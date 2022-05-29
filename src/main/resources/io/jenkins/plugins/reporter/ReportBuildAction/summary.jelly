@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
+
+    <t:summary icon="/plugin/data-reporting/icons/wm-logo-48x48.png">
+        <a href="data-reporting">${%title}</a> ${%source(it.result.csv)}
+        
+        <ul>
+            <li>
+                ${%accurate(it.totalAccurateRate)}
+            </li>
+            <li>
+                ${%manually(it.totalManuallyRate)}
+            </li>
+            <li>
+                ${%incorrect(it.totalIncorrectRate)}
+            </li>
+        </ul>
+    </t:summary>
+    
+</j:jelly>

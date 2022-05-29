@@ -1,0 +1,46 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:bs="/bootstrap5">
+   
+  <l:layout title="${it.displayName}" norefresh="true" nogrid="true">
+    
+    <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+ 
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+    
+    <l:main-panel>
+        
+        <j:set var="assets" value="${it.report.assets}"/>
+        
+        <div class="fluid-container"> 
+            
+             <div class="row gy-3"> 
+                <j:forEach var="asset" items="${assets}">
+                       
+                    <div class="col-5">
+                      <bs:card title="${asset.id}" fontAwesomeIcon="chart-pie">
+                          <c:pie-chart id="${asset.id}" model="${it.getAssetDataModel(asset)}" height="256" />
+                      </bs:card>
+                    </div>
+                    <div class="col-7">
+                        <bs:card title="${%history}" fontAwesomeIcon="arrow-trend-up">
+                            <div id="${asset.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
+                        </bs:card>
+                    </div>
+                    
+                </j:forEach>
+                
+            </div>
+            
+        </div>
+        
+        <script>var view = <st:bind value="${it}"/></script>
+        <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/asset.js"/>
+        
+    </l:main-panel>
+           
+  </l:layout>
+   
+</j:jelly>
+                   
