@@ -21,23 +21,21 @@ public class AssetTrendChart {
                             createRangeMaxFor(dataSet, ReportSeriesBuilder.MANUALLY)),
                     createRangeMaxFor(dataSet, ReportSeriesBuilder.INCORRECT)) + 10);
 
-            model.setRangeMin(Math.max(0, Math.min(
-                    Math.min(createRangeMinFor(dataSet, ReportSeriesBuilder.ACCURATE),
-                            createRangeMinFor(dataSet, ReportSeriesBuilder.MANUALLY)),
-                    createRangeMinFor(dataSet, ReportSeriesBuilder.INCORRECT)) - 10));
+            // we always start from the zero line
+            model.setRangeMin(0);
 
             LineSeries accurateSeries = new LineSeries("Accurate", Palette.GREEN.getNormal(),
-                    LineSeries.StackedMode.SEPARATE_LINES, LineSeries.FilledMode.LINES);
+                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
             accurateSeries.addAll(dataSet.getSeries(AssetSeriesBuilder.ACCURATE));
             model.addSeries(accurateSeries);
 
             LineSeries manuallySeries = new LineSeries("Manually", Palette.YELLOW.getNormal(),
-                    LineSeries.StackedMode.SEPARATE_LINES, LineSeries.FilledMode.LINES);
+                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
             manuallySeries.addAll(dataSet.getSeries(AssetSeriesBuilder.MANUALLY));
             model.addSeries(manuallySeries);
 
             LineSeries incorrectSeries = new LineSeries("Incorrect", Palette.RED.getNormal(),
-                    LineSeries.StackedMode.SEPARATE_LINES, LineSeries.FilledMode.LINES);
+                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
             incorrectSeries.addAll(dataSet.getSeries(AssetSeriesBuilder.INCORRECT));
             model.addSeries(incorrectSeries);
         }
