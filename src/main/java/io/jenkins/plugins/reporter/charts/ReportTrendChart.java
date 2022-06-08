@@ -33,21 +33,5 @@ public class ReportTrendChart {
         }
         return model;
     }
-
-    private int createRangeMinFor(final LinesDataSet dataSet, final String label) {
-        return min(dataSet, label) - 10;
-    }
-
-    private Integer min(final LinesDataSet dataSet, final String dataSetId) {
-        return dataSet.getSeries(dataSetId).stream().reduce(Math::min).orElse(0);
-    }
-
-    private int createRangeMaxFor(final LinesDataSet dataSet, final String label) {
-        return max(dataSet, label) + 10;
-    }
-
-    private Integer max(final LinesDataSet dataSet, final String dataSetId) {
-        return dataSet.getSeries(dataSetId).stream().reduce(Math::max).orElse(500);
-    }
     
 }
