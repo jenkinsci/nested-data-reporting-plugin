@@ -1,3 +1,10 @@
+![GitHub](https://img.shields.io/github/license/simonsymhoven/data-reporting-plugin)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/simonsymhoven/data-reporting-plugin)
+![Open GitHub issues](https://img.shields.io/github/issues/simonsymhoven/data-reporting-plugin)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/simonsymhoven/data-reporting-plugin/GitHub%20CI/master?label=GitHub%20CI)
+![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/data-reporting-plugin?label=latest%20version)
+
+
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
