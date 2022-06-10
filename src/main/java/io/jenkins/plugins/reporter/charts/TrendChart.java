@@ -3,25 +3,17 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.*;
 import io.jenkins.plugins.reporter.ReportBuildAction;
 
-public class AssetTrendChart {
+public class TrendChart {
 
     public LinesChartModel create(final Iterable<? extends BuildResult<ReportBuildAction>> results,
-                                  final ChartModelConfiguration configuration, String id) {
+                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportBuildAction> builder) {
 
-        AssetSeriesBuilder builder = new AssetSeriesBuilder(id);
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
-
         LinesChartModel model = new LinesChartModel(dataSet);
-        
+
         if (!dataSet.isEmpty()) {
             model.useContinuousRangeAxis();
 
-            model.setRangeMax(Math.max(
-                    Math.max(createRangeMaxFor(dataSet, ReportSeriesBuilder.ACCURATE),
-                            createRangeMaxFor(dataSet, ReportSeriesBuilder.MANUALLY)),
-                    createRangeMaxFor(dataSet, ReportSeriesBuilder.INCORRECT)) + 10);
-
-            // we always start from the zero line
             model.setRangeMin(0);
 
             LineSeries accurateSeries = new LineSeries("Accurate", Palette.GREEN.getNormal(),
@@ -40,21 +32,5 @@ public class AssetTrendChart {
             model.addSeries(incorrectSeries);
         }
         return model;
-    }
-
-    private int createRangeMinFor(final LinesDataSet dataSet, final String label) {
-        return min(dataSet, label);
-    }
-
-    private Integer min(final LinesDataSet dataSet, final String dataSetId) {
-        return dataSet.getSeries(dataSetId).stream().reduce(Math::min).orElse(0);
-    }
-
-    private int createRangeMaxFor(final LinesDataSet dataSet, final String label) {
-        return max(dataSet, label);
-    }
-
-    private Integer max(final LinesDataSet dataSet, final String dataSetId) {
-        return dataSet.getSeries(dataSetId).stream().reduce(Math::max).orElse(500);
     }
 }
