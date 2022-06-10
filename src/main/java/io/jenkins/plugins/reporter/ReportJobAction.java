@@ -5,7 +5,8 @@ import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LinesChartModel;
 import hudson.model.Job;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
-import io.jenkins.plugins.reporter.charts.ReportTrendChart;
+import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
+import io.jenkins.plugins.reporter.charts.TrendChart;
 
 public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuildAction> {
     
@@ -50,6 +51,6 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuild
     LinesChartModel createChart(final Iterable<? extends BuildResult<ReportBuildAction>> buildHistory,
                                 final String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-        return new ReportTrendChart().create(buildHistory, modelConfiguration);
+        return new TrendChart().create(buildHistory, modelConfiguration, new ReportSeriesBuilder());
     }
 }

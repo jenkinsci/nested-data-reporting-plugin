@@ -5,7 +5,8 @@ import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.RunList;
-import io.jenkins.plugins.reporter.charts.AssetTrendChart;
+import io.jenkins.plugins.reporter.charts.AssetSeriesBuilder;
+import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Asset;
 import io.jenkins.plugins.reporter.model.Report;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -64,7 +65,7 @@ public class ReportViewModel implements ModelObject {
         return new JacksonFacade().toJson(model);
     }
 
-    private String createTrendAsJson(final AssetTrendChart trendChart, final String configuration, String id) {
+    private String createTrendAsJson(final TrendChart trendChart, final String configuration, String id) {
         Job<?, ?> job = getOwner().getParent();
         RunList<?> runs = job.getBuilds();
 
@@ -76,10 +77,11 @@ public class ReportViewModel implements ModelObject {
         List<BuildResult<ReportBuildAction>> history = new ArrayList<>();
         for (ReportBuildAction report : reports) {
             Build build = new Build(report.getOwner().getNumber(), report.getOwner().getDisplayName(), 0);
-            history.add(new BuildResult<ReportBuildAction>(build, report));
+            history.add(new BuildResult<>(build, report));
         }
-        
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), id));
+
+        AssetSeriesBuilder builder = new AssetSeriesBuilder(id);
+        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), builder));
     }
 
     /**
@@ -93,7 +95,7 @@ public class ReportViewModel implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getBuildTrend(final String configuration, String id) {
-        return createTrendAsJson(new AssetTrendChart(), configuration, id);
+        return createTrendAsJson(new TrendChart(), configuration, id);
     }
 
     /**
