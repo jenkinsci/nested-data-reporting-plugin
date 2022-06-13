@@ -10,8 +10,8 @@ import io.jenkins.plugins.reporter.charts.TrendChart;
 
 public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuildAction> {
     
-    static final String SMALL_ICON = "/plugin/data-reporting/icons/wm-logo-24x24.png";
-    static final String BIG_ICON = "/plugin/data-reporting/icons/wm-logo-48x48.png";
+    static final String SMALL_ICON = "/plugin/data-reporting/icons/data-reporting-24x24.png";
+    static final String BIG_ICON = "/plugin/data-reporting/icons/data-reporting-48x48.png";
     static final String ID = "data-reporting";
 
     /**
