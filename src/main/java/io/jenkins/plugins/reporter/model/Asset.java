@@ -5,6 +5,11 @@ import net.sf.jsefa.csv.annotation.CsvField;
 
 import java.io.Serializable;
 
+/**
+ * Simple model class that determines the parts of a csv file (by accurate, manually and incorrect) in a build.
+ *
+ * @author Simon Symhoven
+ */
 @CsvDataType()
 public class Asset implements Serializable {
     private static final long serialVersionUID = -2800979294230808946L;
