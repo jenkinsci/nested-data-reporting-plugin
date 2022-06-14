@@ -21,6 +21,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         
         if (StringUtils.isNotBlank(getJsonFile())) {
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
-            setJsonString(new String(Files.readAllBytes(jsonFile.toPath())));
+            setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
         
         List<Item> items = new ObjectMapper().readValue(getJsonString(), new TypeReference<List<Item>>(){});
