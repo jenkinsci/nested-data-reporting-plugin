@@ -15,7 +15,7 @@
   <h1 align="center">Data Reporting Plugin</h1>
 
   <p align="center">
-    Jenkins plugin to report data from csv as pie- and trend-charts.
+    Jenkins plugin to report data from json as pie- and trend-charts.
     <br />
     <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
@@ -28,39 +28,89 @@
 
 ## Introduction
 
-This plugin reports data from csv file as pie- and trend-charts. An example csv file looks like this:
+This plugin reports data from json file as pie- and trend-charts. An example json file looks like this:
 
 ```
-Product;accurate;manually;incorrect
-Aktien;9;2;3
-Derivate;10;3;2
-Fonds;20;7;6
-Optionsscheine;15;4;6
+[
+  {
+    "id": "Aktien",
+    "result": {
+      "accurate": 9,
+      "manually": 2,
+      "incorrect": 3
+    },
+    "items": [
+      {
+        "id": "Aktie 1",
+        "result": {
+          "accurate": 4,
+          "manually": 1,
+          "incorrect": 1
+        }
+      },
+      {
+        "id": "Aktie 2",
+        "result": {
+          "accurate": 5,
+          "manually": 1,
+          "incorrect": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Derivate",
+    "result": {
+      "accurate": 10,
+      "manually": 3,
+      "incorrect": 2
+    }
+  },
+  {
+    "id": "Fonds",
+    "result": {
+      "accurate": 20,
+      "manually": 7,
+      "incorrect": 6
+    }
+  },
+  {
+    "id": "Optionsscheine",
+    "result": {
+      "accurate": 15,
+      "manually": 4,
+      "incorrect": 6
+    }
+  }
+]
+
 ```
 
 At job level, a trend chart is generated showing the development 
-of the asset classes included in the csv over all builds.
+of the items included in the json over all builds.
 
 At the build level, the distribution is then displayed as 
-a pie chart for each asset class and the detailed history of the last 
+a pie chart for each item and the detailed history of the last 
 builds is displayed in a filterable manner.
 
 In addition, the percentage distribution is shown 
-in total across all classes in the summary.
+in total across all items in the summary.
 
 ## Getting started
 
 ### Pipeline Step
 
 ```
-reportData csv: 'stocks.csv', label: 'Data Reporting (WM 2022)' 
+publishReport jsonFile: "etc/result.json", label: 'Data Reporting (WM 2022)' 
 ```
 
 Parameter: 
 
-* csv: path to csv file relative to the workspace.
-* label: the label for the build action (optional, default: "Data Reporting").
+* `jsonFile`: path to json file relative to the workspace.
+* `model`: the json model as string.
+* `label`: the label for the build action (optional, default: "Data Reporting").
 
+Hint: You have to provide at least one of `jsonFile` or `model`!
 ## Issues
 
 TODO Decide where you're going to host your issues, the default is Jenkins JIRA, but you can also enable GitHub issues,

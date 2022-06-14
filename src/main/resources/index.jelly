@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    This plugin reports data from csv file as pie- and trend-chart.
+    This plugin reports data from json file as pie- and trend-chart.
 </div>
