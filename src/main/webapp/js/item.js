@@ -30,9 +30,9 @@
          * Creates a build trend chart that shows the number of issues for a couple of builds.
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
-        view.getAssetIds(function(assetIds) {
+        view.getItemIds(function(itemIds) {
 
-            Object.entries(assetIds.responseJSON).forEach((entry) => {
+            Object.entries(itemIds.responseJSON).forEach((entry) => {
                 const [index, id] = entry;
                 console.log(`${id}-trend-chart`);
                 view.getBuildTrend(configuration, id, function (lineModel) {

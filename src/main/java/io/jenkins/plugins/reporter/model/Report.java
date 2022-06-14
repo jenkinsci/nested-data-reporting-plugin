@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +45,15 @@ public class Report implements Serializable {
     public Map<String, Integer> aggregate() {
         return getItems()
                 .stream()
+                .map(Item::getResult)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
+    }
+
+    public Map<String, Integer> aggregate(Predicate<? super Item> filter) {
+        return getItems()
+                .stream()
+                .filter(filter)
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
