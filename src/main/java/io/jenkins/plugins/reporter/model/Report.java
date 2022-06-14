@@ -16,34 +16,33 @@ import java.util.stream.Collectors;
 public class Report implements Serializable {
 
     private static final long serialVersionUID = -4523053939010906220L;
-    private final List<Item> items;
+    private final Result result;
     private final String label;
 
     /**
      * Creates a new {@link Report}.
-     * @param items
+     * @param result
      * @param label
      */
-    public Report(List<Item> items, String label) {
-        this.items = items;
+    public Report(Result result, String label) {
+        this.result = result;
         this.label = label;
     }
     
     public Report() {
         this.label = "Data Report";
-        this.items = Collections.emptyList();
+        this.result = new Result();
     }
-    public List<Item> getItems() {
-        return items;
+    public Result getResult() {
+        return result;
     }
-
     
     public String getLabel() {
         return label;
     }
     
     public Map<String, Integer> aggregate() {
-        return getItems()
+        return getResult().getComponents()
                 .stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
@@ -51,7 +50,7 @@ public class Report implements Serializable {
     }
 
     public Map<String, Integer> aggregate(Predicate<? super Item> filter) {
-        return getItems()
+        return getResult().getComponents()
                 .stream()
                 .filter(filter)
                 .map(Item::getResult)

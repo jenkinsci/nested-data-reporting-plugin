@@ -57,7 +57,8 @@ public class ReportViewModel implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public String getItemDataModel(Item item) {
         PieChartModel model = new PieChartModel(item.getId());
-        item.getResult().forEach((key, value) -> model.add(new PieData(key, value), Palette.GREEN));
+        item.getResult().forEach((key, value) -> model.add(new PieData(key, value), 
+                report.getResult().getColors().get(key)));
         return new JacksonFacade().toJson(model);
     }
 
@@ -77,7 +78,8 @@ public class ReportViewModel implements ModelObject {
         }
 
         ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), builder));
+        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), 
+                builder, report.getResult().getColors()));
     }
 
     /**
@@ -102,7 +104,7 @@ public class ReportViewModel implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public List<String> getItemIds() {
-        return getReport().getItems().stream().map(Item::getId).collect(Collectors.toList());
+        return getReport().getResult().getComponents().stream().map(Item::getId).collect(Collectors.toList());
     }
     
 }

@@ -47,6 +47,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
     LinesChartModel createChart(final Iterable<? extends BuildResult<ReportAction>> buildHistory,
                                 final String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-        return new TrendChart().create(buildHistory, modelConfiguration, new ReportSeriesBuilder());
+        return new TrendChart().create(buildHistory, modelConfiguration, new ReportSeriesBuilder(), 
+                getLatestAction().get().getReport().getResult().getColors());
     }
 }

@@ -14,6 +14,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
+import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -79,9 +80,9 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
-        
-        List<Item> items = new ObjectMapper().readValue(getJsonString(), new TypeReference<List<Item>>(){});
-        Report report = new Report(items, getLabel());
+
+        Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
+        Report report = new Report(result, getLabel());
      
         run.addAction(new ReportAction(run, report));
     }

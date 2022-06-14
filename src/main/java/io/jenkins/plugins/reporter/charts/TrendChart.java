@@ -3,6 +3,8 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.*;
 import io.jenkins.plugins.reporter.ReportAction;
 
+import java.util.Map;
+
 /**
  * Builds the Java side model for a trend chart showing the accurate, manually and incorrect parts of an asset or report.
  * The number of builds to consider is controlled by a {@link ChartModelConfiguration} instance. The created model object
@@ -29,7 +31,8 @@ public class TrendChart {
      * @return the chart model, ready to be serialized to JSON
      */
     public LinesChartModel create(final Iterable<? extends BuildResult<ReportAction>> results,
-                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder) {
+                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder, 
+                                  Map<String, String> colors) {
 
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
         LinesChartModel model = new LinesChartModel(dataSet);
@@ -39,7 +42,7 @@ public class TrendChart {
             model.setRangeMin(0);
             
             dataSet.getDataSetIds().forEach(id -> {
-                LineSeries series = new LineSeries(id, Palette.GREEN.getNormal(), 
+                LineSeries series = new LineSeries(id, colors.get(id), 
                         LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
                 series.addAll(dataSet.getSeries(id));
                 model.addSeries(series);

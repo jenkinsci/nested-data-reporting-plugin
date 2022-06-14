@@ -31,59 +31,65 @@
 This plugin reports data from json file as pie- and trend-charts. An example json file looks like this:
 
 ```
-[
-  {
-    "id": "Aktien",
-    "result": {
-      "accurate": 9,
-      "manually": 2,
-      "incorrect": 3
-    },
-    "items": [
-      {
-        "id": "Aktie 1",
-        "result": {
-          "accurate": 4,
-          "manually": 1,
-          "incorrect": 1
-        }
+{
+  "components": [
+    {
+      "id": "Aktien",
+      "result": {
+        "incorrect": 3,
+        "manually": 2,
+        "accurate": 9
       },
-      {
-        "id": "Aktie 2",
-        "result": {
-          "accurate": 5,
-          "manually": 1,
-          "incorrect": 2
+      "items": [
+        {
+          "id": "Aktie 1",
+          "result": {
+            "incorrect": 1,
+            "manually": 1,
+            "accurate": 4
+          }
+        },
+        {
+          "id": "Aktie 2",
+          "result": {
+            "incorrect": 2,
+            "manually": 1,
+            "accurate": 5
+          }
         }
+      ]
+    },
+    {
+      "id": "Derivate",
+      "result": {
+        "incorrect": 2,
+        "manually": 3,
+        "accurate": 10
       }
-    ]
-  },
-  {
-    "id": "Derivate",
-    "result": {
-      "accurate": 10,
-      "manually": 3,
-      "incorrect": 2
+    },
+    {
+      "id": "Fonds",
+      "result": {
+        "incorrect": 6,
+        "manually": 7,
+        "accurate": 20
+      }
+    },
+    {
+      "id": "Optionsscheine",
+      "result": {
+        "incorrect": 6,
+        "manually": 4,
+        "accurate": 15
+      }
     }
-  },
-  {
-    "id": "Fonds",
-    "result": {
-      "accurate": 20,
-      "manually": 7,
-      "incorrect": 6
-    }
-  },
-  {
-    "id": "Optionsscheine",
-    "result": {
-      "accurate": 15,
-      "manually": 4,
-      "incorrect": 6
-    }
+  ],
+  "colors": {
+    "incorrect": "#EF9A9A",
+    "manually": "#FFF59D",
+    "accurate": "#A5D6A7"
   }
-]
-
+}
 ```
 
 At job level, a trend chart is generated showing the development 
