@@ -19,7 +19,7 @@ public class Item implements Serializable {
     @JsonProperty("id")
     private String id;
     
-    Map<String, Number> result;
+    Map<String, Integer> result;
 
     List<Item> items;
 
@@ -31,11 +31,11 @@ public class Item implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Number> getResult() {
+    public Map<String, Integer> getResult() {
         return result;
     }
 
-    public void setResult(Map<String, Number> result) {
+    public void setResult(Map<String, Integer> result) {
         this.result = result;
     }
 

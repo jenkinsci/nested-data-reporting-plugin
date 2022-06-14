@@ -2,30 +2,26 @@ package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.model.Item;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Builds one x-axis point for the series of a line chart showing the accurate, 
- * manually and incorrect parts of a report from the csv file. The results of all assets are summarized.
+ * Builds one x-axis point for the series of a line chart showing the parts 
+ * of a report from json model. The results of all items are aggregated.
  *
  * @author Simon Symhoven
  */
 public class ReportSeriesBuilder extends SeriesBuilder<ReportAction> {
     
-    static final String ACCURATE = "accurate";
-    static final String MANUALLY = "manually";
-    static final String INCORRECT = "incorrect";
-    
     @Override
-    protected Map<String, Integer> computeSeries(ReportAction dataReportBuildAction) {
-        Map<String, Integer> series = new HashMap<>();
-
-        series.put(ACCURATE, 4);
-        series.put(MANUALLY, 5);
-        series.put(INCORRECT, 6);
-        
-        return series;
+    protected Map<String, Integer> computeSeries(ReportAction reportAction) {
+        return reportAction.getReport().getItems()
+                .stream()
+                .map(Item::getResult)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
     }
+    
 }
