@@ -23,7 +23,7 @@ public class TrendChart {
      * @param configuration
      *         the chart configuration to be used
      * @param builder
-     *          the {@link SeriesBuilder} to use for the model. {@link AssetSeriesBuilder} for each asset on
+     *          the {@link SeriesBuilder} to use for the model. {@link ItemSeriesBuilder} for each asset on
      *          build level or {@link ReportSeriesBuilder} for the aggregated result on job level.
      *
      * @return the chart model, ready to be serialized to JSON
@@ -36,23 +36,14 @@ public class TrendChart {
 
         if (!dataSet.isEmpty()) {
             model.useContinuousRangeAxis();
-
             model.setRangeMin(0);
-
-            LineSeries accurateSeries = new LineSeries("Accurate", Palette.GREEN.getNormal(),
-                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
-            accurateSeries.addAll(dataSet.getSeries(AssetSeriesBuilder.ACCURATE));
-            model.addSeries(accurateSeries);
-
-            LineSeries manuallySeries = new LineSeries("Manually", Palette.YELLOW.getNormal(),
-                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
-            manuallySeries.addAll(dataSet.getSeries(AssetSeriesBuilder.MANUALLY));
-            model.addSeries(manuallySeries);
-
-            LineSeries incorrectSeries = new LineSeries("Incorrect", Palette.RED.getNormal(),
-                    LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
-            incorrectSeries.addAll(dataSet.getSeries(AssetSeriesBuilder.INCORRECT));
-            model.addSeries(incorrectSeries);
+            
+            dataSet.getDataSetIds().forEach(id -> {
+                LineSeries series = new LineSeries(id, Palette.GREEN.getNormal(), 
+                        LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
+                series.addAll(dataSet.getSeries(id));
+                model.addSeries(series);
+            });
         }
         
         return model;

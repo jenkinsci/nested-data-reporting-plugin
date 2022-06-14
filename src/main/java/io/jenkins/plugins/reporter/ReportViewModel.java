@@ -5,18 +5,15 @@ import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.RunList;
-import io.jenkins.plugins.reporter.charts.AssetSeriesBuilder;
+import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ReportViewModel implements ModelObject {
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
@@ -58,13 +55,9 @@ public class ReportViewModel implements ModelObject {
      * @return the UI model as JSON
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public String getAssetDataModel(Item asset) {
-        PieChartModel model = new PieChartModel(asset.getId());
-
-        model.add(new PieData("Accurate", 2), Palette.GREEN);
-        model.add(new PieData("Manually", 4), Palette.YELLOW);
-        model.add(new PieData("Incorrect", 6), Palette.RED);
-
+    public String getItemDataModel(Item item) {
+        PieChartModel model = new PieChartModel(item.getId());
+        item.getResult().forEach((key, value) -> model.add(new PieData(key, value), Palette.GREEN));
         return new JacksonFacade().toJson(model);
     }
 
@@ -83,12 +76,12 @@ public class ReportViewModel implements ModelObject {
             history.add(new BuildResult<>(build, report));
         }
 
-        AssetSeriesBuilder builder = new AssetSeriesBuilder(id);
+        ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
         return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), builder));
     }
 
     /**
-     * Returns the UI model for an ECharts line chart that shows the asset properties.
+     * Returns the UI model for an ECharts line chart that shows the item properties.
      *
      * @param configuration
      *         determines whether the Jenkins build number should be used on the X-axis or the date
@@ -102,14 +95,14 @@ public class ReportViewModel implements ModelObject {
     }
 
     /**
-     * Returns the ids of the assets to render the trend charts.
+     * Returns the ids of the items to render the trend charts.
      *
-     * @return the ids of assets as list
+     * @return the ids of items as list
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public List<String> getAssetIds() {
-        return new ArrayList<String>(Collections.singleton("Aktien"));
+    public List<String> getItemIds() {
+        return getReport().getItems().stream().map(Item::getId).collect(Collectors.toList());
     }
     
 }

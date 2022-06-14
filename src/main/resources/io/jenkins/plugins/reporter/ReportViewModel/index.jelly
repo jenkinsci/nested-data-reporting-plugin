@@ -11,21 +11,21 @@
     
     <l:main-panel>
         
-        <j:set var="assets" value="${it.report.assets}"/>
+        <j:set var="items" value="${it.report.items}"/>
         
         <div class="fluid-container"> 
             
              <div class="row gy-3"> 
-                <j:forEach var="asset" items="${assets}">
+                <j:forEach var="item" items="${items}">
                        
                     <div class="col-5">
-                      <bs:card title="${asset.id}" fontAwesomeIcon="chart-pie">
-                          <c:pie-chart id="${asset.id}" model="${it.getAssetDataModel(asset)}" height="256" />
+                      <bs:card title="${item.id}" fontAwesomeIcon="chart-pie">
+                          <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
                       </bs:card>
                     </div>
                     <div class="col-7">
                         <bs:card title="${%history}" fontAwesomeIcon="arrow-trend-up">
-                            <div id="${asset.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
+                            <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
                         </bs:card>
                     </div>
                     
@@ -36,7 +36,7 @@
         </div>
         
         <script>var view = <st:bind value="${it}"/></script>
-        <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/asset.js"/>
+        <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/item.js"/>
         
     </l:main-panel>
            
