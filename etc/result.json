@@ -1,0 +1,52 @@
+[
+  {
+    "id": "Aktien",
+    "result": {
+      "accurate": 9,
+      "manually": 2,
+      "incorrect": 3
+    },
+    "items": [
+      {
+        "id": "Aktie 1",
+        "result": {
+          "accurate": 4,
+          "manually": 1,
+          "incorrect": 1
+        }
+      },
+      {
+        "id": "Aktie 2",
+        "result": {
+          "accurate": 5,
+          "manually": 1,
+          "incorrect": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Derivate",
+    "result": {
+      "accurate": 10,
+      "manually": 3,
+      "incorrect": 2
+    }
+  },
+  {
+    "id": "Fonds",
+    "result": {
+      "accurate": 20,
+      "manually": 7,
+      "incorrect": 6
+    }
+  },
+  {
+    "id": "Optionsscheine",
+    "result": {
+      "accurate": 15,
+      "manually": 4,
+      "incorrect": 6
+    }
+  }
+]

@@ -6,16 +6,16 @@ import io.jenkins.plugins.util.BuildAction;
 import io.jenkins.plugins.util.JobAction;
 import org.kohsuke.stapler.StaplerProxy;
 
-public class ReportBuildAction extends BuildAction<Report> implements StaplerProxy {
+public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
     
-    protected ReportBuildAction(Run<?, ?> owner, Report report) {
+    protected ReportAction(Run<?, ?> owner, Report report) {
         super(owner, report, true);
         this.report = report;
     }
 
-    public ReportBuildAction(Run<?, ?> owner, Report report, boolean canSerialize) {
+    public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
     }
@@ -57,20 +57,5 @@ public class ReportBuildAction extends BuildAction<Report> implements StaplerPro
     @Override
     public Object getTarget() {
         return new ReportViewModel(getOwner(), getResult());
-    }
-
-    @SuppressWarnings("unused")
-    public double getTotalAccurateRate() {
-        return getResult().getTotalAccurate() / (double) getResult().getTotal() * 100;
-    }
-
-    @SuppressWarnings("unused")
-    public double getTotalManuallyRate() {
-        return getResult().getTotalManually() / (double) getResult().getTotal() * 100;
-    }
-
-    @SuppressWarnings("unused")
-    public double getTotalIncorrectRate() {
-        return getResult().getTotalIncorrect() / (double) getResult().getTotal() * 100;
     }
 }

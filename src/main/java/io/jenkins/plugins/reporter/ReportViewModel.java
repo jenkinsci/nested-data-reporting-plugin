@@ -7,11 +7,12 @@ import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.AssetSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
-import io.jenkins.plugins.reporter.model.Asset;
+import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,12 +56,12 @@ public class ReportViewModel implements ModelObject {
      * @return the UI model as JSON
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public String getAssetDataModel(Asset asset) {
+    public String getAssetDataModel(Item asset) {
         PieChartModel model = new PieChartModel(asset.getId());
 
-        model.add(new PieData("Accurate", asset.getAccurate()), Palette.GREEN);
-        model.add(new PieData("Manually", asset.getManually()), Palette.YELLOW);
-        model.add(new PieData("Incorrect", asset.getIncorrect()), Palette.RED);
+        model.add(new PieData("Accurate", 2), Palette.GREEN);
+        model.add(new PieData("Manually", 4), Palette.YELLOW);
+        model.add(new PieData("Incorrect", 6), Palette.RED);
 
         return new JacksonFacade().toJson(model);
     }
@@ -69,13 +70,13 @@ public class ReportViewModel implements ModelObject {
         Job<?, ?> job = getOwner().getParent();
         RunList<?> runs = job.getBuilds();
 
-        List<ReportBuildAction> reports = runs.stream()
+        List<ReportAction> reports = runs.stream()
                 .filter(run -> run.getNumber() <= getOwner().getNumber())
-                .map(run -> run.getAction(ReportBuildAction.class))
+                .map(run -> run.getAction(ReportAction.class))
                 .collect(Collectors.toList());
 
-        List<BuildResult<ReportBuildAction>> history = new ArrayList<>();
-        for (ReportBuildAction report : reports) {
+        List<BuildResult<ReportAction>> history = new ArrayList<>();
+        for (ReportAction report : reports) {
             Build build = new Build(report.getOwner().getNumber(), report.getOwner().getDisplayName(), 0);
             history.add(new BuildResult<>(build, report));
         }
@@ -106,7 +107,7 @@ public class ReportViewModel implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public List<String> getAssetIds() {
-        return getReport().getAssets().stream().map(Asset::getId).collect(Collectors.toList());
+        return new ArrayList<String>(Collections.singleton("Aktien"));
     }
     
 }

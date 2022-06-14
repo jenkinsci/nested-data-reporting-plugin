@@ -1,7 +1,7 @@
 package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.*;
-import io.jenkins.plugins.reporter.ReportBuildAction;
+import io.jenkins.plugins.reporter.ReportAction;
 
 /**
  * Builds the Java side model for a trend chart showing the accurate, manually and incorrect parts of an asset or report.
@@ -28,8 +28,8 @@ public class TrendChart {
      *
      * @return the chart model, ready to be serialized to JSON
      */
-    public LinesChartModel create(final Iterable<? extends BuildResult<ReportBuildAction>> results,
-                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportBuildAction> builder) {
+    public LinesChartModel create(final Iterable<? extends BuildResult<ReportAction>> results,
+                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder) {
 
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
         LinesChartModel model = new LinesChartModel(dataSet);

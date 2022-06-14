@@ -1,8 +1,8 @@
 package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
-import io.jenkins.plugins.reporter.ReportBuildAction;
-import io.jenkins.plugins.reporter.model.Asset;
+import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.model.Item;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author Simon Symhoven
  */
-public class AssetSeriesBuilder extends SeriesBuilder<ReportBuildAction> {
+public class AssetSeriesBuilder extends SeriesBuilder<ReportAction> {
     
     private final String id;
     static final String ACCURATE = "accurate";
@@ -31,15 +31,12 @@ public class AssetSeriesBuilder extends SeriesBuilder<ReportBuildAction> {
     }
 
     @Override
-    protected Map<String, Integer> computeSeries(ReportBuildAction dataReportBuildAction) {
+    protected Map<String, Integer> computeSeries(ReportAction dataReportBuildAction) {
         Map<String, Integer> series = new HashMap<>();
 
-        Asset asset = dataReportBuildAction.getResult().getAssets()
-                .stream().filter(a -> a.getId().equals(id)).findFirst().get();
-
-        series.put(ACCURATE, asset.getAccurate());
-        series.put(MANUALLY, asset.getManually());
-        series.put(INCORRECT, asset.getIncorrect());
+        series.put(ACCURATE, 1);
+        series.put(MANUALLY, 2);
+        series.put(INCORRECT, 3);
         
         return series;
     }
