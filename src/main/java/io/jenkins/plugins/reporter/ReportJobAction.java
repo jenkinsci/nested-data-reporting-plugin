@@ -8,7 +8,7 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 
-public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuildAction> {
+public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportAction> {
     
     static final String SMALL_ICON = "/plugin/data-reporting/icons/data-reporting-24x24.png";
     static final String BIG_ICON = "/plugin/data-reporting/icons/data-reporting-48x48.png";
@@ -21,7 +21,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuild
      *         the job that owns this action
      */
     public ReportJobAction(final Job<?, ?> owner) {
-        super(owner, ReportBuildAction.class);
+        super(owner, ReportAction.class);
     }
     
     @Override
@@ -44,11 +44,11 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportBuild
         return createChart(getBuildHistory(), configuration);
     }
     
-    public Iterable<? extends BuildResult<ReportBuildAction>> getBuildHistory() {
+    public Iterable<? extends BuildResult<ReportAction>> getBuildHistory() {
         return createBuildHistory();
     }
 
-    LinesChartModel createChart(final Iterable<? extends BuildResult<ReportBuildAction>> buildHistory,
+    LinesChartModel createChart(final Iterable<? extends BuildResult<ReportAction>> buildHistory,
                                 final String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
         return new TrendChart().create(buildHistory, modelConfiguration, new ReportSeriesBuilder());

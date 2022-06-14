@@ -1,5 +1,7 @@
 package io.jenkins.plugins.reporter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -10,43 +12,49 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import io.jenkins.plugins.reporter.model.Asset;
+import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
 import jenkins.tasks.SimpleBuildStep;
-import net.sf.jsefa.Deserializer;
-import net.sf.jsefa.common.lowlevel.filter.HeaderAndFooterFilter;
-import net.sf.jsefa.csv.CsvIOFactory;
-import net.sf.jsefa.csv.config.CsvConfiguration;
-import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.List;
 
 @Extension
-public class ReportBuildStep extends Builder implements SimpleBuildStep, Serializable {
+public class PublishReportStep extends Builder implements SimpleBuildStep, Serializable {
     
-    private String csv;
-
+    private String jsonString;
+    private String jsonFile;
     private String label;
     
     @DataBoundConstructor
-    public ReportBuildStep() {
+    public PublishReportStep() {
         super();
         this.label = "Data Reporting";
     }
     
-    public String getCsv() {
-        return csv;
+    public String getJsonString() {
+        return jsonString;
     }
     
     @DataBoundSetter
-    public void setCsv(String csv) {
-        this.csv = csv;
+    public void setJsonString(final String jsonString) {
+        this.jsonString = jsonString;
     }
 
+    public String getJsonFile() {
+        return jsonFile;
+    }
+
+    @DataBoundSetter
+    public void setJsonFile(final String jsonFile) {
+        this.jsonFile = jsonFile;
+    }
+    
     public String getLabel() {
         return label;
     }
@@ -64,34 +72,21 @@ public class ReportBuildStep extends Builder implements SimpleBuildStep, Seriali
     @Override
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("Report data... ");
-        listener.getLogger().println("with csv: " + getCsv());
-        listener.getLogger().println("and label: " + getLabel());
-
-        CsvConfiguration config = new CsvConfiguration();
-        config.setLineFilter(new HeaderAndFooterFilter(1, false, true));
+        listener.getLogger().println("with label: " + getLabel());
         
-        Deserializer deserializer = CsvIOFactory.createFactory(config, Asset.class).createDeserializer();
-        
-        File csvFile = new File(workspace.toURI().getPath(), csv);
-        InputStream csvStream = new FileInputStream(csvFile);
-        deserializer.open(new InputStreamReader(csvStream,  "UTF-8"));
-            
-        Report report = new Report();
-        report.setCsv(getCsv());
-        report.setLabel(getLabel());
-        List<Asset> assets = Lists.newArrayList();
-        while (deserializer.hasNext()) {
-            Asset asset = deserializer.next();
-            assets.add(asset);
+        if (StringUtils.isNotBlank(getJsonFile())) {
+            File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
+            setJsonString(new String(Files.readAllBytes(jsonFile.toPath())));
         }
-        deserializer.close(true);
-        report.setAssets(assets);
         
-        run.addAction(new ReportBuildAction(run, report));
+        List<Item> items = new ObjectMapper().readValue(getJsonString(), new TypeReference<List<Item>>(){});
+        Report report = new Report(items, getLabel());
+     
+        run.addAction(new ReportAction(run, report));
     }
  
     @Extension 
-    @Symbol("reportData")
+    @Symbol("publishReport")
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
         @NonNull
@@ -105,5 +100,4 @@ public class ReportBuildStep extends Builder implements SimpleBuildStep, Seriali
             return true;
         }
     }
-    
 }
