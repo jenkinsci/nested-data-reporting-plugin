@@ -1,20 +1,22 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
 
-    <t:summary icon="/plugin/data-reporting/icons/wm-logo-48x48.png">
-        <a href="data-reporting">${%title}</a> ${%source(it.result.csv)}
+    <t:summary icon="/plugin/data-reporting/icons/data-reporting-48x48.png">
+        
+        <strong>Label: </strong><a href="data-reporting">${it.result.label}</a> <br/>
+        
+        <strong>Aggregated Results:</strong>
         
         <ul>
-            <li>
-                ${%accurate(it.totalAccurateRate)}
-            </li>
-            <li>
-                ${%manually(it.totalManuallyRate)}
-            </li>
-            <li>
-                ${%incorrect(it.totalIncorrectRate)}
-            </li>
+        
+            <j:forEach var="item" items="${it.aggregatedRelativeReportItemResults}">
+            
+               <li>${item.key}: ${item.value}%</li>
+               
+            </j:forEach>
+        
         </ul>
+        
     </t:summary>
     
 </j:jelly>
