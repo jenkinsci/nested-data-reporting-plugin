@@ -41,11 +41,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     @Override
     protected LinesChartModel createChartModel(String configuration) {
-        return createChart(getBuildHistory(), configuration);
-    }
-    
-    public Iterable<? extends BuildResult<ReportAction>> getBuildHistory() {
-        return createBuildHistory();
+        return createChart(createBuildHistory(), configuration);
     }
 
     LinesChartModel createChart(final Iterable<? extends BuildResult<ReportAction>> buildHistory,

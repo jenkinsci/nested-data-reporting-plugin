@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
+    ${it.createChartModel("")}
   <c:trend-chart it="${from}" title="${%title}" enableLinks="true" configurationId="default"/>
 </j:jelly>
