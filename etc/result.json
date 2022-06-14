@@ -3,25 +3,25 @@
     {
       "id": "Aktien",
       "result": {
-        "accurate": 9,
+        "incorrect": 3,
         "manually": 2,
-        "incorrect": 3
+        "accurate": 9
       },
       "items": [
         {
           "id": "Aktie 1",
           "result": {
-            "accurate": 4,
+            "incorrect": 1,
             "manually": 1,
-            "incorrect": 1
+            "accurate": 4
           }
         },
         {
           "id": "Aktie 2",
           "result": {
-            "accurate": 5,
+            "incorrect": 2,
             "manually": 1,
-            "incorrect": 2
+            "accurate": 5
           }
         }
       ]
@@ -29,31 +29,31 @@
     {
       "id": "Derivate",
       "result": {
-        "accurate": 10,
+        "incorrect": 2,
         "manually": 3,
-        "incorrect": 2
+        "accurate": 10
       }
     },
     {
       "id": "Fonds",
       "result": {
-        "accurate": 20,
+        "incorrect": 6,
         "manually": 7,
-        "incorrect": 6
+        "accurate": 20
       }
     },
     {
       "id": "Optionsscheine",
       "result": {
-        "accurate": 15,
+        "incorrect": 6,
         "manually": 4,
-        "incorrect": 6
+        "accurate": 15
       }
     }
   ],
   "colors": {
-    "accurate": "#A5D6A7",
+    "incorrect": "#EF9A9A",
     "manually": "#FFF59D",
-    "incorrect": "#EF9A9A"
+    "accurate": "#A5D6A7"
   }
 }

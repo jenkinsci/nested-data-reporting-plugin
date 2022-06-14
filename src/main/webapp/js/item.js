@@ -34,7 +34,6 @@
 
             Object.entries(itemIds.responseJSON).forEach((entry) => {
                 const [index, id] = entry;
-                console.log(`${id}-trend-chart`);
                 view.getBuildTrend(configuration, id, function (lineModel) {
                     echartsJenkinsApi.renderConfigurableZoomableTrendChart(`${id}-trend-chart`,
                         lineModel.responseJSON, trendConfigurationDialogId, null);
