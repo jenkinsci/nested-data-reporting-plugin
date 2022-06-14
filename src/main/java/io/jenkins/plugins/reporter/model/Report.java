@@ -3,6 +3,8 @@ package io.jenkins.plugins.reporter.model;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Simple data class that manages a list of {@link Item} and a label add by the 
@@ -38,5 +40,14 @@ public class Report implements Serializable {
     public String getLabel() {
         return label;
     }
+    
+    public Map<String, Integer> aggregate() {
+        return getItems()
+                .stream()
+                .map(Item::getResult)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
+    }
+    
     
 }
