@@ -102,7 +102,7 @@ public class ReportViewModel implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public List<String> getItemIds() {
-        return getReport().getItems().stream().map(Item::getId).collect(Collectors.toList());
+        return getReport().getResult().getComponents().stream().map(Item::getId).collect(Collectors.toList());
     }
     
 }

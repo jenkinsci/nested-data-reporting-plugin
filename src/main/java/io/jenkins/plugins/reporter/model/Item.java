@@ -14,6 +14,7 @@ import java.util.Map;
  * @author Simon Symhoven
  */
 public class Item implements Serializable {
+    
     private static final long serialVersionUID = -2800979294230808946L;
 
     @JsonProperty("id")

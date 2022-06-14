@@ -11,7 +11,7 @@
     
     <l:main-panel>
         
-        <j:set var="items" value="${it.report.items}"/>
+        <j:set var="items" value="${it.report.result.items}"/>
         
         <div class="fluid-container"> 
             

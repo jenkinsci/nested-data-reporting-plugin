@@ -3,7 +3,7 @@
 
     <t:summary icon="/plugin/data-reporting/icons/data-reporting-48x48.png">
         
-        <strong>Label: </strong><a href="data-reporting">${it.result.label}</a> <br/>
+        <strong>Label: </strong><a href="data-reporting">${it.report.label}</a> <br/>
         
         <strong>Aggregated Results:</strong>
         
