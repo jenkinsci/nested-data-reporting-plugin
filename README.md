@@ -113,10 +113,10 @@ publishReport jsonFile: "etc/result.json", label: 'Data Reporting (WM 2022)'
 Parameter: 
 
 * `jsonFile`: path to json file relative to the workspace.
-* `model`: the json model as string.
+* `jsonString`: the json model as string.
 * `label`: the label for the build action (optional, default: "Data Reporting").
 
-Hint: You have to provide at least one of `jsonFile` or `model`!
+Hint: You have to provide at least one of `jsonFile` or `jsonString`!
 ## Issues
 
 TODO Decide where you're going to host your issues, the default is Jenkins JIRA, but you can also enable GitHub issues,
