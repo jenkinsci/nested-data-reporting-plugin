@@ -6,6 +6,7 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
+import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
@@ -13,6 +14,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ReportViewModel implements ModelObject {
@@ -50,7 +52,7 @@ public class ReportViewModel implements ModelObject {
     }
     
     /**
-     * Returns the UI model for an ECharts report data chart.
+     * Returns the UI model for an ECharts item data chart.
      *
      * @return the UI model as JSON
      */
@@ -58,6 +60,19 @@ public class ReportViewModel implements ModelObject {
     public String getItemDataModel(Item item) {
         PieChartModel model = new PieChartModel(item.getId());
         item.getResult().forEach((key, value) -> model.add(new PieData(key, value), 
+                report.getResult().getColors().get(key)));
+        return new JacksonFacade().toJson(model);
+    }
+
+    /**
+     * Returns the UI model for an ECharts report data chart.
+     *
+     * @return the UI model as JSON
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getReportDataModel() {
+        PieChartModel model = new PieChartModel("aggregated-pie-chart");
+        getReport().aggregate().forEach((key, value) -> model.add(new PieData(key, value),
                 report.getResult().getColors().get(key)));
         return new JacksonFacade().toJson(model);
     }
@@ -76,8 +91,10 @@ public class ReportViewModel implements ModelObject {
             Build build = new Build(report.getOwner().getNumber(), report.getOwner().getDisplayName(), 0);
             history.add(new BuildResult<>(build, report));
         }
-
-        ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
+        
+        SeriesBuilder<ReportAction> builder = Objects.equals(id, "aggregated") ? 
+                new ReportSeriesBuilder() : new ItemSeriesBuilder(id);
+        
         return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), 
                 builder, report.getResult().getColors()));
     }
@@ -104,7 +121,9 @@ public class ReportViewModel implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public List<String> getItemIds() {
-        return getReport().getResult().getComponents().stream().map(Item::getId).collect(Collectors.toList());
+        List<String> items = getReport().getResult().getComponents().stream().map(Item::getId).collect(Collectors.toList());
+        items.add("aggregated");
+        return items;
     }
     
 }
