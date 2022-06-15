@@ -9,6 +9,33 @@
     redrawTrendCharts();
 
     /**
+     * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
+     * If the user selects the tab using an #anchor prefer this tab.
+     */
+    selectTab('li:first-child a');
+    const url = document.location.toString();
+    if (url.match('#')) {
+        const tabName = url.split('#')[1];
+        selectTab('a[href="#' + tabName + '"]');
+    }
+    else {
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            selectTab('a[href="' + activeTab + '"]');
+        }
+    }
+
+    /**
+     * Store the selected tab in browser's local storage.
+     */
+    const tabToggleLink = $('a[data-bs-toggle="tab"]');
+    tabToggleLink.on('show.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+        const activeTab = $(e.target).attr('href');
+        localStorage.setItem('activeTab', activeTab);
+    });
+
+    /**
      * Activate tooltips.
      */
     $(function () {
@@ -17,6 +44,33 @@
             tooltip.enable();
         });
     });
+
+    /**
+     * Activates the specified tab.
+     *
+     * @param {String} selector - selector of the tab
+     */
+    function selectTab (selector) {
+        const detailsTabs = $('#tab-details');
+        const selectedTab = detailsTabs.find(selector);
+
+        if (selectedTab.length !== 0) {
+            const tab = new bootstrap5.Tab(selectedTab[0]);
+            tab.show();
+        }
+    }
+
+
+    /**
+     * Trigger redraw charts with resize event after bs tab has changed.
+     * FIXME
+     */
+    $(function () {
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function () {
+            $(window).trigger('resize');
+        });
+    });
+    
 
     /**
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
