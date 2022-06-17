@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" xmlns:bs="/bootstrap5">
  
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
 
@@ -7,6 +7,8 @@
   
       <st:adjunct includes="io.jenkins.plugins.jquery3"/>
       <st:adjunct includes="io.jenkins.plugins.echarts"/>
+      <st:adjunct includes="io.jenkins.plugins.data-tables-select"/>
+      
       <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
       
       <j:set var="items" value="${it.report.result.components}"/>
@@ -32,45 +34,53 @@
       
       <div class="row py-3">
       
-        <div class="col-12">
-        
-            <bs:card title="${%details}" fontAwesomeIcon="pie-chart">
+          <div class="col-12">
                 
                 <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
-                        
-                        <j:forEach var="item" items="${items}">
-                            <li class="nav-item">
-                              <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${item.id}Content">${item.id}</a>
-                            </li>
-                        </j:forEach>
+                    
+                    <j:forEach var="item" items="${items}">
+                        <li class="nav-item">
+                          <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${item.id}Content">${item.id}</a>
+                        </li>
+                    </j:forEach>
+                    
                 </ul>   
-                
-                 <div class="tab-content">
-                        
-                        <j:forEach var="item" items="${items}">
-                             <div role="tabpanel" id="${item.id}Content" class="tab-pane fade">
-                                  <div class="row gy-3 m-2"> 
-                                                         
-                                      <div class="col-5">
-                                        <bs:card title="${%distribution}">
-                                            <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
-                                        </bs:card>
-                                      </div>
-                                      <div class="col-7">
-                                          <bs:card title="${%history}">
-                                              <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
-                                          </bs:card>
-                                      </div>
-                                  </div>
-                                                                    
-                             </div>
-                        </j:forEach>
-                   
-                </div>            
-              
-            </bs:card>
             
-        </div>
+                <div class="tab-content">
+                    
+                    <j:forEach var="item" items="${items}">
+                         <div role="tabpanel" id="${item.id}Content" class="tab-pane fade">
+                              <div class="row gy-3 m-2"> 
+                                                     
+                                  <div class="col-5">
+                                    <bs:card title="${%distribution}">
+                                        <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
+                                    </bs:card>
+                                  </div>
+                                  <div class="col-7">
+                                      <bs:card title="${%history}">
+                                          <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
+                                      </bs:card>
+                                  </div>
+                                  
+                                  <div class="row py-3">
+                                        
+                                        <div class="col-12">
+                                        
+                                            <dt:table model="${it.getTableModel(item.id)}"/>
+                                            
+                                        </div>
+                                        
+                                  </div>
+                                  
+                              </div>
+                                                                
+                         </div>
+                    </j:forEach>
+           
+                </div>
+            
+          </div>
         
       </div>
       
