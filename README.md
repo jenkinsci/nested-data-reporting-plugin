@@ -28,18 +28,14 @@
 
 ## Introduction
 
-This plugin reports data from json file as pie- and trend-charts. An example json file looks like this:
+This plugin reports data from json file as pie- and trend-charts. If a component has `items` the `result` will be computed automatically.
+An example json file looks like this: 
 
 ```
 {
   "components": [
     {
       "id": "Aktien",
-      "result": {
-        "incorrect": 3,
-        "manually": 2,
-        "accurate": 9
-      },
       "items": [
         {
           "id": "Aktie 1",
