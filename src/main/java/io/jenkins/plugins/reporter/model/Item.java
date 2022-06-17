@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Json Model class, which represents an {@link Item}. 
@@ -33,7 +34,15 @@ public class Item implements Serializable {
     }
 
     public Map<String, Integer> getResult() {
-        return result;
+        if (result != null) {
+            return result;
+        }
+
+        return getItems()
+                .stream()
+                .map(Item::getResult)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
     }
 
     public void setResult(Map<String, Integer> result) {
@@ -47,5 +56,4 @@ public class Item implements Serializable {
     public void setItems(List<Item> items) {
         this.items = items;
     }
-
 }
