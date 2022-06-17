@@ -85,9 +85,8 @@ public class ReportViewModel implements ModelObject {
         }
         
         ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
-        String model = new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
+        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
                 builder, report.getResult().getColors()));
-        return model;
     }
 
     /**
