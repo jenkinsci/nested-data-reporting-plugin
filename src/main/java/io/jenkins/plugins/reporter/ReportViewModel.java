@@ -97,9 +97,6 @@ public class ReportViewModel implements ModelObject {
              }
         }
         
-        ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
-        
         SeriesBuilder<ReportAction> builder = Objects.equals(id, "aggregated") ? 
                 new ReportSeriesBuilder() : new ItemSeriesBuilder(id);
         
