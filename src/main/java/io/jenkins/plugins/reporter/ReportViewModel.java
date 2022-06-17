@@ -3,6 +3,7 @@ package io.jenkins.plugins.reporter;
 import edu.hm.hafner.echarts.*;
 import hudson.model.Job;
 import hudson.model.ModelObject;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
@@ -13,6 +14,8 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReportViewModel implements ModelObject {
@@ -66,20 +69,25 @@ public class ReportViewModel implements ModelObject {
         Job<?, ?> job = getOwner().getParent();
         RunList<?> runs = job.getBuilds();
 
-        List<ReportAction> reports = runs.stream()
+        List<Optional<ReportAction>> reports = runs.stream()
+                .filter(run -> Objects.requireNonNull(run.getResult()).isCompleteBuild())
                 .filter(run -> run.getNumber() <= getOwner().getNumber())
-                .map(run -> run.getAction(ReportAction.class))
+                .map(run -> Optional.of(run.getAction(ReportAction.class)))
                 .collect(Collectors.toList());
 
         List<BuildResult<ReportAction>> history = new ArrayList<>();
-        for (ReportAction report : reports) {
-            Build build = new Build(report.getOwner().getNumber(), report.getOwner().getDisplayName(), 0);
-            history.add(new BuildResult<>(build, report));
+        for (Optional<ReportAction> report : reports) {
+             if (report.isPresent()) {
+                 ReportAction reportAction = report.get();
+                 Build build = new Build(reportAction.getOwner().getNumber(), reportAction.getOwner().getDisplayName(), 0);
+                 history.add(new BuildResult<>(build, reportAction));
+             }
         }
-
+        
         ItemSeriesBuilder builder = new ItemSeriesBuilder(id);
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), 
+        String model = new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
                 builder, report.getResult().getColors()));
+        return model;
     }
 
     /**
