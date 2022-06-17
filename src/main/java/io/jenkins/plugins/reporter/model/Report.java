@@ -1,8 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -22,7 +20,9 @@ public class Report implements Serializable {
     /**
      * Creates a new {@link Report}.
      * @param result
+     *              the {@link Result} of the {@link Report}.
      * @param label
+     *              the label to show for this action in jenkins ui.
      */
     public Report(Result result, String label) {
         this.result = result;
@@ -33,6 +33,7 @@ public class Report implements Serializable {
         this.label = "Data Report";
         this.result = new Result();
     }
+    
     public Result getResult() {
         return result;
     }

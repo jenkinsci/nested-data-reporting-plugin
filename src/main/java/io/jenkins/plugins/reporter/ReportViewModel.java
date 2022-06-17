@@ -3,7 +3,6 @@ package io.jenkins.plugins.reporter;
 import edu.hm.hafner.echarts.*;
 import hudson.model.Job;
 import hudson.model.ModelObject;
-import hudson.model.Result;
 import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
