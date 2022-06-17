@@ -1,49 +1,263 @@
 {
   "components": [
     {
-      "id": "Aktien",
+      "id": "Aktie",
       "items": [
         {
-          "id": "Aktie 1",
+          "id": "Aktien_ohne_Rentencharakter",
           "result": {
-            "incorrect": 1,
-            "manually": 1,
-            "accurate": 4
+            "incorrect": 63,
+            "manually": 0,
+            "accurate": 35
           }
         },
         {
-          "id": "Aktie 2",
+          "id": "Depositary_Receipts",
           "result": {
-            "incorrect": 2,
-            "manually": 1,
-            "accurate": 5
+            "incorrect": 54,
+            "manually": 0,
+            "accurate": 44
+          }
+        },
+        {
+          "id": "Genussscheine",
+          "result": {
+            "incorrect": 69,
+            "manually": 0,
+            "accurate": 29
+          }
+        },
+        {
+          "id": "Hybridaktien",
+          "result": {
+            "incorrect": 49,
+            "manually": 0,
+            "accurate": 49
+          }
+        },
+        {
+          "id": "Private_Equities",
+          "result": {
+            "incorrect": 60,
+            "manually": 0,
+            "accurate": 38
+          }
+        },
+        {
+          "id": "Sonderformen_Fonds_mit_Rentencharakter",
+          "result": {
+            "incorrect": 34,
+            "manually": 0,
+            "accurate": 65
+          }
+        },
+        {
+          "id": "Sonderformen_Fonds_ohne_Rentencharakter",
+          "result": {
+            "incorrect": 51,
+            "manually": 0,
+            "accurate": 48
+          }
+        },
+        {
+          "id": "Units_(zusammengesetzte_Werte)",
+          "result": {
+            "incorrect": 67,
+            "manually": 0,
+            "accurate": 32
           }
         }
       ]
     },
     {
       "id": "Derivate",
-      "result": {
-        "incorrect": 2,
-        "manually": 3,
-        "accurate": 10
-      }
+      "items": [
+        {
+          "id": "Derivate_Kontrakte_Basistrades",
+          "result": {
+            "incorrect": 85,
+            "manually": 1,
+            "accurate": 13
+          }
+        },
+        {
+          "id": "Rohstoffe_Commodities",
+          "result": {
+            "incorrect": 88,
+            "manually": 1,
+            "accurate": 10
+          }
+        },
+        {
+          "id": "Sonstige_Beteiligungswerte",
+          "result": {
+            "incorrect": 74,
+            "manually": 0,
+            "accurate": 25
+          }
+        },
+        {
+          "id": "technischeProdukte",
+          "result": {
+            "incorrect": 64,
+            "manually": 1,
+            "accurate": 34
+          }
+        },
+        {
+          "id": "W\u00e4hrungen",
+          "result": {
+            "incorrect": 91,
+            "manually": 1,
+            "accurate": 7
+          }
+        }
+      ]
     },
     {
       "id": "Fonds",
-      "result": {
-        "incorrect": 6,
-        "manually": 7,
-        "accurate": 20
-      }
+      "items": [
+        {
+          "id": "Beteiligungsfonds",
+          "result": {
+            "incorrect": 89,
+            "manually": 1,
+            "accurate": 9
+          }
+        },
+        {
+          "id": "Geschlossene_Investmentfonds",
+          "result": {
+            "incorrect": 71,
+            "manually": 0,
+            "accurate": 28
+          }
+        },
+        {
+          "id": "Offene_Investmentfonds",
+          "result": {
+            "incorrect": 62,
+            "manually": 0,
+            "accurate": 37
+          }
+        }
+      ]
     },
     {
-      "id": "Optionsscheine",
-      "result": {
-        "incorrect": 6,
-        "manually": 4,
-        "accurate": 15
-      }
+      "id": "Not_Found",
+      "items": [
+        {
+          "id": "Not_Found",
+          "result": {
+            "incorrect": 12,
+            "manually": 0,
+            "accurate": 87
+          }
+        }
+      ]
+    },
+    {
+      "id": "Rechte",
+      "items": [
+        {
+          "id": "Nebenrechte",
+          "result": {
+            "incorrect": 84,
+            "manually": 0,
+            "accurate": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "Renten",
+      "items": [
+        {
+          "id": "ABS_Strukturen",
+          "result": {
+            "incorrect": 41,
+            "manually": 0,
+            "accurate": 57
+          }
+        },
+        {
+          "id": "Anleihen_mit_Andienungsrecht",
+          "result": {
+            "incorrect": 76,
+            "manually": 0,
+            "accurate": 22
+          }
+        },
+        {
+          "id": "Anleihen_mit_zertifikats\u00e4hnlicher_Struktur",
+          "result": {
+            "incorrect": 70,
+            "manually": 0,
+            "accurate": 28
+          }
+        },
+        {
+          "id": "Geldmarktinstrumente",
+          "result": {
+            "incorrect": 82,
+            "manually": 1,
+            "accurate": 16
+          }
+        },
+        {
+          "id": "Sonstige_Bonds",
+          "result": {
+            "incorrect": 52,
+            "manually": 0,
+            "accurate": 46
+          }
+        },
+        {
+          "id": "Standardrente",
+          "result": {
+            "incorrect": 59,
+            "manually": 0,
+            "accurate": 39
+          }
+        },
+        {
+          "id": "Wandelanleihen_Umtauschanleihen",
+          "result": {
+            "incorrect": 59,
+            "manually": 0,
+            "accurate": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "Zertifikat",
+      "items": [
+        {
+          "id": "Zertifikate_mit_Laufzeit_und_mit_Zinszahlung",
+          "result": {
+            "incorrect": 73,
+            "manually": 0,
+            "accurate": 25
+          }
+        },
+        {
+          "id": "Zertifikate_mit_Laufzeit_und_ohne_Zinszahlung",
+          "result": {
+            "incorrect": 74,
+            "manually": 0,
+            "accurate": 24
+          }
+        },
+        {
+          "id": "Zertifikate_ohne_Laufzeit",
+          "result": {
+            "incorrect": 81,
+            "manually": 0,
+            "accurate": 17
+          }
+        }
+      ]
     }
   ],
   "colors": {
