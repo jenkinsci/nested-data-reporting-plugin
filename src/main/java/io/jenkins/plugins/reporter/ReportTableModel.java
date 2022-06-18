@@ -5,18 +5,17 @@ import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.span;
 
 public class ReportTableModel extends TableModel {
     
-    private final String REPORT_ID = "report-aggregated-table";
+    private static final String REPORT_ID = "report-aggregated-table";
     private final Report report;
     
     public ReportTableModel(Report report) {
