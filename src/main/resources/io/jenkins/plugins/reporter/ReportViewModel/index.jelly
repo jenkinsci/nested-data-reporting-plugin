@@ -1,8 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" xmlns:bs="/bootstrap5">
- 
+    
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
-
+   
+     
   <bs:page it="${it}">
       
       <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
@@ -10,21 +11,29 @@
       <j:set var="items" value="${it.report.result.components}"/>
              
       <div class="row py-3 flex-nowrap">
-       
-          <div class="col-5">
+            
+          <div class="col-4">
       
             <bs:card title="${%overview}" fontAwesomeIcon="chart-pie">
                   <c:pie-chart id="${item.id}" model="${it.getReportDataModel()}" height="256" />
             </bs:card>
       
           </div>
-      
-          <div class="col-7">
+          
+          <div class="col-4">
       
             <bs:card title="${%history}" fontAwesomeIcon="arrow-trend-up">
                 <div id="aggregated-trend-chart" class="graph-cursor-pointer card-chart"/>
             </bs:card>
       
+          </div>
+          
+          <div class="col-4">
+            
+              <bs:card title="${%distribution}" fontAwesomeIcon="bars-graph">
+                  <dt:table model="${it.getTableModel('aggregated')}"/>
+              </bs:card>
+    
           </div>
       </div>
       
@@ -63,7 +72,7 @@
                                         
                                         <div class="col">
                                             
-                                            <dt:table model="${it.getTableModel(item.id)}"/>
+                                            
                                             
                                         </div>
                                         

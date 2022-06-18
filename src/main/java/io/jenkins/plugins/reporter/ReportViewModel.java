@@ -1,41 +1,36 @@
 package io.jenkins.plugins.reporter;
 
 import edu.hm.hafner.echarts.*;
-import hudson.Functions;
 import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
-import io.jenkins.plugins.datatables.TableColumn;
-import io.jenkins.plugins.datatables.TableConfiguration;
 import io.jenkins.plugins.datatables.TableModel;
-import io.jenkins.plugins.datatables.options.SelectStyle;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
-import org.apache.commons.collections.ListUtils;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import javax.swing.text.TableView;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReportViewModel extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
-    
+
     private final Run<?, ?> owner;
     private final Report report;
 
     /**
      * Creates a new instance of {@link ReportViewModel}.
      *
-     * @param owner
-     *         the build as owner of this view
-     * @param report
-     *         the report to show in the view
+     * @param owner  the build as owner of this view
+     * @param report the report to show in the view
      */
     ReportViewModel(final Run<?, ?> owner, final Report report) {
         super();
@@ -43,11 +38,11 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
         this.owner = owner;
         this.report = report;
     }
-    
+
     public Run<?, ?> getOwner() {
         return owner;
     }
-    
+
     @Override
     public String getDisplayName() {
         return report.getLabel();
@@ -56,7 +51,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
     public Report getReport() {
         return report;
     }
-    
+
     /**
      * Returns the UI model for an ECharts item data chart.
      *
@@ -65,7 +60,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
     @SuppressWarnings("unused") // Called by jelly view
     public String getItemDataModel(Item item) {
         PieChartModel model = new PieChartModel(item.getId());
-        item.getResult().forEach((key, value) -> model.add(new PieData(key, value), 
+        item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
                 report.getResult().getColors().get(key)));
         return new JacksonFacade().toJson(model);
     }
@@ -94,26 +89,24 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
 
         List<BuildResult<ReportAction>> history = new ArrayList<>();
         for (Optional<ReportAction> report : reports) {
-             if (report.isPresent()) {
-                 ReportAction reportAction = report.get();
-                 Build build = new Build(reportAction.getOwner().getNumber(), reportAction.getOwner().getDisplayName(), 0);
-                 history.add(new BuildResult<>(build, reportAction));
-             }
+            if (report.isPresent()) {
+                ReportAction reportAction = report.get();
+                Build build = new Build(reportAction.getOwner().getNumber(), reportAction.getOwner().getDisplayName(), 0);
+                history.add(new BuildResult<>(build, reportAction));
+            }
         }
-        
-        SeriesBuilder<ReportAction> builder = Objects.equals(id, "aggregated") ? 
+
+        SeriesBuilder<ReportAction> builder = Objects.equals(id, "aggregated") ?
                 new ReportSeriesBuilder() : new ItemSeriesBuilder(id);
-        
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration), 
+
+        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
                 builder, report.getResult().getColors()));
     }
 
     /**
      * Returns the UI model for an ECharts line chart that shows the item properties.
      *
-     * @param configuration
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
+     * @param configuration determines whether the Jenkins build number should be used on the X-axis or the date
      * @return the UI model as JSON
      */
     @JavaScriptMethod
@@ -137,6 +130,6 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
 
     @Override
     public TableModel getTableModel(String id) {
-        return new ReportTableModel(id);
+        return new ReportTableModel(getReport());
     }
 }

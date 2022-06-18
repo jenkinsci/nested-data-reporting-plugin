@@ -59,5 +59,4 @@ public class Report implements Serializable {
                 .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
     }
     
-    
 }
