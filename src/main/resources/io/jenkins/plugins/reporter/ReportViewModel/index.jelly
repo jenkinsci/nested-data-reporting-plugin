@@ -30,12 +30,14 @@
           
           <div class="col-4">
             
-              <bs:card title="${%distribution}" fontAwesomeIcon="bars-graph">
+              <bs:card title="${%distribution}" fontAwesomeIcon="bars-progress">
                   <dt:table model="${it.getTableModel('aggregated')}"/>
               </bs:card>
     
           </div>
+          
       </div>
+      
       
       <div class="row py-3">
       
