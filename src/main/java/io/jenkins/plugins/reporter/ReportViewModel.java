@@ -69,9 +69,8 @@ public class ReportViewModel implements ModelObject {
         RunList<?> runs = job.getBuilds();
 
         List<Optional<ReportAction>> reports = runs.stream()
-                .filter(run -> Objects.requireNonNull(run.getResult()).isCompleteBuild())
                 .filter(run -> run.getNumber() <= getOwner().getNumber())
-                .map(run -> Optional.of(run.getAction(ReportAction.class)))
+                .map(run -> Optional.ofNullable(run.getAction(ReportAction.class)))
                 .collect(Collectors.toList());
 
         List<BuildResult<ReportAction>> history = new ArrayList<>();
