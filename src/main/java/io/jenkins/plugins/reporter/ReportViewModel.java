@@ -130,6 +130,6 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
 
     @Override
     public TableModel getTableModel(String id) {
-        return new ReportTableModel(getReport());
+        return new ReportTableModel(id, getReport());
     }
 }

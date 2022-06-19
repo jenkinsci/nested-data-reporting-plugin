@@ -9,24 +9,30 @@ import io.jenkins.plugins.reporter.model.Report;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static j2html.TagCreator.s;
 import static j2html.TagCreator.span;
 
 public class ReportTableModel extends TableModel {
     
     private static final String REPORT_ID = "report-aggregated-table";
+
+    private final String id;
     private final Report report;
     
-    public ReportTableModel(Report report) {
+    
+    public ReportTableModel(String id, Report report) {
         super();
         
+        this.id = id;
         this.report = report;
     }
     
     @Override
     public String getId() {
-        return REPORT_ID;
+        return id.equals(REPORT_ID) ? REPORT_ID : id;
     }
 
     @Override
@@ -52,7 +58,21 @@ public class ReportTableModel extends TableModel {
 
     @Override
     public List<Object> getRows() {
-        return report.getResult().getComponents().stream().map(item -> new TableRow(item, report.getResult().getColors())).collect(Collectors.toList());
+        
+        if (id.equals(REPORT_ID)) {
+            return report.getResult().getComponents()
+                    .stream()
+                    .map(item -> new TableRow(item, report.getResult().getColors()))
+                    .collect(Collectors.toList());
+        }
+        
+        Optional<Item> subItem = report.getResult().getComponents().stream().filter(item -> item.getId().equals(id)).findFirst();
+
+        return subItem.<List<Object>>map(value -> value.getItems()
+                .stream()
+                .map(item -> new TableRow(item, report.getResult().getColors()))
+                .collect(Collectors.toList())).orElseGet(ArrayList::new);
+
     }
     
     public static class TableRow {
@@ -70,14 +90,14 @@ public class ReportTableModel extends TableModel {
         }
         
         public DetailedCell<String> getDistribution() {
-            return createColoredResultColumn(item.getId(), item.getId());
+            return createColoredResultColumn(item);
         }
 
-        protected DetailedCell<String> createColoredResultColumn(final String text, final String tooltip) {
-            String tag = span()
-                    .withTitle(tooltip)
+        protected DetailedCell<String> createColoredResultColumn(final Item item) {
+           String tag = span()
+                    .withTitle(item.getResult().values().stream().map(Object::toString).collect(Collectors.joining("/")))
                     .withStyle(String.format("color: transparent; background-image: linear-gradient(to right %s); display:block;", createGradient()))
-                    .withText(text)
+                    .withText(item.getId())
                     .attr("data-bs-toggle", "tooltip")
                     .attr("data-bs-placement", "left")
                     .render();

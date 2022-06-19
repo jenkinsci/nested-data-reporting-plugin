@@ -12,17 +12,17 @@
              
       <div class="row py-3 flex-nowrap">
             
-          <div class="col-4">
+          <div class="col-3">
       
-            <bs:card title="${%overview}" fontAwesomeIcon="chart-pie">
-                  <c:pie-chart id="${item.id}" model="${it.getReportDataModel()}" height="256" />
+            <bs:card class="h-100" title="${%overview}" fontAwesomeIcon="chart-pie">
+                  <c:pie-chart id="${item.id}" model="${it.getReportDataModel()}" height="340"/>
             </bs:card>
       
           </div>
           
-          <div class="col-4">
+          <div class="col-5">
       
-            <bs:card title="${%history}" fontAwesomeIcon="arrow-trend-up">
+            <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
                 <div id="aggregated-trend-chart" class="graph-cursor-pointer card-chart"/>
             </bs:card>
       
@@ -30,8 +30,8 @@
           
           <div class="col-4">
             
-              <bs:card title="${%distribution}" fontAwesomeIcon="bars-progress">
-                  <dt:table model="${it.getTableModel('aggregated')}"/>
+              <bs:card class="h-100" bodyClass="pd-20" title="${%distribution}" fontAwesomeIcon="bars-progress">
+                  <dt:table model="${it.getTableModel('report-aggregated-table')}"/>
               </bs:card>
     
           </div>
@@ -57,10 +57,11 @@
                     
                     <j:forEach var="item" items="${items}">
                          <div role="tabpanel" id="${item.id}Content" class="tab-pane fade">
-                              <div class="row gy-3 m-2"> 
+                              
+                              <div class="row py-3"> 
                                                      
                                   <div class="col-5">
-                                    <bs:card title="${%distribution}">
+                                    <bs:card title="${%overview}">
                                         <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
                                     </bs:card>
                                   </div>
@@ -69,17 +70,21 @@
                                           <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
                                       </bs:card>
                                   </div>
-                                  
-                                  <div class="row py-3">
+                              
+                              </div> 
+                              
+                              <div class="row py-3">
                                         
-                                        <div class="col">
-                                            
-                                            
-                                            
-                                        </div>
+                                    <div class="col-12">
                                         
-                                  </div>
-                                  
+                                        <bs:card title="${%distribution}" fontAwesomeIcon="bars-progress">
+                                            
+                                            <dt:table model="${it.getTableModel(item.id)}"/>
+                                           
+                                        </bs:card>
+                                        
+                                    </div>
+                                 
                               </div>
                                                                 
                          </div>

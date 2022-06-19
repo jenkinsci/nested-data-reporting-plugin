@@ -3,6 +3,7 @@ package io.jenkins.plugins.reporter.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class Item implements Serializable {
     @JsonProperty("id")
     private String id;
     
-    Map<String, Integer> result;
+    LinkedHashMap<String, Integer> result;
 
     List<Item> items;
 
@@ -33,19 +34,19 @@ public class Item implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Integer> getResult() {
+    public LinkedHashMap<String, Integer> getResult() {
         if (result != null) {
             return result;
         }
-
+                
         return getItems()
                 .stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
+                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
 
-    public void setResult(Map<String, Integer> result) {
+    public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }
 
