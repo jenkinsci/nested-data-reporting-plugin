@@ -5,7 +5,6 @@
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/simonsymhoven/data-reporting-plugin/GitHub%20CI/master?label=GitHub%20CI)
 ![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/data-reporting-plugin?label=latest%20version)
 
-<!-- PROJECT LOGO -->
 <br />
 <p align="center">
   <a href="#">
@@ -15,7 +14,7 @@
   <h1 align="center">Data Reporting Plugin</h1>
 
   <p align="center">
-    Jenkins plugin to report data from json as pie- and trend-charts.
+    Jenkins plugin to report data from nested json as pie-charts, trend-charts and data tables.
     <br />
     <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
@@ -28,7 +27,8 @@
 
 ## Introduction
 
-This plugin reports data from json file as pie- and trend-charts. If a component has `items` the `result` will be computed automatically.
+This plugin reports data from a nested json file as pie-charts, trend-charts and data tables. 
+If a component has `items` the `result` will be computed automatically for the parent item.
 An example json file looks like this: 
 
 ```
@@ -91,34 +91,50 @@ An example json file looks like this:
 At job level, a trend chart is generated showing the development 
 of the items included in the json over all builds.
 
-At the build level, the distribution is then displayed as 
-a pie chart for each item and the detailed history of the last 
-builds is displayed in a filterable manner.
+At the build level, the aggregation of the entire JSON file 
+is first displayed as a pie chart and as a filterable history. 
+Next to it, the first level of the underlying items is listed in a table, 
+together with the result of the respective aggregation of the child items.
 
-In addition, the percentage distribution is shown 
-in total across all items in the summary.
+Below is a tab panel that contains all the elements of the first level. 
+Here again, the aggregation of the child elements is displayed as a pie chart 
+and as a filterable trend history, as well as a table with the individual child elements and 
+their distribution of the aggregated results of their child elements.
+
+> ⭕  **Limited visualization**:
+>
+> In version **2.3.0** currently only the first two levels are visualized. 
+> The values of all items below are not displayed visually, but are 
+> of course represented in the aggregation of the first two levels.
+
+### Example
+
+![ui](etc/ui-2.3.0.png)
 
 ## Getting started
 
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json", label: 'Data Reporting (WM 2022)' 
+publishReport jsonFile: "etc/result.json", label: 'My awesome label' 
 ```
 
-Parameter: 
+#### Parameter: 
 
-* `jsonFile`: path to json file relative to the workspace.
-* `jsonString`: the json model as string.
-* `label`: the label for the build action (optional, default: "Data Reporting").
+The currently supported parameters are:
 
-Hint: You have to provide at least one of `jsonFile` or `jsonString`!
+- **``jsonFile``**path to json file relative to the workspace.
+
+or 
+
+- **`jsonString`**: the json model as string.
+
+and **optional**
+- **`label`**: the label for the build action (default: "Data Reporting").
+
 ## Issues
 
-TODO Decide where you're going to host your issues, the default is Jenkins JIRA, but you can also enable GitHub issues,
-If you use GitHub issues there's no need for this section; else add the following line:
-
-Report issues and enhancements in the [Jenkins issue tracker](https://issues.jenkins-ci.org/).
+Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/simonsymhoven/data-reporting-plugin/issues)
 
 ## Contributing
 
