@@ -23,7 +23,7 @@
           <div class="col-5">
       
             <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
-                <div id="aggregated-trend-chart" class="graph-cursor-pointer card-chart"/>
+                <div id="aggregated-trend-chart" class="graph-cursor-pointer report-card-chart"/>
             </bs:card>
       
           </div>
@@ -61,13 +61,21 @@
                               <div class="row py-3"> 
                                                      
                                   <div class="col-5">
-                                    <bs:card title="${%overview}">
-                                        <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
+                                  
+                                    <bs:card class="h-100" title="${%overview}">
+                                    
+                                        <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="340" />
+                                        
                                     </bs:card>
+                                    
                                   </div>
+                                  
                                   <div class="col-7">
-                                      <bs:card title="${%history}">
-                                          <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
+                                  
+                                      <bs:card class="h-100" title="${%history}">
+                                      
+                                          <div id="${item.id}-trend-chart" class="graph-cursor-pointer item-card-chart"/>
+                                          
                                       </bs:card>
                                   </div>
                               
@@ -77,7 +85,7 @@
                                         
                                     <div class="col-12">
                                         
-                                        <bs:card title="${%distribution}" fontAwesomeIcon="bars-progress">
+                                        <bs:card title="${%distribution}">
                                             
                                             <dt:table model="${it.getTableModel(item.id)}"/>
                                            
