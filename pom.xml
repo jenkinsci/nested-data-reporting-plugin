@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
@@ -49,7 +37,7 @@
     </scm>    
     
     <properties>
-        <revision>2.2.0</revision>
+        <revision>2.2.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.baseline>2.319</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
@@ -57,8 +45,9 @@
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>2.17.0</plugin-util-api.version>
-        <echarts-api.version>5.3.2-3</echarts-api.version>
+        <echarts-api.version>5.3.3-1</echarts-api.version>
         <font-awesome-api.version>6.1.1-1</font-awesome-api.version>
+        <jackson2-api.version>2.13.2.20220328-273.v11d70a_b_a_1a_52</jackson2-api.version>
         <jquery3-api.version>3.6.0-4</jquery3-api.version>
         <data-tables-api.version>1.12.1-1</data-tables-api.version>
         <bootstrap5-api.version>5.1.3-7</bootstrap5-api.version>
@@ -69,7 +58,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>1409.v7659b_c072f18</version>
+                <version>1438.v6a_2c29d73f82</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -103,15 +92,11 @@
             <version>${data-tables-api.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>jackson2-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>echarts-api</artifactId>
             <version>${echarts-api.version}</version>
         </dependency>
-
+        
         <!-- Workflow dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
