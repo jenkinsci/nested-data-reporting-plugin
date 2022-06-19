@@ -103,7 +103,7 @@ in total across all items in the summary.
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json", label: 'Data Reporting (WM 2022)' 
+publishReport jsonFile: "etc/result.json", label: 'My Awesome Label'
 ```
 
 Parameter: 
