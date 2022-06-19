@@ -45,7 +45,7 @@
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>2.17.0</plugin-util-api.version>
-        <echarts-api.version>5.3.2-3</echarts-api.version>
+        <echarts-api.version>5.3.3-1</echarts-api.version>
         <font-awesome-api.version>6.1.1-1</font-awesome-api.version>
         <jackson2-api.version>2.13.2.20220328-273.v11d70a_b_a_1a_52</jackson2-api.version>
         <jquery3-api.version>3.6.0-4</jquery3-api.version>
