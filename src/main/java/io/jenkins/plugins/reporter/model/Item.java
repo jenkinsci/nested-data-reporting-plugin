@@ -1,11 +1,13 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jline.internal.Nullable;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +25,8 @@ public class Item implements Serializable {
     private String id;
     
     LinkedHashMap<String, Integer> result;
-
+    
+    @Nullable
     List<Item> items;
 
     public String getId() {
@@ -49,10 +52,12 @@ public class Item implements Serializable {
     public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }
-
+    
     public List<Item> getItems() {
         return items;
     }
+    
+    public boolean hasItems() { return !Objects.isNull(items) && !items.isEmpty(); }
 
     public void setItems(List<Item> items) {
         this.items = items;

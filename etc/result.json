@@ -1,14 +1,6 @@
 {
   "components": [
     {
-      "id": "Awesome-Cookie",
-      "result": {
-        "incorrect": 1,
-        "manually": 2,
-        "accurate": 4
-      }
-    },
-    {
       "id": "Aktie",
       "items": [
         {
