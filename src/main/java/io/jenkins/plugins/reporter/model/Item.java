@@ -1,10 +1,13 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jline.internal.Nullable;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,8 +24,9 @@ public class Item implements Serializable {
     @JsonProperty("id")
     private String id;
     
-    Map<String, Integer> result;
-
+    LinkedHashMap<String, Integer> result;
+    
+    @Nullable
     List<Item> items;
 
     public String getId() {
@@ -33,25 +37,27 @@ public class Item implements Serializable {
         this.id = id;
     }
 
-    public Map<String, Integer> getResult() {
+    public LinkedHashMap<String, Integer> getResult() {
         if (result != null) {
             return result;
         }
-
+                
         return getItems()
                 .stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
+                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
 
-    public void setResult(Map<String, Integer> result) {
+    public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }
-
+    
     public List<Item> getItems() {
         return items;
     }
+    
+    public boolean hasItems() { return !Objects.isNull(items) && !items.isEmpty(); }
 
     public void setItems(List<Item> items) {
         this.items = items;

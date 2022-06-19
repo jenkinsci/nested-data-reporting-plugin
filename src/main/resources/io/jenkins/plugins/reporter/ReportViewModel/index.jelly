@@ -1,46 +1,117 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" xmlns:bs="/bootstrap5">
+    
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
    
-  <l:layout title="${it.displayName}" norefresh="true" nogrid="true">
-    
-    <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
-    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-    <st:adjunct includes="io.jenkins.plugins.echarts"/>
- 
-    <st:include it="${it.owner}" page="sidepanel.jelly"/>
-    
-    <l:main-panel>
-        
-        <j:set var="items" value="${it.report.result.components}"/>
-        
-        <div class="fluid-container"> 
+     
+  <bs:page it="${it}">
+      
+      <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
+      
+      <j:set var="items" value="${it.report.result.components}"/>
+             
+      <div class="row py-3 flex-nowrap">
             
-             <div class="row gy-3"> 
-                <j:forEach var="item" items="${items}">
-                       
-                    <div class="col-5">
-                      <bs:card title="${item.id}" fontAwesomeIcon="chart-pie">
-                          <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="256" />
-                      </bs:card>
-                    </div>
-                    <div class="col-7">
-                        <bs:card title="${%history}" fontAwesomeIcon="arrow-trend-up">
-                            <div id="${item.id}-trend-chart" class="graph-cursor-pointer card-chart"/>
-                        </bs:card>
-                    </div>
-                    
-                </j:forEach>
+          <div class="col-3">
+      
+            <bs:card class="h-100" title="${%overview}" fontAwesomeIcon="chart-pie">
+                  <c:pie-chart id="${item.id}" model="${it.getReportDataModel()}" height="340"/>
+            </bs:card>
+      
+          </div>
+          
+          <div class="col-5">
+      
+            <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
+                <div id="aggregated-trend-chart" class="graph-cursor-pointer report-card-chart"/>
+            </bs:card>
+      
+          </div>
+          
+          <div class="col-4">
+            
+              <bs:card class="h-100" bodyClass="pd-20" title="${%distribution}" fontAwesomeIcon="bars-progress">
+                  <dt:table model="${it.getTableModel('report-aggregated-table')}"/>
+              </bs:card>
+    
+          </div>
+          
+      </div>
+      
+      
+      <div class="row py-3">
+      
+          <div class="col-12">
                 
-            </div>
+                <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
+                    
+                    <j:forEach var="item" items="${items}">
+                        <li class="nav-item">
+                          <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${item.id}Content">${item.id}</a>
+                        </li>
+                    </j:forEach>
+                    
+                </ul>   
             
-        </div>
-        
-        <script>var view = <st:bind value="${it}"/></script>
-        <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/item.js"/>
-        
-    </l:main-panel>
+                <div class="tab-content">
+                    
+                    <j:forEach var="item" items="${items}">
+                         <div role="tabpanel" id="${item.id}Content" class="tab-pane fade">
+                              
+                              <div class="row py-3"> 
+                                                     
+                                  <div class="col-5">
+                                  
+                                    <bs:card class="h-100" title="${%overview}">
+                                    
+                                        <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="340" />
+                                        
+                                    </bs:card>
+                                    
+                                  </div>
+                                  
+                                  <div class="col-7">
+                                  
+                                      <bs:card class="h-100" title="${%history}">
+                                      
+                                          <div id="${item.id}-trend-chart" class="graph-cursor-pointer item-card-chart"/>
+                                          
+                                      </bs:card>
+                                  </div>
+                              
+                              </div> 
+                              
+                              <j:if test="${item.hasItems()}">
+                              
+                                  <div class="row py-3">
+                                            
+                                        <div class="col-12">
+                                            
+                                            <bs:card title="${%distribution}">
+                                                
+                                                <dt:table model="${it.getTableModel(item.id)}"/>
+                                               
+                                            </bs:card>
+                                            
+                                        </div>
+                                     
+                                  </div>
+                              
+                              </j:if>
+                                                                
+                         </div>
+                    </j:forEach>
            
-  </l:layout>
-   
+                </div>
+            
+          </div>
+        
+      </div>
+      
+      <script>var view = <st:bind value="${it}"/></script>
+      <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/item.js"/>
+        
+  </bs:page>
+  
 </j:jelly>
                    
