@@ -2,6 +2,7 @@ package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.model.Item;
 
 import java.util.Map;
 
@@ -13,20 +14,19 @@ import java.util.Map;
  */
 public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
     
-    private final String id;
+    private final Item item;
 
     /**
      * Creates a new {@link ItemSeriesBuilder}.
      * 
-     * @param id
-     *         the id as string of the item from the json model to get the series for.
+     * @param item
      */
-    public ItemSeriesBuilder(String id) {
-        this.id = id;
+    public ItemSeriesBuilder(Item item) {
+        this.item = item;
     }
 
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
-        return reportAction.getReport().aggregate(item -> item.getId().equals(id));
+        return item.getResult();
     }
 }
