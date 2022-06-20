@@ -123,7 +123,7 @@ publishReport jsonFile: "etc/result.json", label: 'My awesome label'
 
 The currently supported parameters are:
 
-- **``jsonFile``**path to json file relative to the workspace.
+- **`jsonFile`**path to json file relative to the workspace.
 
 or 
 
