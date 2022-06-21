@@ -1,8 +1,13 @@
 package io.jenkins.plugins.reporter;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -33,6 +38,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Set;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -94,20 +100,26 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
-
+        
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance( SpecVersion.VersionFlag.V201909 );
+        
         try (InputStream schemaStream = this.getClass().getResourceAsStream("/schema.json")) {
-            JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaStream));
-            JSONObject jsonObject = new JSONObject(getJsonString());
-            Schema schema = SchemaLoader.load(jsonSchema);
-            schema.validate(jsonObject);
+            JsonSchema schema = schemaFactory.getSchema(schemaStream);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode json = mapper.readTree(getJsonString());
+            Set<ValidationMessage> validationResult = schema.validate( json );
+
+            if (validationResult.isEmpty()) {
+                Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
+                Report report = new Report(result, getLabel());
+                run.addAction(new ReportAction(run, report));
+            } else {
+                validationResult.forEach(vm -> listener.getLogger().printf("[PublishReportStep] %s%n", vm.getMessage()));
+            }
+            
         } catch (IOException exception) {
             listener.getLogger().printf("[PublishReportStep] %s%n", exception.getMessage());
         }
-        
-        Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
-        Report report = new Report(result, getLabel());
-     
-        run.addAction(new ReportAction(run, report));
     }
  
     @Extension 
