@@ -1,10 +1,12 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
-import io.jenkins.plugins.reporter.ReportViewModel;
+import io.jenkins.plugins.reporter.ItemViewModel;
+import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ import static j2html.TagCreator.span;
 
 /**
  * Provides the model for the item table. The model displays the distribution for the subitems and the id column is 
- * linked to the {@link ReportViewModel} of the selected subitem.
+ * linked to the {@link ItemViewModel} of the selected subitem.
  *
  * @author Simon Symhoven
  */
@@ -49,38 +51,57 @@ public class ItemTableModel extends TableModel {
     public List<TableColumn> getColumns() {
         List<TableColumn> columns = new ArrayList<>();
         
-        columns.add(new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("id")
-                .withHeaderLabel("ID")
-                .withHeaderClass(TableColumn.ColumnCss.HIDDEN)
-                .build());
+        columns.add(createIdColumn());
+        columns.add(createNameColumn());
 
-        columns.add(new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("name")
-                .withHeaderLabel("Name")
-                .withHeaderClass(TableColumn.ColumnCss.NONE)
-                .build());
-       
-        columns.add(new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("distribution")
-                .withHeaderLabel("Distribution")
-                .withHeaderClass(TableColumn.ColumnCss.NO_SORT)
-                .withDetailedCell()
-                .build());
+        item.getResult().keySet().forEach(property -> columns.add(createResultColumn(property)));
+        
+        columns.add(createDistributionColumn());
      
         return columns;
     }
 
     @Override
     public List<Object> getRows() {
-        
         return item.getItems()
             .stream()
             .map(item -> new ItemRow(item, colors))
             .collect(Collectors.toList());
-
     }
 
+    protected TableColumn createIdColumn() {
+        return new TableColumn.ColumnBuilder()
+                .withDataPropertyKey("id")
+                .withHeaderLabel("ID")
+                .withHeaderClass(TableColumn.ColumnCss.HIDDEN)
+                .build();
+    }
+    
+    protected TableColumn createNameColumn() {
+        return new TableColumn.ColumnBuilder()
+                .withDataPropertyKey("name")
+                .withHeaderLabel("Name")
+                .withHeaderClass(TableColumn.ColumnCss.NONE)
+                .build();
+    }
+
+    protected TableColumn createResultColumn(String property) {
+        return new TableColumn.ColumnBuilder()
+                .withDataPropertyKey(property)
+                .withHeaderLabel(CaseUtils.toCamelCase(property, true))
+                .withHeaderClass(TableColumn.ColumnCss.NUMBER)
+                .build();
+    }
+
+    protected TableColumn createDistributionColumn() {
+        return new TableColumn.ColumnBuilder()
+                .withDataPropertyKey("distribution")
+                .withHeaderLabel("Distribution")
+                .withHeaderClass(TableColumn.ColumnCss.NO_SORT)
+                .withDetailedCell()
+                .build();
+    }
+    
     /**
      * A table row that shows the properties of an item.
      */
@@ -116,6 +137,16 @@ public class ItemTableModel extends TableModel {
             return createColoredResultColumn(item);
         }
 
+        /**
+         * Used to get a Getter for each property of the dynamic result of the item.
+         * 
+         * @return the result.
+         */
+        @JsonAnyGetter
+        public Map<String, Integer> getResult() {
+            return item.getResult();
+        }
+        
         protected DetailedCell<String> createColoredResultColumn(final Item item) {
            String tag = span()
                     .withTitle(item.getResult().values().stream().map(Object::toString).collect(Collectors.joining("/")))

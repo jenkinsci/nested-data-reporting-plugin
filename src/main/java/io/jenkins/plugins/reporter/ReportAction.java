@@ -10,7 +10,7 @@ import org.kohsuke.stapler.StaplerProxy;
 /**
  * Controls the life cycle of the data report a job. This action persists the results of a data report.
  * 
- * This action also provides access to the report details: these are rendered using a new {@link ReportViewModel} 
+ * This action also provides access to the report details: these are rendered using a new {@link ItemViewModel} 
  * instance.
  *
  * @author Simon Symhoven
@@ -91,13 +91,13 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      * @return the detail view for items
      */
     @Override
-    public ReportViewModel getTarget() {
+    public ItemViewModel getTarget() {
         Item item = new Item();
         item.setId("report");
         item.setName("Report Overview");
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         
-        return new ReportViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), report.getResult().getColors());
+        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), report.getResult().getColors());
     }
 }
