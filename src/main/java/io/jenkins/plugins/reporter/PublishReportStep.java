@@ -96,7 +96,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         }
         
         try {
-            String jsonSchema = new String(Files.readAllBytes(Paths.get(getClass().getResource("schema.json").getPath())));
+            String jsonSchema = new String(Files.readAllBytes(Paths.get(getClass().getResource("/schema.json").getPath())));
             ProcessingReport validate = JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(JsonLoader.fromString(getJsonString()));
             
             if (validate.isSuccess()) {
