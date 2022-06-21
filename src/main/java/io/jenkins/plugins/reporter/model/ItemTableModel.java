@@ -81,7 +81,6 @@ public class ItemTableModel extends TableModel {
         
         private static final Sanitizer SANITIZER = new Sanitizer();
        
-        private String id;
         private final Item item;
         private final Map<String, String> colors;
 
