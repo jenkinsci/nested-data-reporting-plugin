@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static j2html.TagCreator.i;
 import static j2html.TagCreator.span;
 
 /**
@@ -51,6 +52,12 @@ public class ItemTableModel extends TableModel {
         columns.add(new TableColumn.ColumnBuilder()
                 .withDataPropertyKey("id")
                 .withHeaderLabel("ID")
+                .withHeaderClass(TableColumn.ColumnCss.NONE)
+                .build());
+
+        columns.add(new TableColumn.ColumnBuilder()
+                .withDataPropertyKey("name")
+                .withHeaderLabel("Name")
                 .withHeaderClass(TableColumn.ColumnCss.NONE)
                 .build());
        
@@ -101,12 +108,15 @@ public class ItemTableModel extends TableModel {
             return formatProperty(item.getId());
         }
         
+        public String getName() {
+            return item.getName();
+        }
+        
         public DetailedCell<String> getDistribution() {
             return createColoredResultColumn(item);
         }
 
         protected DetailedCell<String> createColoredResultColumn(final Item item) {
-            
            String tag = span()
                     .withTitle(item.getResult().values().stream().map(Object::toString).collect(Collectors.joining("/")))
                     .withStyle(String.format("color: transparent; background-image: linear-gradient(to right %s); display:block;", createGradient()))

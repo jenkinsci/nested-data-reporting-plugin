@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +20,12 @@ public class Item implements Serializable {
 
     @JsonProperty("id")
     private String id;
+
+    /** 
+     * @since 2.4.0
+     */
+    @JsonProperty("name")
+    private String name;
     
     LinkedHashMap<String, Integer> result;
     
@@ -35,6 +38,14 @@ public class Item implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LinkedHashMap<String, Integer> getResult() {

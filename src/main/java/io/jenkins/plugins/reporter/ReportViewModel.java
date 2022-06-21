@@ -164,7 +164,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ReportViewModel(owner, url, subItem, String.format("Module: %s", subItem.getId()), colors);
+            return new ReportViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colors);
         }
         catch (NoSuchElementException ignored) {
             try {
