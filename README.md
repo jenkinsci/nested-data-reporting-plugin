@@ -133,14 +133,14 @@ publishReport jsonFile: "etc/result.json", label: 'My awesome label'
 
 The currently supported parameters are:
 
-- **`jsonFile`**path to json file relative to the workspace.
+- **`jsonFile`** path to json file relative to the workspace.
 
 or 
 
-- **`jsonString`**: the json model as string.
+- **`jsonString`** the json model as string.
 
 and **optional**
-- **`label`**: the label for the build action (default: "Data Reporting").
+- **`label`** the label for the build action (default: "Data Reporting").
 
 ## Issues
 
