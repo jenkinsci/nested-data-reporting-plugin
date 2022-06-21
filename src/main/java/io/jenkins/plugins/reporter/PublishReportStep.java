@@ -95,11 +95,14 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
 
-        if (isValidJson(getJsonString())) {
-            listener.getLogger().println("[PublishReportStep] JSON String is invalid!");
-            throw new ValidationException(null, "JSON String is invalid!", "Invalid JSON");
+        try (InputStream schemaStream = this.getClass().getResourceAsStream("/schema.json")) {
+            JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaStream));
+            JSONObject jsonObject = new JSONObject(getJsonString());
+            Schema schema = SchemaLoader.load(jsonSchema);
+            schema.validate(jsonObject);
+        } catch (IOException exception) {
+            listener.getLogger().printf("[PublishReportStep] %s%n", exception.getMessage());
         }
-        
         
         Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
         Report report = new Report(result, getLabel());
@@ -120,18 +123,6 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
-        }
-    }
-
-    public boolean isValidJson(@NonNull final String json) {
-        try (InputStream schemaStream = this.getClass().getResourceAsStream("/schema.json")) {
-            JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaStream));
-            JSONObject jsonObject = new JSONObject(json);
-            Schema schema = SchemaLoader.load(jsonSchema);
-            schema.validate(jsonObject);
-            return true;
-        } catch (IOException exception) {
-            return false;
         }
     }
 }
