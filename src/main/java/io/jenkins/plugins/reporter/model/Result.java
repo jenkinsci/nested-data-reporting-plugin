@@ -18,7 +18,7 @@ public class Result implements Serializable {
 
     private static final long serialVersionUID = 7878818807240640969L;
             
-    @JsonProperty("components")
+    @JsonProperty("items")
     private List<Item> items;
     
     private Map<String, String> colors;

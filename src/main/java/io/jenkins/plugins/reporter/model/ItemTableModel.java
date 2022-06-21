@@ -52,7 +52,7 @@ public class ItemTableModel extends TableModel {
         columns.add(new TableColumn.ColumnBuilder()
                 .withDataPropertyKey("id")
                 .withHeaderLabel("ID")
-                .withHeaderClass(TableColumn.ColumnCss.NONE)
+                .withHeaderClass(TableColumn.ColumnCss.HIDDEN)
                 .build());
 
         columns.add(new TableColumn.ColumnBuilder()
@@ -105,11 +105,11 @@ public class ItemTableModel extends TableModel {
         }
         
         public String getId() {
-            return formatProperty(item.getId());
+            return item.getId();
         }
         
         public String getName() {
-            return item.getName();
+            return formatProperty(item.getId(), item.getName());
         }
         
         public DetailedCell<String> getDistribution() {
@@ -156,13 +156,15 @@ public class ItemTableModel extends TableModel {
          * Formats the text of the specified property column. The text actually is a link to the UI representation of
          * the property.
          *
+         * @param link
+         *         the property to use as link
          * @param value
-         *         the value of the property
+         *         the value of the property to be shown
          *
          * @return the formatted column
          */
-        protected String formatProperty(final String value) {
-            return String.format("<a href=\"%d/\">%s</a>", value.hashCode(), render(value));
+        protected String formatProperty(final String link, final String value) {
+            return String.format("<a href=\"%d/\">%s</a>", link.hashCode(), render(value));
         }
 
         /**

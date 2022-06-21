@@ -28,17 +28,19 @@
 ## Introduction
 
 This plugin reports data from a nested json file as pie-charts, trend-charts and data tables. 
-If a component has `items` the `result` will be computed automatically for the parent item.
+If an item has `items`, the `result` will be computed automatically for this parent item.
 An example json file looks like this: 
 
 ```
 {
-  "components": [
+  "items": [
     {
-      "id": "Aktien",
+      "id": "stocks",
+      "name": "Stocks",
       "items": [
         {
-          "id": "Aktie 1",
+          "id": "alphabet",
+          "name": "Google",
           "result": {
             "incorrect": 1,
             "manually": 1,
@@ -46,7 +48,8 @@ An example json file looks like this:
           }
         },
         {
-          "id": "Aktie 2",
+          "id": "microsoft",
+          "name": "Microsoft",
           "result": {
             "incorrect": 2,
             "manually": 1,
@@ -56,7 +59,8 @@ An example json file looks like this:
       ]
     },
     {
-      "id": "Derivate",
+      "id": "derivates",
+      "name": "Derivates",
       "result": {
         "incorrect": 2,
         "manually": 3,
@@ -64,7 +68,8 @@ An example json file looks like this:
       }
     },
     {
-      "id": "Fonds",
+      "id": "fonds",
+      "name": "Fonds",
       "result": {
         "incorrect": 6,
         "manually": 7,
@@ -72,7 +77,8 @@ An example json file looks like this:
       }
     },
     {
-      "id": "Optionsscheine",
+      "id": "warrants",
+      "name": "Warrants",
       "result": {
         "incorrect": 6,
         "manually": 4,
