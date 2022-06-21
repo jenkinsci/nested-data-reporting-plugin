@@ -1,13 +1,6 @@
 package io.jenkins.plugins.reporter;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -22,23 +15,15 @@ import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
 import org.jenkinsci.Symbol;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Set;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -100,26 +85,11 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
-        
-        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance( SpecVersion.VersionFlag.V201909 );
-        
-        try (InputStream schemaStream = this.getClass().getResourceAsStream("/schema.json")) {
-            JsonSchema schema = schemaFactory.getSchema(schemaStream);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode json = mapper.readTree(getJsonString());
-            Set<ValidationMessage> validationResult = schema.validate( json );
-
-            if (validationResult.isEmpty()) {
-                Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
-                Report report = new Report(result, getLabel());
-                run.addAction(new ReportAction(run, report));
-            } else {
-                validationResult.forEach(vm -> listener.getLogger().printf("[PublishReportStep] %s%n", vm.getMessage()));
-            }
+        JacksonFacade jackson = new JacksonFacade();
+        Result result =  jackson.fromJson(getJsonString(), Result.class);
+        Report report = new Report(result, getLabel());
+        run.addAction(new ReportAction(run, report));
             
-        } catch (IOException exception) {
-            listener.getLogger().printf("[PublishReportStep] %s%n", exception.getMessage());
-        }
     }
  
     @Extension 

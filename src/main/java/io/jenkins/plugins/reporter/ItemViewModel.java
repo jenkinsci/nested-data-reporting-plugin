@@ -1,7 +1,5 @@
 package io.jenkins.plugins.reporter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hm.hafner.echarts.*;
 import hudson.model.Job;
 import hudson.model.ModelObject;

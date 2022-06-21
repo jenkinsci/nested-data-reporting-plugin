@@ -94,6 +94,8 @@ An example json file looks like this:
 }
 ```
 
+To check your json you can use the [json schema](src/main/resources/schema.json) to validate it.
+
 > ⚠️ **Color Mapping**:
 >
 > The attribute "colors" needs exactly the same attributes as the result of the 
