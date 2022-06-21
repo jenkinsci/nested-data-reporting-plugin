@@ -88,28 +88,38 @@ An example json file looks like this:
 }
 ```
 
+> ⚠️ **Color Mapping**:
+>
+> The attribute "colors" needs exactly the same attributes as the result of the 
+> items and assigns a color to each attribute, which is used for the graphical representation.
+
+### Visualization
+
 At job level, a trend chart is generated showing the development 
 of the items included in the json over all builds.
 
-At the build level, the aggregation of the entire JSON file 
-is first displayed as a pie chart and as a filterable history. 
-Next to it, the first level of the underlying items is listed in a table, 
-together with the result of the respective aggregation of the child items.
+Since version **2.4.0**, the view is dynamically built and always contains a pie chart, a history and a table.
 
-Below is a tab panel that contains all the elements of the first level. 
-Here again, the aggregation of the child elements is displayed as a pie chart 
-and as a filterable trend history, as well as a table with the individual child elements and 
-their distribution of the aggregated results of their child elements.
+The pie chart and the hsitory show the aggregated results of the underlying items.
 
-> ⭕  **Limited visualization**:
+The table then shows the individual underlying items and visualizes the distribution of the properties in the table.
+
+By clicking on a corresponding row, the view is filtered according to the selection. 
+However, the structure remains the same. This can be continued until no more subitems are 
+available in the json model. On the lowest level only the pie chart and the history will be displayed.
+
+The limited visualization from version **2.3.0** is thus resolved.
+
+> ~~⭕  **Limited visualization**:~~
 >
-> In version **2.3.0** currently only the first two levels are visualized. 
+> ~~In version **2.3.0** currently only the first two levels are visualized. 
 > The values of all items below are not displayed visually, but are 
-> of course represented in the aggregation of the first two levels.
+> of course represented in the aggregation of the first two levels.~~
+
 
 ### Example
 
-![ui](etc/ui-2.3.0.png)
+![ui](etc/ui-2.4.0.png)
 
 ## Getting started
 
@@ -123,14 +133,14 @@ publishReport jsonFile: "etc/result.json", label: 'My awesome label'
 
 The currently supported parameters are:
 
-- **`jsonFile`**path to json file relative to the workspace.
+- **`jsonFile`** path to json file relative to the workspace.
 
 or 
 
-- **`jsonString`**: the json model as string.
+- **`jsonString`** the json model as string.
 
 and **optional**
-- **`label`**: the label for the build action (default: "Data Reporting").
+- **`label`** the label for the build action (default: "Data Reporting").
 
 ## Issues
 
