@@ -126,9 +126,9 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public boolean isValidJson(@NonNull final String json) {
         try (InputStream schemaStream = this.getClass().getResourceAsStream("/schema.json")) {
             JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaStream));
-            JSONArray jsonSubject = new JSONArray(json);
+            JSONObject jsonObject = new JSONObject(json);
             Schema schema = SchemaLoader.load(jsonSchema);
-            schema.validate(jsonSubject);
+            schema.validate(jsonObject);
             return true;
         } catch (IOException exception) {
             return false;
