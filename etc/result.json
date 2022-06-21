@@ -24,12 +24,7 @@
         },
         {
           "id": "genussscheine",
-          "name": "Genussscheine",
-          "result": {
-            "incorrect": 69,
-            "manually": 0,
-            "accurate": 29
-          }
+          "name": "Genussscheine"
         },
         {
           "id": "hybridaktien",
