@@ -1,5 +1,7 @@
 package io.jenkins.plugins.reporter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hm.hafner.echarts.*;
 import hudson.model.Job;
 import hudson.model.ModelObject;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
-public class ReportViewModel extends DefaultAsyncTableContentProvider implements ModelObject {
+public class ItemViewModel extends DefaultAsyncTableContentProvider implements ModelObject {
     
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
@@ -36,7 +38,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
 
 
     /**
-     * Creates a new instance of {@link ReportViewModel}.
+     * Creates a new instance of {@link ItemViewModel}.
      * 
      * @param owner
      *          the associated build/run of this view
@@ -49,7 +51,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
      * @param colors
      *          the color mapping for the item result.
      */
-    public ReportViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, Map<String, String> colors) {
+    public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, Map<String, String> colors) {
         super();
 
         this.owner = owner;
@@ -164,7 +166,7 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ReportViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colors);
+            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colors);
         }
         catch (NoSuchElementException ignored) {
             try {

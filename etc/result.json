@@ -130,8 +130,8 @@
       ]
     },
     {
-      "id": "Fonds",
-      "name": "Derivate_Kontrakte_Basistrades",
+      "id": "fonds",
+      "name": "Fonds",
       "items": [
         {
           "id": "Beteiligungsfonds",
@@ -163,8 +163,8 @@
       ]
     },
     {
-      "id": "Not_Found",
-      "name": "Derivate_Kontrakte_Basistrades",
+      "id": "not-found",
+      "name": "Not Found",
       "items": [
         {
           "id": "Not_Found",
@@ -178,8 +178,8 @@
       ]
     },
     {
-      "id": "Rechte",
-      "name": "Derivate_Kontrakte_Basistrades",
+      "id": "rechte",
+      "name": "Rechte",
       "items": [
         {
           "id": "Nebenrechte",
@@ -193,8 +193,8 @@
       ]
     },
     {
-      "id": "Renten",
-      "name": "Derivate_Kontrakte_Basistrades",
+      "id": "renten",
+      "name": "Renten",
       "items": [
         {
           "id": "ABS_Strukturen",
@@ -262,8 +262,8 @@
       ]
     },
     {
-      "id": "Zertifikat",
-      "name": "Derivate_Kontrakte_Basistrades",
+      "id": "zertifikate",
+      "name": "Zertifikate",
       "items": [
         {
           "id": "Zertifikate_mit_Laufzeit_und_mit_Zinszahlung",
