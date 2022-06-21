@@ -1,5 +1,10 @@
 package io.jenkins.plugins.reporter;
 
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.common.io.Resources;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
@@ -22,8 +27,12 @@ import org.kohsuke.stapler.DataBoundSetter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -85,11 +94,22 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
-        JacksonFacade jackson = new JacksonFacade();
-        Result result =  jackson.fromJson(getJsonString(), Result.class);
-        Report report = new Report(result, getLabel());
-        run.addAction(new ReportAction(run, report));
+        
+        try {
+            String jsonSchema = new String(Files.readAllBytes(Paths.get(getClass().getResource("schema.json").getPath())));
+            ProcessingReport validate = JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(JsonLoader.fromString(getJsonString()));
             
+            if (validate.isSuccess()) {
+                JacksonFacade jackson = new JacksonFacade();
+                Result result =  jackson.fromJson(getJsonString(), Result.class);
+                Report report = new Report(result, getLabel());
+                run.addAction(new ReportAction(run, report));
+            } else {
+                listener.getLogger().println("[PublishReportStep] JSON is invalid!");
+            }
+        } catch (ProcessingException e) {
+            listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());
+        }
     }
  
     @Extension 
