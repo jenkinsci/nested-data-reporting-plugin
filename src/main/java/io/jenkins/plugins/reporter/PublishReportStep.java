@@ -25,6 +25,12 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+/**
+ * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
+ * by registering a {@link ReportAction}.
+ *
+ * @author Simon Symhoven.
+ */
 @Extension
 public class PublishReportStep extends Builder implements SimpleBuildStep, Serializable {
     

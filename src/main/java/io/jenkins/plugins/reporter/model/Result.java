@@ -6,16 +6,23 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Json Model class, which represents an {@link Result}. 
+ * Simple data class that manages a list of {@link Item} and the corresponding color mapping.
+ *
+ * @author Simon Symhoven
+ */
 public class Result implements Serializable {
-    
+
+    private static final long serialVersionUID = 7878818807240640969L;
+            
     @JsonProperty("components")
     private List<Item> components;
     
     private Map<String, String> colors;
-
+    
     public List<Item> getComponents() {
         return components;
     }
@@ -32,6 +39,11 @@ public class Result implements Serializable {
         this.colors = colors;
     }
 
+    /**
+     * Aggregates the results of all items. The values are added together, grouped by key. 
+     * 
+     * @return the aggregated result.
+     */
     public LinkedHashMap<String, Integer> aggregate() {
         return getComponents()
                 .stream()

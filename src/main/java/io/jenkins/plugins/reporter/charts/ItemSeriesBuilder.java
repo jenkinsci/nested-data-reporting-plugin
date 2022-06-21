@@ -20,6 +20,7 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
      * Creates a new {@link ItemSeriesBuilder}.
      * 
      * @param item
+     *          the item to build the series for.
      */
     public ItemSeriesBuilder(Item item) {
         this.item = item;

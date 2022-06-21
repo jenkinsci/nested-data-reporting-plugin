@@ -3,7 +3,8 @@ package io.jenkins.plugins.reporter.model;
 import java.io.Serializable;
 
 /**
- * Simple data class that manages a list of {@link Item} and a label add by the 
+ * Json Model class, which represents an {@link Report}. 
+ * Simple data class that manages a {@link Result} and a label add by the 
  * {@link io.jenkins.plugins.reporter.PublishReportStep}.
  *
  * @author Simon Symhoven
@@ -16,6 +17,7 @@ public class Report implements Serializable {
 
     /**
      * Creates a new {@link Report}.
+     * 
      * @param result
      *              the {@link Result} of the {@link Report}.
      * @param label
@@ -25,7 +27,10 @@ public class Report implements Serializable {
         this.result = result;
         this.label = label;
     }
-    
+
+    /**
+     * Creates a new {@link Report}.
+     */
     public Report() {
         this.label = "Data Report";
         this.result = new Result();

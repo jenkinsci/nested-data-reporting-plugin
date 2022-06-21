@@ -1,17 +1,23 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-   
         <f:entry title="${%title.label}">
+        
               <f:textbox field="label" />
+              
         </f:entry>
+        
         <f:entry title="${%title.jsonFile}">
+        
               <f:textbox field="jsonFile" />
+              
         </f:entry>
+        
         <f:entry title="${%title.jsonString}" description="${%description.jsonString}" field="jsonString">
+        
             <f:textarea codemirror-mode="javascript"
                         codemirror-config="mode: 'text/javascript', matchBrackets: true"/>
+                        
         </f:entry>
-   
 
 </j:jelly>

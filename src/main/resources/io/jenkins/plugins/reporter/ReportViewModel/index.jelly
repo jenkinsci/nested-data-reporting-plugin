@@ -12,7 +12,9 @@
           <div class="col-5">
       
             <bs:card class="h-100" title="${%overview}" fontAwesomeIcon="chart-pie">
+            
                   <c:pie-chart id="${item.id}" model="${it.getItemDataModel()}" height="340"/>
+                  
             </bs:card>
       
           </div>
@@ -20,7 +22,9 @@
           <div class="col-7">
       
             <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
+            
                 <div id="item-trend-chart" class="graph-cursor-pointer card-chart"/>
+                
             </bs:card>
       
           </div>
@@ -34,7 +38,9 @@
                 <div class="col-12">
                     
                     <bs:card class="h-100" bodyClass="pd-20" title="${%distribution}" fontAwesomeIcon="bars-progress">
+                    
                         <dt:table model="${it.getTableModel(it.item.id)}"/>
+                        
                     </bs:card>
     
                 </div>

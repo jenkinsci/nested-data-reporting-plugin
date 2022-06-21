@@ -1,11 +1,10 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.model;
 
 import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
-import io.jenkins.plugins.reporter.model.Item;
-import j2html.tags.UnescapedText;
+import io.jenkins.plugins.reporter.ReportViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,29 +13,40 @@ import java.util.stream.Collectors;
 
 import static j2html.TagCreator.span;
 
-public class ReportTableModel extends TableModel {
+/**
+ * Provides the model for the item table. The model displays the distribution for the subitems and the id column is 
+ * linked to the {@link ReportViewModel} of the selected subitem.
+ *
+ * @author Simon Symhoven
+ */
+public class ItemTableModel extends TableModel {
     
-    private final String id;
     private final Item item;
     private final Map<String, String> colors;
-    
-    public ReportTableModel(String id, Item item, Map<String, String> colors) {
+
+    /**
+     * Creates a new instance of {@link ItemTableModel}.
+     * 
+     * @param item
+     *         the item to render
+     * @param colors
+     *         the color mapping for the result.
+     */
+    public ItemTableModel(Item item, Map<String, String> colors) {
         super();
         
-        this.id = id;
         this.item = item;
         this.colors = colors;
     }
     
     @Override
     public String getId() {
-        return id;
+        return item.getId();
     }
 
     @Override
     public List<TableColumn> getColumns() {
         List<TableColumn> columns = new ArrayList<>();
-    
         
         columns.add(new TableColumn.ColumnBuilder()
                 .withDataPropertyKey("id")
@@ -59,20 +69,31 @@ public class ReportTableModel extends TableModel {
         
         return item.getItems()
             .stream()
-            .map(item -> new ItemTableRow(item, colors))
+            .map(item -> new ItemRow(item, colors))
             .collect(Collectors.toList());
 
     }
-    
-    public static class ItemTableRow {
+
+    /**
+     * A table row that shows the properties of an item.
+     */
+    public static class ItemRow {
         
         private static final Sanitizer SANITIZER = new Sanitizer();
        
         private String id;
         private final Item item;
         private final Map<String, String> colors;
-        
-        ItemTableRow(Item item, Map<String, String> colors) {
+
+        /**
+         * Creates a new instance of {@link ItemRow}.
+         * 
+         * @param item
+         *          the item to render.
+         * @param colors
+         *          the color mapping for the result of the item.
+         */
+        ItemRow(Item item, Map<String, String> colors) {
             this.item = item;
             this.colors = colors;
         }
@@ -95,9 +116,14 @@ public class ReportTableModel extends TableModel {
                     .attr("data-bs-placement", "left")
                     .render();
             
-            return new DetailedCell<String>(tag, null);
+            return new DetailedCell<>(tag, null);
         }
-        
+
+        /**
+         * Creates the gradient for the distribution for each subitem of item to display in the table cell.
+         * 
+         * @return the html string with gradient.
+         */
         protected String createGradient() {
             int total = item.getResult().values().stream().reduce(0, Integer::sum);
             
@@ -128,18 +154,6 @@ public class ReportTableModel extends TableModel {
          */
         protected String formatProperty(final String value) {
             return String.format("<a href=\"%d/\">%s</a>", value.hashCode(), render(value));
-        }
-
-        /**
-         * Renders the specified HTML code. Removes unsafe HTML constructs.
-         *
-         * @param text
-         *         the HTML to render
-         *
-         * @return safe HTML
-         */
-        protected final String render(final UnescapedText text) {
-            return SANITIZER.render(text);
         }
 
         /**

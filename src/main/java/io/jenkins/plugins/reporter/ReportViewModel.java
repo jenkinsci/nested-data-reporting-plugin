@@ -8,9 +8,9 @@ import hudson.util.RunList;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
-import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
+import io.jenkins.plugins.reporter.model.ItemTableModel;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -19,7 +19,13 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Build view that shows the details for a item and the subitems of item.
+ *
+ * @author Simon Symhoven
+ */
 public class ReportViewModel extends DefaultAsyncTableContentProvider implements ModelObject {
+    
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
     private final Run<?, ?> owner;
@@ -33,12 +39,17 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
      * Creates a new instance of {@link ReportViewModel}.
      * 
      * @param owner
+     *          the associated build/run of this view
      * @param url
+     *          the relative URL of this view
      * @param item
+     *          the corresponding item of this view.
      * @param label
+     *          the label to be shown for this view.
      * @param colors
+     *          the color mapping for the item result.
      */
-    ReportViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, Map<String, String> colors) {
+    public ReportViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, Map<String, String> colors) {
         super();
 
         this.owner = owner;
@@ -48,6 +59,11 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
         this.colors = colors;
     }
 
+    /**
+     * Returns the build as owner of this object.
+     *
+     * @return the owner
+     */
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -69,9 +85,18 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
                 colors.get(key)));
         return new JacksonFacade().toJson(model);
     }
-    
 
-    private String createTrendAsJson(final TrendChart trendChart, final String configuration, String id) {
+    /**
+     * Returns the UI model for an ECharts line chart that shows the item result.
+     *
+     * @param configuration 
+     *          determines whether the Jenkins build number should be used on the X-axis or the date
+     *          
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getBuildTrend(final String configuration) {
         Job<?, ?> job = getOwner().getParent();
         RunList<?> runs = job.getBuilds();
 
@@ -89,31 +114,21 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
             }
         }
 
-        SeriesBuilder<ReportAction> builder = new ItemSeriesBuilder(item);
-
-        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration),
-                builder, colors));
+        return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
+                new ItemSeriesBuilder(item), colors));
     }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the item result.
-     *
-     * @param configuration determines whether the Jenkins build number should be used on the X-axis or the date
-     * @return the UI model as JSON
-     */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrend(final String configuration) {
-        return createTrendAsJson(new TrendChart(), configuration, item.getId());
-    }
-    
     
     @Override
     @SuppressWarnings("unused") // Called by jelly view
     public TableModel getTableModel(String id) {
-        return new ReportTableModel(id, item, colors);
+        return new ItemTableModel(item, colors);
     }
-    
+
+    /**
+     * Returns the corresponding item of this view.
+     * 
+     * @return this item of view.
+     */
     public Item getItem() {
         return item;
     }
@@ -147,8 +162,9 @@ public class ReportViewModel extends DefaultAsyncTableContentProvider implements
                     .filter(i -> i.getId().hashCode() == Integer.parseInt(link))
                     .findFirst()
                     .orElseThrow(NoSuchElementException::new);
-            
-            return new ItemFactory().createNewItemView(link, owner, this, subItem, colors);
+
+            String url = getUrl() + "/" + link;
+            return new ReportViewModel(owner, url, subItem, String.format("Module: %s", subItem.getId()), colors);
         }
         catch (NoSuchElementException ignored) {
             try {
