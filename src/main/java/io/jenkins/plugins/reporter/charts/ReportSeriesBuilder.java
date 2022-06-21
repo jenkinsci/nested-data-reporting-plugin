@@ -15,7 +15,7 @@ public class ReportSeriesBuilder extends SeriesBuilder<ReportAction> {
     
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
-        return reportAction.getReport().aggregate();
+        return reportAction.getReport().getResult().aggregate();
     }
     
 }

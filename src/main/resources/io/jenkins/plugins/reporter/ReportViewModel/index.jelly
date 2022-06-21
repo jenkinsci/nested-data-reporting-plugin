@@ -3,111 +3,52 @@
     
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
    
-     
   <bs:page it="${it}">
-      
+       
       <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
-      
-      <j:set var="items" value="${it.report.result.components}"/>
              
       <div class="row py-3 flex-nowrap">
             
-          <div class="col-3">
-      
-            <bs:card class="h-100" title="${%overview}" fontAwesomeIcon="chart-pie">
-                  <c:pie-chart id="${item.id}" model="${it.getReportDataModel()}" height="340"/>
-            </bs:card>
-      
-          </div>
-          
           <div class="col-5">
       
-            <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
-                <div id="aggregated-trend-chart" class="graph-cursor-pointer report-card-chart"/>
+            <bs:card class="h-100" title="${%overview}" fontAwesomeIcon="chart-pie">
+            
+                  <c:pie-chart id="${item.id}" model="${it.getItemDataModel()}" height="340"/>
+                  
             </bs:card>
       
           </div>
           
-          <div class="col-4">
+          <div class="col-7">
+      
+            <bs:card class="h-100 flex" title="${%history}" fontAwesomeIcon="arrow-trend-up">
             
-              <bs:card class="h-100" bodyClass="pd-20" title="${%distribution}" fontAwesomeIcon="bars-progress">
-                  <dt:table model="${it.getTableModel('report-aggregated-table')}"/>
-              </bs:card>
-    
+                <div id="item-trend-chart" class="graph-cursor-pointer card-chart"/>
+                
+            </bs:card>
+      
           </div>
           
       </div>
       
+      <j:if test="${it.item.hasItems()}">
       
-      <div class="row py-3">
-      
-          <div class="col-12">
-                
-                <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
-                    
-                    <j:forEach var="item" items="${items}">
-                        <li class="nav-item">
-                          <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${item.id}Content">${item.id}</a>
-                        </li>
-                    </j:forEach>
-                    
-                </ul>   
-            
-                <div class="tab-content">
-                    
-                    <j:forEach var="item" items="${items}">
-                         <div role="tabpanel" id="${item.id}Content" class="tab-pane fade">
-                              
-                              <div class="row py-3"> 
-                                                     
-                                  <div class="col-5">
-                                  
-                                    <bs:card class="h-100" title="${%overview}">
-                                    
-                                        <c:pie-chart id="${item.id}" model="${it.getItemDataModel(item)}" height="340" />
-                                        
-                                    </bs:card>
-                                    
-                                  </div>
-                                  
-                                  <div class="col-7">
-                                  
-                                      <bs:card class="h-100" title="${%history}">
-                                      
-                                          <div id="${item.id}-trend-chart" class="graph-cursor-pointer item-card-chart"/>
-                                          
-                                      </bs:card>
-                                  </div>
-                              
-                              </div> 
-                              
-                              <j:if test="${item.hasItems()}">
-                              
-                                  <div class="row py-3">
-                                            
-                                        <div class="col-12">
-                                            
-                                            <bs:card title="${%distribution}">
-                                                
-                                                <dt:table model="${it.getTableModel(item.id)}"/>
-                                               
-                                            </bs:card>
-                                            
-                                        </div>
-                                     
-                                  </div>
-                              
-                              </j:if>
+          <div class="row py-3 flex-nowrap">
                                                                 
-                         </div>
-                    </j:forEach>
-           
+                <div class="col-12">
+                    
+                    <bs:card class="h-100" bodyClass="pd-20" title="${%distribution}" fontAwesomeIcon="bars-progress">
+                    
+                        <dt:table model="${it.getTableModel(it.item.id)}"/>
+                        
+                    </bs:card>
+    
                 </div>
             
           </div>
-        
-      </div>
       
+      </j:if>
+                
       <script>var view = <st:bind value="${it}"/></script>
       <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/item.js"/>
         

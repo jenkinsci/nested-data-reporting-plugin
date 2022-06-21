@@ -1,30 +1,56 @@
 package io.jenkins.plugins.reporter;
 
 import hudson.model.Run;
+import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.util.BuildAction;
 import io.jenkins.plugins.util.JobAction;
 import org.kohsuke.stapler.StaplerProxy;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+/**
+ * Controls the life cycle of the data report a job. This action persists the results of a data report.
+ * 
+ * This action also provides access to the report details: these are rendered using a new {@link ReportViewModel} 
+ * instance.
+ *
+ * @author Simon Symhoven
+ */
 public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
-    
+
+    /**
+     * Creates a new instance of {@link ReportAction}.
+     *
+     * @param owner
+     *         the associated build/run that created the static analysis result
+     * @param report
+     *         the report to add to the action.
+     */
     protected ReportAction(Run<?, ?> owner, Report report) {
-        super(owner, report, true);
-        this.report = report;
+        this(owner, report, true);
     }
 
+    /**
+     * Creates a new instance of {@link ReportAction}.
+     *
+     * @param owner
+     *         the associated build/run that created the static analysis result
+     * @param report
+     *         the report to add to the action
+     * @param canSerialize
+     *         if the action can be serialized.
+     */
     public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
     }
 
+    /**
+     * Returns the {@link Report} controlled by this action.
+     * 
+     * @return the report.
+     */
     public Report getReport() {
         return report;
     }
@@ -59,17 +85,18 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
         return ReportJobAction.ID;
     }
 
+    /**
+     * Returns the detail view for items for all Stapler requests.
+     *
+     * @return the detail view for items
+     */
     @Override
-    public Object getTarget() {
-        return new ReportViewModel(getOwner(), getResult());
-    }
-
-    @SuppressWarnings("unused")
-    public Map<String, Double> getAggregatedRelativeReportItemResults() {
-        int total = getResult().aggregate().values().stream().reduce(0, Integer::sum);
-        return getResult().aggregate().entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getKey,
-                item -> BigDecimal.valueOf((double) item.getValue() * 100 / total)
-                        .setScale(2, RoundingMode.HALF_UP).doubleValue()));
+    public ReportViewModel getTarget() {
+        Item item = new Item();
+        item.setId("report");
+        item.setResult(report.getResult().aggregate());
+        item.setItems(report.getResult().getComponents());
+        
+        return new ReportViewModel(getOwner(), ReportJobAction.ID, item, "Report Overview", report.getResult().getColors());
     }
 }

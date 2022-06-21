@@ -1,51 +1,59 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.model;
 
 import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
-import io.jenkins.plugins.reporter.model.Item;
-import io.jenkins.plugins.reporter.model.Report;
+import io.jenkins.plugins.prism.Sanitizer;
+import io.jenkins.plugins.reporter.ReportViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static j2html.TagCreator.s;
 import static j2html.TagCreator.span;
 
-public class ReportTableModel extends TableModel {
+/**
+ * Provides the model for the item table. The model displays the distribution for the subitems and the id column is 
+ * linked to the {@link ReportViewModel} of the selected subitem.
+ *
+ * @author Simon Symhoven
+ */
+public class ItemTableModel extends TableModel {
     
-    private static final String REPORT_ID = "report-aggregated-table";
+    private final Item item;
+    private final Map<String, String> colors;
 
-    private final String id;
-    private final Report report;
-    
-    
-    public ReportTableModel(String id, Report report) {
+    /**
+     * Creates a new instance of {@link ItemTableModel}.
+     * 
+     * @param item
+     *         the item to render
+     * @param colors
+     *         the color mapping for the result.
+     */
+    public ItemTableModel(Item item, Map<String, String> colors) {
         super();
         
-        this.id = id;
-        this.report = report;
+        this.item = item;
+        this.colors = colors;
     }
     
     @Override
     public String getId() {
-        return id.equals(REPORT_ID) ? REPORT_ID : id;
+        return item.getId();
     }
 
     @Override
     public List<TableColumn> getColumns() {
         List<TableColumn> columns = new ArrayList<>();
-
         
         columns.add(new TableColumn.ColumnBuilder()
                 .withDataPropertyKey("id")
                 .withHeaderLabel("ID")
                 .withHeaderClass(TableColumn.ColumnCss.NONE)
                 .build());
-        
+       
         columns.add(new TableColumn.ColumnBuilder()
                 .withDataPropertyKey("distribution")
                 .withHeaderLabel("Distribution")
@@ -59,34 +67,38 @@ public class ReportTableModel extends TableModel {
     @Override
     public List<Object> getRows() {
         
-        if (id.equals(REPORT_ID)) {
-            return report.getResult().getComponents()
-                    .stream()
-                    .map(item -> new TableRow(item, report.getResult().getColors()))
-                    .collect(Collectors.toList());
-        }
-        
-        Optional<Item> subItem = report.getResult().getComponents().stream().filter(item -> item.getId().equals(id)).findFirst();
-
-        return subItem.<List<Object>>map(value -> value.getItems()
-                .stream()
-                .map(item -> new TableRow(item, report.getResult().getColors()))
-                .collect(Collectors.toList())).orElseGet(ArrayList::new);
+        return item.getItems()
+            .stream()
+            .map(item -> new ItemRow(item, colors))
+            .collect(Collectors.toList());
 
     }
-    
-    public static class TableRow {
+
+    /**
+     * A table row that shows the properties of an item.
+     */
+    public static class ItemRow {
         
+        private static final Sanitizer SANITIZER = new Sanitizer();
+       
         private final Item item;
         private final Map<String, String> colors;
-        
-        TableRow(Item item, Map<String, String> colors) {
+
+        /**
+         * Creates a new instance of {@link ItemRow}.
+         * 
+         * @param item
+         *          the item to render.
+         * @param colors
+         *          the color mapping for the result of the item.
+         */
+        ItemRow(Item item, Map<String, String> colors) {
             this.item = item;
             this.colors = colors;
         }
         
         public String getId() {
-            return item.getId(); 
+            return formatProperty(item.getId());
         }
         
         public DetailedCell<String> getDistribution() {
@@ -94,6 +106,7 @@ public class ReportTableModel extends TableModel {
         }
 
         protected DetailedCell<String> createColoredResultColumn(final Item item) {
+            
            String tag = span()
                     .withTitle(item.getResult().values().stream().map(Object::toString).collect(Collectors.joining("/")))
                     .withStyle(String.format("color: transparent; background-image: linear-gradient(to right %s); display:block;", createGradient()))
@@ -102,9 +115,14 @@ public class ReportTableModel extends TableModel {
                     .attr("data-bs-placement", "left")
                     .render();
             
-            return new DetailedCell<String>(tag, null);
+            return new DetailedCell<>(tag, null);
         }
-        
+
+        /**
+         * Creates the gradient for the distribution for each subitem of item to display in the table cell.
+         * 
+         * @return the html string with gradient.
+         */
         protected String createGradient() {
             int total = item.getResult().values().stream().reduce(0, Integer::sum);
             
@@ -122,6 +140,31 @@ public class ReportTableModel extends TableModel {
             }
             
             return builder.toString();
+        }
+
+        /**
+         * Formats the text of the specified property column. The text actually is a link to the UI representation of
+         * the property.
+         *
+         * @param value
+         *         the value of the property
+         *
+         * @return the formatted column
+         */
+        protected String formatProperty(final String value) {
+            return String.format("<a href=\"%d/\">%s</a>", value.hashCode(), render(value));
+        }
+
+        /**
+         * Renders the specified HTML code. Removes unsafe HTML constructs.
+         *
+         * @param html
+         *         the HTML to render
+         *
+         * @return safe HTML
+         */
+        protected final String render(final String html) {
+            return SANITIZER.render(html);
         }
     }
 }

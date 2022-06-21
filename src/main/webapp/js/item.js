@@ -81,19 +81,11 @@
         const configuration = JSON.stringify(echartsJenkinsApi.readFromLocalStorage('jenkins-echarts-trend-configuration-default'));
         
         /**
-         * Creates a build trend chart that shows the number of issues for a couple of builds.
-         * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
+         * Creates a build trend chart that shows the result for a couple of builds.
          */
-        view.getItemIds(function(itemIds) {
-
-            Object.entries(itemIds.responseJSON).forEach((entry) => {
-                const [index, id] = entry;
-                view.getBuildTrend(configuration, id, function (lineModel) {
-                    echartsJenkinsApi.renderConfigurableZoomableTrendChart(`${id}-trend-chart`,
-                        lineModel.responseJSON, trendConfigurationDialogId, null);
-                });
-            });
-            
+        view.getBuildTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderConfigurableZoomableTrendChart(`item-trend-chart`,
+                lineModel.responseJSON, trendConfigurationDialogId, null);
         });
     }
     
