@@ -18,17 +18,17 @@ public class Result implements Serializable {
 
     private static final long serialVersionUID = 7878818807240640969L;
             
-    @JsonProperty("components")
-    private List<Item> components;
+    @JsonProperty("items")
+    private List<Item> items;
     
     private Map<String, String> colors;
     
-    public List<Item> getComponents() {
-        return components;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setComponents(List<Item> components) {
-        this.components = components;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public Map<String, String> getColors() {
@@ -45,7 +45,7 @@ public class Result implements Serializable {
      * @return the aggregated result.
      */
     public LinkedHashMap<String, Integer> aggregate() {
-        return getComponents()
+        return getItems()
                 .stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())

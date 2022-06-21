@@ -1,10 +1,12 @@
 {
-  "components": [
+  "items": [
     {
-      "id": "Aktie",
+      "id": "aktien",
+      "name": "Aktien",
       "items": [
         {
-          "id": "Aktien_ohne_Rentencharakter",
+          "id": "aktien-ohne-rentencharacter",
+          "name": "Aktien ohne Rentencharacter",
           "result": {
             "incorrect": 63,
             "manually": 0,
@@ -12,7 +14,8 @@
           }
         },
         {
-          "id": "Depositary_Receipts",
+          "id": "depositary-receipts",
+          "name": "Depositary Receipts",
           "result": {
             "incorrect": 54,
             "manually": 0,
@@ -20,7 +23,8 @@
           }
         },
         {
-          "id": "Genussscheine",
+          "id": "genussscheine",
+          "name": "Genussscheine",
           "result": {
             "incorrect": 69,
             "manually": 0,
@@ -28,7 +32,8 @@
           }
         },
         {
-          "id": "Hybridaktien",
+          "id": "hybridaktien",
+          "name": "Hybridaktien",
           "result": {
             "incorrect": 49,
             "manually": 0,
@@ -36,7 +41,8 @@
           }
         },
         {
-          "id": "Private_Equities",
+          "id": "private-equities",
+          "name": "Private Equities",
           "result": {
             "incorrect": 60,
             "manually": 0,
@@ -44,7 +50,8 @@
           }
         },
         {
-          "id": "Sonderformen_Fonds_mit_Rentencharakter",
+          "id": "sonderformen-fonds-mit-rentencharakter",
+          "name": "Sonderformen Fonds mit Rentencharakter",
           "result": {
             "incorrect": 34,
             "manually": 0,
@@ -53,6 +60,7 @@
         },
         {
           "id": "Sonderformen_Fonds_ohne_Rentencharakter",
+          "name": "Sonderformen Fonds mit Rentencharakter",
           "result": {
             "incorrect": 51,
             "manually": 0,
@@ -60,7 +68,8 @@
           }
         },
         {
-          "id": "Units_(zusammengesetzte_Werte)",
+          "id": "units-zusammengesetzte-werte",
+          "name": "Units (zusammengesetzte Werte)",
           "result": {
             "incorrect": 67,
             "manually": 0,
@@ -70,10 +79,12 @@
       ]
     },
     {
-      "id": "Derivate",
+      "id": "derivate",
+      "name": "Derivate",
       "items": [
         {
-          "id": "Derivate_Kontrakte_Basistrades",
+          "id": "derivate-Kontrakte-basistrades",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 85,
             "manually": 1,
@@ -82,6 +93,7 @@
         },
         {
           "id": "Rohstoffe_Commodities",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 88,
             "manually": 1,
@@ -90,6 +102,7 @@
         },
         {
           "id": "Sonstige_Beteiligungswerte",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 74,
             "manually": 0,
@@ -98,6 +111,7 @@
         },
         {
           "id": "technischeProdukte",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 64,
             "manually": 1,
@@ -106,6 +120,7 @@
         },
         {
           "id": "W\u00e4hrungen",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 91,
             "manually": 1,
@@ -116,9 +131,11 @@
     },
     {
       "id": "Fonds",
+      "name": "Derivate_Kontrakte_Basistrades",
       "items": [
         {
           "id": "Beteiligungsfonds",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 89,
             "manually": 1,
@@ -127,6 +144,7 @@
         },
         {
           "id": "Geschlossene_Investmentfonds",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 71,
             "manually": 0,
@@ -135,6 +153,7 @@
         },
         {
           "id": "Offene_Investmentfonds",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 62,
             "manually": 0,
@@ -145,9 +164,11 @@
     },
     {
       "id": "Not_Found",
+      "name": "Derivate_Kontrakte_Basistrades",
       "items": [
         {
           "id": "Not_Found",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 12,
             "manually": 0,
@@ -158,9 +179,11 @@
     },
     {
       "id": "Rechte",
+      "name": "Derivate_Kontrakte_Basistrades",
       "items": [
         {
           "id": "Nebenrechte",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 84,
             "manually": 0,
@@ -171,9 +194,11 @@
     },
     {
       "id": "Renten",
+      "name": "Derivate_Kontrakte_Basistrades",
       "items": [
         {
           "id": "ABS_Strukturen",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 41,
             "manually": 0,
@@ -182,6 +207,7 @@
         },
         {
           "id": "Anleihen_mit_Andienungsrecht",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 76,
             "manually": 0,
@@ -190,6 +216,7 @@
         },
         {
           "id": "Anleihen_mit_zertifikats\u00e4hnlicher_Struktur",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 70,
             "manually": 0,
@@ -198,6 +225,7 @@
         },
         {
           "id": "Geldmarktinstrumente",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 82,
             "manually": 1,
@@ -206,6 +234,7 @@
         },
         {
           "id": "Sonstige_Bonds",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 52,
             "manually": 0,
@@ -214,6 +243,7 @@
         },
         {
           "id": "Standardrente",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 59,
             "manually": 0,
@@ -222,6 +252,7 @@
         },
         {
           "id": "Wandelanleihen_Umtauschanleihen",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 59,
             "manually": 0,
@@ -232,9 +263,11 @@
     },
     {
       "id": "Zertifikat",
+      "name": "Derivate_Kontrakte_Basistrades",
       "items": [
         {
           "id": "Zertifikate_mit_Laufzeit_und_mit_Zinszahlung",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 73,
             "manually": 0,
@@ -243,6 +276,7 @@
         },
         {
           "id": "Zertifikate_mit_Laufzeit_und_ohne_Zinszahlung",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 74,
             "manually": 0,
@@ -251,6 +285,7 @@
         },
         {
           "id": "Zertifikate_ohne_Laufzeit",
+          "name": "Derivate_Kontrakte_Basistrades",
           "result": {
             "incorrect": 81,
             "manually": 0,
