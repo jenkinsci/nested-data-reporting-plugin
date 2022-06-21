@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "default": {},
+  "title": "Report Schema",
+  "required": [
+    "items",
+    "colors"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "default": [],
+      "title": "The items Schema",
+      "items": {
+        "type": "object",
+        "default": {},
+        "title": "A Schema",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "default": "",
+            "title": "The id Schema"
+          },
+          "name": {
+            "type": "string",
+            "default": "",
+            "title": "The name Schema"
+          },
+          "items": {
+            "type": "array",
+            "default": [],
+            "title": "The items Schema",
+            "items": {
+              "type": "object",
+              "default": {},
+              "title": "A Schema",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "default": "",
+                  "title": "The id Schema"
+                },
+                "name": {
+                  "type": "string",
+                  "default": "",
+                  "title": "The name Schema"
+                },
+                "result": {
+                  "type": "object",
+                  "default": {},
+                  "title": "The result Schema",
+                  "properties": {
+                    
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "colors": {
+      "type": "object",
+      "default": {},
+      "title": "The colors Schema",
+      "properties": {
+        
+      }
+    }
+  }
+}
