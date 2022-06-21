@@ -47,8 +47,7 @@
           }
         }
       ]
-    },
-    
+    },  
     {
       "id": "Renten",
       "name": "Renten",
@@ -72,10 +71,16 @@
           }
         }
       ]
+    },
+    {
+      "id": "Derivat",
+      "name": "Derivat",
+      "result": {
+        "incorrect": 2271,
+        "manually": 79,
+        "accurate": 7648
+      }
     }
-    
-      
-    
   ],
   "colors": {
     "incorrect": "#EF9A9A",
