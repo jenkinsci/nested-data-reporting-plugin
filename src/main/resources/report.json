@@ -1,0 +1,20 @@
+{
+  "type":"object",
+  "id":"report.json",
+  "required": ["colors", "items"],
+  "properties":{
+    "colors":{
+      "type":"object",
+      "additionalProperties":{
+        "type":"string"
+      }
+    },
+    "items":{
+      "type":"array",
+      "items":{
+        "type":"object",
+        "$ref":"item.json"
+      }
+    }
+  }
+}
