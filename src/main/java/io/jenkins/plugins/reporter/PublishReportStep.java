@@ -19,12 +19,19 @@ import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaClient;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.jenkinsci.Symbol;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -92,19 +99,21 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
         
-        try {
-            ProcessingReport validate = JsonSchemaFactory.byDefault()
-                    .getJsonSchema("resource:/report.json").validate(JsonLoader.fromString(getJsonString()));
+        try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
+            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
+            SchemaLoader schemaLoader = SchemaLoader.builder()
+                    .schemaClient(SchemaClient.classPathAwareClient())
+                    .schemaJson(rawSchema)
+                    .resolutionScope("classpath:/")
+                    .build();
+            Schema schema = schemaLoader.load().build();
+            schema.validate(new JSONObject(getJsonString()));
             
-            if (validate.isSuccess()) {
-                JacksonFacade jackson = new JacksonFacade();
-                Result result =  jackson.fromJson(getJsonString(), Result.class);
-                Report report = new Report(result, getLabel());
-                run.addAction(new ReportAction(run, report));
-            } else {
-                listener.getLogger().println("[PublishReportStep] JSON is invalid!");
-            }
-        } catch (ProcessingException e) {
+            JacksonFacade jackson = new JacksonFacade();
+            Result result =  jackson.fromJson(getJsonString(), Result.class);
+            Report report = new Report(result, getLabel());
+            run.addAction(new ReportAction(run, report));
+        } catch (ValidationException e) {
             listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());
         }
     }
