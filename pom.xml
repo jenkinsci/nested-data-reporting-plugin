@@ -108,11 +108,6 @@
             <artifactId>json-schema-validator</artifactId>
             <version>${json-schema-validator.version}</version>
         </dependency>
-        <dependency> 
-            <groupId>com.google.guava</groupId> 
-            <artifactId>guava</artifactId> 
-            <version>${guava.version}</version> 
-        </dependency>
         
         <!-- Workflow dependencies -->
         <dependency>
