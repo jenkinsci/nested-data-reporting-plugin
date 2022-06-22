@@ -1,0 +1,38 @@
+{
+  "type":"object",
+  "id":"item.json",
+  "required": ["id", "name"],
+  "properties":{
+    "id":{
+      "type":"string"
+    },
+    "name":{
+      "type":"string"
+    },
+    "result":{
+      "type":"object",
+      "additionalProperties":{
+        "type":"integer"
+      }
+    },
+    "items":{
+      "type":"array",
+      "items":{
+        "type":"object",
+        "$ref":"item.json"
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "result"
+      ]
+    },
+    {
+      "required": [
+        "items"
+      ]
+    }
+  ]
+}

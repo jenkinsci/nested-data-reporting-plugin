@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -18,18 +21,20 @@ public class Item implements Serializable {
     
     private static final long serialVersionUID = -2800979294230808946L;
 
-    @JsonProperty("id")
+    @JsonProperty(value = "id", required = true)
     private String id;
 
     /** 
      * @since 2.4.0
      */
-    @JsonProperty("name")
+    @JsonProperty(value = "name", required = true)
     private String name;
-    
+
+    @JsonProperty(required = false)
     LinkedHashMap<String, Integer> result;
     
     @Nullable
+    @JsonProperty(required = false)
     List<Item> items;
 
     public String getId() {

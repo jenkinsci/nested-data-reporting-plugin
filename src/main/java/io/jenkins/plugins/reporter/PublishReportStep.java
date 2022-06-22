@@ -1,6 +1,6 @@
 package io.jenkins.plugins.reporter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -15,12 +15,19 @@ import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaClient;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.jenkinsci.Symbol;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -78,18 +85,31 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     
     @Override
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
-        listener.getLogger().println("Report data... ");
-        listener.getLogger().println("with label: " + getLabel());
+        listener.getLogger().println("[PublishReportStep] Report data... ");
+        listener.getLogger().println("[PublishReportStep] with label: " + getLabel());
         
         if (StringUtils.isNotBlank(getJsonFile())) {
             File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
             setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
         }
-
-        Result result = new ObjectMapper().readValue(getJsonString(), Result.class);
-        Report report = new Report(result, getLabel());
-     
-        run.addAction(new ReportAction(run, report));
+        
+        try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
+            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
+            SchemaLoader schemaLoader = SchemaLoader.builder()
+                    .schemaClient(SchemaClient.classPathAwareClient())
+                    .schemaJson(rawSchema)
+                    .resolutionScope("classpath:/")
+                    .build();
+            Schema schema = schemaLoader.load().build();
+            schema.validate(new JSONObject(getJsonString()));
+            
+            JacksonFacade jackson = new JacksonFacade();
+            Result result =  jackson.fromJson(getJsonString(), Result.class);
+            Report report = new Report(result, getLabel());
+            run.addAction(new ReportAction(run, report));
+        } catch (ValidationException e) {
+            listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());
+        }
     }
  
     @Extension 

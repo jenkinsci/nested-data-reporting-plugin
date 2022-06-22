@@ -18,9 +18,10 @@ public class Result implements Serializable {
 
     private static final long serialVersionUID = 7878818807240640969L;
             
-    @JsonProperty("items")
+    @JsonProperty(value = "items", required = true)
     private List<Item> items;
     
+    @JsonProperty(required = true)
     private Map<String, String> colors;
     
     public List<Item> getItems() {
