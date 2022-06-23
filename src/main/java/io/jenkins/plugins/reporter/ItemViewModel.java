@@ -16,7 +16,10 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +35,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
     private final Item item;
     private final String url;
     private final String label;
-    private final Map<String, String> colors;
+    private final ColorProvider colorProvider;
 
 
     /**
@@ -46,17 +49,17 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
      *          the corresponding item of this view.
      * @param label
      *          the label to be shown for this view.
-     * @param colors
-     *          the color mapping for the item result.
+     * @param colorProvider
+     *          the colorProvider (mapping for the item result).
      */
-    public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, Map<String, String> colors) {
+    public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, ColorProvider colorProvider) {
         super();
 
         this.owner = owner;
         this.url = url;
         this.item = item;
         this.label = label;
-        this.colors = colors;
+        this.colorProvider = colorProvider;
     }
 
     /**
@@ -82,7 +85,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
     public String getItemDataModel() {
         PieChartModel model = new PieChartModel(item.getId());
         item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                colors.get(key)));
+                colorProvider.getColor(key)));
         return new JacksonFacade().toJson(model);
     }
 
@@ -115,13 +118,13 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
         }
 
         return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
-                new ItemSeriesBuilder(item), colors));
+                new ItemSeriesBuilder(item), colorProvider));
     }
     
     @Override
     @SuppressWarnings("unused") // Called by jelly view
     public TableModel getTableModel(String id) {
-        return new ItemTableModel(item, colors);
+        return new ItemTableModel(item, colorProvider);
     }
 
     /**
@@ -164,7 +167,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colors);
+            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colorProvider);
         }
         catch (NoSuchElementException ignored) {
             try {

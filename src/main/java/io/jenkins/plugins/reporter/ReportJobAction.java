@@ -47,7 +47,8 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
     @Override
     protected LinesChartModel createChartModel(String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(),
-                getLatestAction().get().getReport().getResult().getColors());
+        ReportAction reportAction = getOwner().getLastCompletedBuild().getAction(ReportAction.class);
+        ColorProvider colorProvider = new ColorProvider(reportAction.getReport().getResult().getColors());
+        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), colorProvider);
     }
 }

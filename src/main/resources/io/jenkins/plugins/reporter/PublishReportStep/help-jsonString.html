@@ -1,7 +1,7 @@
 <div>
     <div>
         The configuration must be a valid JSON object with respect to the
-        <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/etc/result-model.json">given Schema</a>.
+        <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/etc/report.json">given Schema</a>.
         Each item from the components list can in turn contain a list of items. This nesting can be used arbitrarily deep.
     </div>
     <h3>Example</h3>
@@ -10,84 +10,54 @@
         {
             "items": [
                 {
-                    "id": "Aktie",
-                    "name": "Aktie",
+                    "id": "stocks",
+                    "name": "Stocks",
                     "items": [
                         {
-                            "id": "Aktien1",
-                            "name": "Aktien1",
+                            "id": "alphabet",
+                            "name": "Google",
                             "result": {
-                                "incorrect": 3541,
-                                "manually": 58,
-                                "accurate": 6399
+                                "incorrect": 1,
+                                "manually": 1,
+                                "accurate": 4
                             }
                         },
                         {
-                            "id": "Aktie2",
-                            "name": "Aktie2",
+                            "id": "microsoft",
+                            "name": "Microsoft",
                             "result": {
-                                "incorrect": 4488,
-                                "manually": 55,
-                                "accurate": 5456
-                            }
-                        },
-                        {
-                            "id": "Aktie3",
-                            "name": "Aktie3",
-                            "result": {
-                                "incorrect": 2973,
-                                "manually": 72,
-                                "accurate": 6954
-                            }
+                                "incorrect": 2,
+                                "manually": 1,
+                                "accurate": 5
+                            }               
                         }
-                    ]
+                     ]
                 },
                 {
-                    "id": "Not_Found",
-                    "name": "Not_Found",
-                    "items": [
-                        {
-                            "id": "Not_Found",
-                            "name": "Not_Found",
-                            "result": {
-                                "incorrect": 8701,
-                                "manually": 0,
-                                "accurate": 1298
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "Renten",
-                    "name": "Renten",
-                    "items": [
-                        {
-                            "id": "Rente1",
-                            "name": "Rente1",
-                            "result": {
-                                "incorrect": 5762,
-                                "manually": 49,
-                                "accurate": 4187
-                            }
-                        },
-                        {
-                            "id": "Rente2",
-                            "name": "Rente2",
-                            "result": {
-                                "incorrect": 2271,
-                                "manually": 79,
-                                "accurate": 7648
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "Derivat",
-                    "name": "Derivat",
+                    "id": "derivates",
+                    "name": "Derivates",
                     "result": {
-                        "incorrect": 2271,
-                        "manually": 79,
-                        "accurate": 7648
+                        "incorrect": 2,
+                        "manually": 3,
+                        "accurate": 10
+                    }
+                },
+                {
+                    "id": "fonds",
+                    "name": "Fonds",
+                    "result": {
+                        "incorrect": 6,
+                        "manually": 7,
+                        "accurate": 20
+                    }
+                },
+                {
+                    "id": "warrants",
+                    "name": "Warrants",
+                    "result": {
+                        "incorrect": 6,
+                        "manually": 4,
+                        "accurate": 15
                     }
                 }
             ],

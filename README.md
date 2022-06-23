@@ -99,7 +99,9 @@ To check your json you can use the [json schema](src/main/resources/report.json)
 > ⚠️ **Color Mapping**:
 >
 > The attribute "colors" needs exactly the same attributes as the result of the 
-> items and assigns a color to each attribute, which is used for the graphical representation.
+> items and assigns a color to each attribute, which is used for the graphical representation. Otherwise
+> a default color `#E9E9E9` is used for the missing property!
+
 
 ### Visualization
 
