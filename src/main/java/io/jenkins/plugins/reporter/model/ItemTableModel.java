@@ -5,6 +5,7 @@ import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
+import io.jenkins.plugins.reporter.ColorProvider;
 import io.jenkins.plugins.reporter.ItemViewModel;
 import org.apache.commons.text.CaseUtils;
 
@@ -24,21 +25,21 @@ import static j2html.TagCreator.span;
 public class ItemTableModel extends TableModel {
     
     private final Item item;
-    private final Map<String, String> colors;
+    private final ColorProvider colorProvider;
 
     /**
      * Creates a new instance of {@link ItemTableModel}.
      * 
      * @param item
      *         the item to render
-     * @param colors
+     * @param colorProvider
      *         the color mapping for the result.
      */
-    public ItemTableModel(Item item, Map<String, String> colors) {
+    public ItemTableModel(Item item, ColorProvider colorProvider) {
         super();
         
         this.item = item;
-        this.colors = colors;
+        this.colorProvider = colorProvider;
     }
     
     @Override
@@ -64,7 +65,7 @@ public class ItemTableModel extends TableModel {
     public List<Object> getRows() {
         return item.getItems()
             .stream()
-            .map(item -> new ItemRow(item, colors))
+            .map(item -> new ItemRow(item, colorProvider))
             .collect(Collectors.toList());
     }
 
@@ -109,19 +110,19 @@ public class ItemTableModel extends TableModel {
         private static final Sanitizer SANITIZER = new Sanitizer();
        
         private final Item item;
-        private final Map<String, String> colors;
+        private final ColorProvider colorProvider;
 
         /**
          * Creates a new instance of {@link ItemRow}.
          * 
          * @param item
          *          the item to render.
-         * @param colors
+         * @param colorProvider
          *          the color mapping for the result of the item.
          */
-        ItemRow(Item item, Map<String, String> colors) {
+        ItemRow(Item item, ColorProvider colorProvider) {
             this.item = item;
-            this.colors = colors;
+            this.colorProvider = colorProvider;
         }
         
         public String getId() {
@@ -169,7 +170,7 @@ public class ItemTableModel extends TableModel {
             StringBuilder builder = new StringBuilder();
             double oldPercentage = 0;
 
-            for (Map.Entry<String, String> color : colors.entrySet()) {
+            for (Map.Entry<String, String> color : colorProvider.getColorMapping().entrySet()) {
                 String id = color.getKey();
                 String hex = color.getValue();
                 
