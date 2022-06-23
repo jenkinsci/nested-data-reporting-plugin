@@ -26,6 +26,8 @@ public class TrendChart {
      * @param builder
      *          the {@link SeriesBuilder} to use for the model. {@link ItemSeriesBuilder} for each asset on
      *          build level or {@link ReportSeriesBuilder} for the aggregated result on job level.
+     * @param colorProvider
+     *          the color mapping for properties.
      *
      * @return the chart model, ready to be serialized to JSON
      */
