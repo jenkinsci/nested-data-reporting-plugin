@@ -48,7 +48,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     @DataBoundConstructor
     public PublishReportStep() {
         super();
-        this.label = "Nested Data Reporting";
+        this.label = Messages.Action_Name();
     }
     
     public String getJsonString() {

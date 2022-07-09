@@ -173,7 +173,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colorProvider, this);
+            return new ItemViewModel(owner, url, subItem, Messages.Module_Description(subItem.getName()), colorProvider, this);
         }
         catch (NoSuchElementException ignored) {
             try {

@@ -18,6 +18,7 @@ import org.kohsuke.stapler.StaplerProxy;
 public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
+    private final static String REPORT_ID = "report";
 
     /**
      * Creates a new instance of {@link ReportAction}.
@@ -67,7 +68,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     protected String getBuildResultBaseName() {
-        return "data-report.xml";
+        return "nested-data-report.xml";
     }
 
     @Override
@@ -93,8 +94,8 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
     @Override
     public ItemViewModel getTarget() {
         Item item = new Item();
-        item.setId("report");
-        item.setName("Report Overview");
+        item.setId(REPORT_ID);
+        item.setName(Messages.Module_Name());
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         

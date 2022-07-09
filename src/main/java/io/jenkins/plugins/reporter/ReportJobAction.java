@@ -19,7 +19,7 @@ import java.util.Optional;
 public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportAction> {
     
     static final String ICON = "/plugin/nested-data-reporting/icons/data-reporting-icon.svg";
-    static final String ID = "data-reporting";
+    static final String ID = "nested-data-reporting";
 
     /**
      * Creates a new instance of {@link ReportJobAction}.
