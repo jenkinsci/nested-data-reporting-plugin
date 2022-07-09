@@ -11,7 +11,7 @@
    <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
   </a>
 
-  <h1 align="center">Data Reporting Plugin</h1>
+  <h1 align="center">Nested Data Reporting Plugin</h1>
 
   <p align="center">
     Jenkins plugin to report data from nested json as pie-charts, trend-charts and data tables.
