@@ -6,6 +6,13 @@ import hudson.model.Job;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
+import org.apache.commons.collections.MapUtils;
+
+import javax.swing.text.html.Option;
+import java.awt.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -46,8 +53,15 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
     @Override
     protected LinesChartModel createChartModel(String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-        ReportAction reportAction = getOwner().getLastCompletedBuild().getAction(ReportAction.class);
-        ColorProvider colorProvider = new ColorProvider(reportAction.getReport().getResult().getColors());
-        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), colorProvider);
+        Optional<ReportAction> reportAction = getOwner().getBuilds()
+                .stream().map(build -> Optional.ofNullable(build.getAction(ReportAction.class)))
+                .filter(Optional::isPresent).findFirst().orElse(Optional.empty());
+        
+        if (reportAction.isPresent()) {
+            ColorProvider colorProvider = new ColorProvider(reportAction.get().getReport().getResult().getColors());
+            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), colorProvider);
+        }
+
+        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new ColorProvider(Collections.emptyMap()));
     }
 }
