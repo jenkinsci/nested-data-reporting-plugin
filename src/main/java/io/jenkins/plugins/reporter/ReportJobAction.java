@@ -15,8 +15,7 @@ import io.jenkins.plugins.reporter.charts.TrendChart;
  */
 public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportAction> {
     
-    static final String SMALL_ICON = "/plugin/data-reporting/icons/data-reporting-24x24.png";
-    static final String BIG_ICON = "/plugin/data-reporting/icons/data-reporting-48x48.png";
+    static final String ICON = "/plugin/data-reporting/icons/data-reporting-icon.svg";
     static final String ID = "data-reporting";
 
     /**
@@ -31,7 +30,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
     
     @Override
     public String getIconFileName() {
-        return BIG_ICON;
+        return ICON;
     }
 
     @Override

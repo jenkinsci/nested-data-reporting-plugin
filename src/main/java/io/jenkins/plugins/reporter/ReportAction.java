@@ -72,7 +72,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getIconFileName() {
-        return ReportJobAction.BIG_ICON;
+        return ReportJobAction.ICON;
     }
 
     @Override
