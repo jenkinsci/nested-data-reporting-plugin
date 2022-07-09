@@ -11,6 +11,7 @@ import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ItemTableModel;
+import jline.internal.Nullable;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -36,6 +37,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
     private final String url;
     private final String label;
     private final ColorProvider colorProvider;
+    private final ItemViewModel parentViewModel;
 
 
     /**
@@ -51,8 +53,11 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
      *          the label to be shown for this view.
      * @param colorProvider
      *          the colorProvider (mapping for the item result).
+     * @param parentViewModel 
+     *          the view model of parent item.
      */
-    public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, ColorProvider colorProvider) {
+    public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, 
+                         final ColorProvider colorProvider, @Nullable final ItemViewModel parentViewModel) {
         super();
 
         this.owner = owner;
@@ -60,6 +65,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
         this.item = item;
         this.label = label;
         this.colorProvider = colorProvider;
+        this.parentViewModel = parentViewModel;
     }
 
     /**
@@ -167,7 +173,7 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colorProvider);
+            return new ItemViewModel(owner, url, subItem, String.format("Module: %s", subItem.getName()), colorProvider, this);
         }
         catch (NoSuchElementException ignored) {
             try {
@@ -178,5 +184,23 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
             }
             return this; // fallback on broken URLs
         }
+    }
+
+    /**
+     * Get the view model of parent item.
+     * 
+     * @return the view model of parent item.
+     */
+    public ItemViewModel getPreviousPage() {
+        return parentViewModel;
+    }
+
+    /**
+     * Get the label of the view model.
+     * 
+     * @return the label.
+     */
+    public String getLabel() {
+        return label;
     }
 }

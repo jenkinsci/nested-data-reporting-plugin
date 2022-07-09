@@ -6,13 +6,9 @@ import hudson.model.Job;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
-import org.apache.commons.collections.MapUtils;
 
-import javax.swing.text.html.Option;
-import java.awt.*;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
