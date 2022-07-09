@@ -7,8 +7,6 @@ import io.jenkins.plugins.util.BuildAction;
 import io.jenkins.plugins.util.JobAction;
 import org.kohsuke.stapler.StaplerProxy;
 
-import java.util.Optional;
-
 /**
  * Controls the life cycle of the data report a job. This action persists the results of a data report.
  * 

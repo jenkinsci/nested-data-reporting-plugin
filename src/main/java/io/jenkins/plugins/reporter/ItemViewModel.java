@@ -1,8 +1,6 @@
 package io.jenkins.plugins.reporter;
 
 import edu.hm.hafner.echarts.*;
-import hudson.Extension;
-import hudson.ExtensionPoint;
 import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -13,7 +11,6 @@ import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ItemTableModel;
-import jenkins.model.Jenkins;
 import jline.internal.Nullable;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
