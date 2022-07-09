@@ -5,7 +5,7 @@
    
   <bs:page it="${it}">
        
-      <link rel="stylesheet" href="${resURL}/plugin/data-reporting/css/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/nested-data-reporting/css/custom-style.css"/>
              
       <div class="row py-3 flex-nowrap">
             
@@ -50,7 +50,7 @@
       </j:if>
                 
       <script>var view = <st:bind value="${it}"/></script>
-      <script type="text/javascript" src="${resURL}/plugin/data-reporting/js/item.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/nested-data-reporting/js/item.js"/>
         
   </bs:page>
   

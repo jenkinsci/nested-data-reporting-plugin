@@ -8,10 +8,10 @@
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>data-reporting</artifactId>
+    <artifactId>nested-data-reporting</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
-    <name>Data Reporting</name>
+    <name>Nested Data Reporting</name>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     
     <licenses>
