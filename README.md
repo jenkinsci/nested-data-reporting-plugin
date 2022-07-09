@@ -8,7 +8,7 @@
 <br />
 <p align="center">
   <a href="#">
-   <img src="src/main/webapp/icons/data-reporting-48x48.png" alt="Logo" width="100" height="100">
+   <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
   </a>
 
   <h1 align="center">Data Reporting Plugin</h1>
