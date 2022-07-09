@@ -129,7 +129,7 @@ The limited visualization from version **2.3.0** is thus resolved.
 
 ### Example
 
-![ui](etc/ui-2.4.0.png)
+![ui](etc/ui-3.0.0.png)
 
 ## Getting started
 
@@ -150,7 +150,7 @@ or
 - **`jsonString`** the json model as string.
 
 and **optional**
-- **`label`** the label for the build action (default: "Data Reporting").
+- **`label`** the label for the build action (default: "Nested Data Reporting").
 
 ## Issues
 
