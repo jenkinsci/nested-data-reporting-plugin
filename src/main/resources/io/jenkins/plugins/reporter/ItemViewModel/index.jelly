@@ -1,12 +1,13 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" 
+    xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome">
     
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
    
   <bs:page it="${it}">
        
       <link rel="stylesheet" href="${resURL}/plugin/nested-data-reporting/css/custom-style.css"/>
-             
+              
       <div class="row py-3 flex-nowrap">
             
           <div class="col-5">
@@ -47,6 +48,16 @@
             
           </div>
       
+      </j:if>
+      
+      <j:if test="${it.previousPage != null}">
+          <div class="module-previous-next-controls">
+             <a href="../" class="jenkins-button jenkins-button--transparent module-previous-button">
+               <fa:svg-icon name="arrow-left"/>
+               <span>${%previous}</span>
+               <span>${it.previousPage.label}</span>
+             </a>
+         </div>
       </j:if>
                 
       <script>var view = <st:bind value="${it}"/></script>

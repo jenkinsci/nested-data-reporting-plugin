@@ -7,6 +7,8 @@ import io.jenkins.plugins.util.BuildAction;
 import io.jenkins.plugins.util.JobAction;
 import org.kohsuke.stapler.StaplerProxy;
 
+import java.util.Optional;
+
 /**
  * Controls the life cycle of the data report a job. This action persists the results of a data report.
  * 
@@ -98,6 +100,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         
-        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), new ColorProvider(report.getResult().getColors()));
+        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), 
+                new ColorProvider(report.getResult().getColors()), null);
     }
 }
