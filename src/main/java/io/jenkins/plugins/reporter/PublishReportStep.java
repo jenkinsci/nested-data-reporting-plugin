@@ -13,6 +13,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.Schema;
@@ -88,10 +89,13 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         listener.getLogger().println("[PublishReportStep] Report data... ");
         listener.getLogger().println("[PublishReportStep] with label: " + getLabel());
         
+        String json;
+        
         if (StringUtils.isNotBlank(getJsonFile())) {
             FilePath jsonFile = workspace.child(getJsonFile());
-            String jsonString = jsonFile.readToString();
-            setJsonString(jsonString);
+            json = jsonFile.readToString();
+        } else {
+            json = getJsonString();
         }
         
         try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
@@ -102,12 +106,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                     .resolutionScope("classpath:/")
                     .build();
             Schema schema = schemaLoader.load().build();
-            schema.validate(new JSONObject(getJsonString()));
+            schema.validate(new JSONObject(json));
             
             JacksonFacade jackson = new JacksonFacade();
-            Result result =  jackson.fromJson(getJsonString(), Result.class);
+            Result result =  jackson.fromJson(json, Result.class);
             Report report = new Report(result, getLabel());
             run.addAction(new ReportAction(run, report));
+
+            listener.getLogger().println("[PublishReportStep] Add report to current build.");
+            
         } catch (ValidationException e) {
             listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());
         }
