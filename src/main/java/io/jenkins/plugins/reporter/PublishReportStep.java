@@ -89,8 +89,9 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         listener.getLogger().println("[PublishReportStep] with label: " + getLabel());
         
         if (StringUtils.isNotBlank(getJsonFile())) {
-            File jsonFile = new File(workspace.toURI().getPath(), getJsonFile());
-            setJsonString(new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8));
+            FilePath jsonFile = workspace.child(getJsonFile());
+            String jsonString = jsonFile.readToString();
+            setJsonString(jsonString);
         }
         
         try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
