@@ -78,7 +78,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getDisplayName() {
-        return report.getLabel();
+        return Messages.Action_Name();
     }
 
     @Override
