@@ -13,7 +13,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.Schema;
@@ -26,12 +25,9 @@ import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -44,12 +40,10 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     
     private String jsonString;
     private String jsonFile;
-    private String label;
     
     @DataBoundConstructor
     public PublishReportStep() {
         super();
-        this.label = Messages.Action_Name();
     }
     
     public String getJsonString() {
@@ -70,15 +64,6 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         this.jsonFile = jsonFile;
     }
     
-    public String getLabel() {
-        return label;
-    }
-
-    @DataBoundSetter
-    public void setLabel(String label) {
-        this.label = label;
-    }
-    
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -87,7 +72,6 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     @Override
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("[PublishReportStep] Report data... ");
-        listener.getLogger().println("[PublishReportStep] with label: " + getLabel());
         
         String json;
         
@@ -110,7 +94,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             
             JacksonFacade jackson = new JacksonFacade();
             Result result =  jackson.fromJson(json, Result.class);
-            Report report = new Report(result, getLabel());
+            Report report = new Report(result);
             run.addAction(new ReportAction(run, report));
 
             listener.getLogger().println("[PublishReportStep] Add report to current build.");

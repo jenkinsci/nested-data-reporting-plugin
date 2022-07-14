@@ -129,14 +129,14 @@ The limited visualization from version **2.3.0** is thus resolved.
 
 ### Example
 
-![ui](etc/ui-3.0.0.png)
+![ui](etc/ui-3.2.0.png)
 
 ## Getting started
 
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json", label: 'My awesome label' 
+publishReport jsonFile: "etc/result.json"
 ```
 
 #### Parameter: 
@@ -148,9 +148,6 @@ The currently supported parameters are:
 or 
 
 - **`jsonString`** the json model as string.
-
-and **optional**
-- **`label`** the label for the build action (default: "Nested Data Reporting").
 
 ## Issues
 
