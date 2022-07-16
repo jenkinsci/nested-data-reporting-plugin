@@ -163,8 +163,8 @@ public class ItemTableModel extends TableModel {
                 
                 spans.add(span()
                         .withTitle(String.format("%s: %.2f%%", id, percentage))
-                        .withStyle(String.format("display: inline-block; color: transparent; " +
-                                "width: %.2f%%; background-color: %s", percentage, hex))
+                        .withClass("distribution")
+                        .withStyle(String.format("width: %.2f%%; background-color: %s", percentage, hex))
                         .withText(item.getId())
                         .attr("data-bs-toggle", "tooltip")
                         .attr("data-bs-placement", "left"));

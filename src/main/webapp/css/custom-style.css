@@ -66,3 +66,12 @@
 .module-previous-next-controls .module-previous-button:hover svg {
     transform: translateX(-2px);
 }
+
+.distribution {
+    display: inline-block; 
+    color: transparent;
+}
+
+.distribution:hover {
+    filter: brightness(110%);
+}
