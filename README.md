@@ -16,12 +16,12 @@
   <p align="center">
     Jenkins plugin to report data from nested json as pie-charts, trend-charts and data tables.
     <br />
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/issues">Report Bug</a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Report Bug</a>
     ·
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/issues">Request Feature</a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Request Feature</a>
   </p>
 </p>
 
@@ -151,7 +151,7 @@ or
 
 ## Issues
 
-Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/simonsymhoven/data-reporting-plugin/issues)
+Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/jenkinsci/nested-data-reporting-plugin/issues)
 
 ## Contributing
 
