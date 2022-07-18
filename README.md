@@ -3,7 +3,9 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
 ![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
-![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting-plugin?label=latest%20version)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/)
+![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting)
+![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/nested-data-reporting)
 
 <br />
 <p align="center">
