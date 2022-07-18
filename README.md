@@ -1,9 +1,9 @@
-![GitHub](https://img.shields.io/github/license/simonsymhoven/data-reporting-plugin)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/simonsymhoven/data-reporting-plugin)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/simonsymhoven/data-reporting-plugin)
-![Open GitHub issues](https://img.shields.io/github/issues/simonsymhoven/data-reporting-plugin)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/simonsymhoven/data-reporting-plugin/GitHub%20CI/master?label=GitHub%20CI)
-![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/data-reporting-plugin?label=latest%20version)
+![GitHub](https://img.shields.io/github/license/jenkinsci/nested-data-reporting-plugin)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jenkinsci/nested-data-reporting-plugin)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
+![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
+![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting-plugin?label=latest%20version)
 
 <br />
 <p align="center">
@@ -16,12 +16,12 @@
   <p align="center">
     Jenkins plugin to report data from nested json as pie-charts, trend-charts and data tables.
     <br />
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/issues">Report Bug</a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Report Bug</a>
     ·
-    <a href="https://github.com/simonsymhoven/data-reporting-plugin/issues">Request Feature</a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Request Feature</a>
   </p>
 </p>
 
@@ -151,7 +151,7 @@ or
 
 ## Issues
 
-Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/simonsymhoven/data-reporting-plugin/issues)
+Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/jenkinsci/nested-data-reporting-plugin/issues)
 
 ## Contributing
 
