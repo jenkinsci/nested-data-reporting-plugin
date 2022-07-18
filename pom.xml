@@ -9,7 +9,7 @@
     </parent>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>nested-data-reporting</artifactId>
-    <version>3.3.0</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
     <name>Nested Data Reporting</name>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
@@ -37,7 +37,7 @@
     </scm>    
     
     <properties>
-        <revision>3.3.0</revision>
+        <revision>3.3.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.baseline>2.332</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.4</jenkins.version>
