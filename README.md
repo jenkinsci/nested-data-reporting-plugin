@@ -1,9 +1,9 @@
-![GitHub](https://img.shields.io/github/license/simonsymhoven/data-reporting-plugin)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/simonsymhoven/data-reporting-plugin)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/simonsymhoven/data-reporting-plugin)
-![Open GitHub issues](https://img.shields.io/github/issues/simonsymhoven/data-reporting-plugin)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/simonsymhoven/data-reporting-plugin/GitHub%20CI/master?label=GitHub%20CI)
-![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/data-reporting-plugin?label=latest%20version)
+![GitHub](https://img.shields.io/github/license/jenkinsci/nested-data-reporting-plugin)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jenkinsci/nested-data-reporting-plugin)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
+![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
+![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting-plugin?label=latest%20version)
 
 <br />
 <p align="center">
