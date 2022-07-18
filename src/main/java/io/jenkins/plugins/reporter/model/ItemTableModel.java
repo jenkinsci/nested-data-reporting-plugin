@@ -7,6 +7,7 @@ import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.reporter.ColorProvider;
 import io.jenkins.plugins.reporter.ItemViewModel;
+import j2html.tags.ContainerTag;
 import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static j2html.TagCreator.div;
 import static j2html.TagCreator.span;
 
 /**
@@ -148,27 +150,9 @@ public class ItemTableModel extends TableModel {
         }
         
         protected DetailedCell<String> createColoredResultColumn(final Item item) {
-           String tag = span()
-                    .withTitle(item.getResult().values().stream().map(Object::toString).collect(Collectors.joining("/")))
-                    .withStyle(String.format("color: transparent; background-image: linear-gradient(to right %s); display:block;", createGradient()))
-                    .withText(item.getId())
-                    .attr("data-bs-toggle", "tooltip")
-                    .attr("data-bs-placement", "left")
-                    .render();
-            
-            return new DetailedCell<>(tag, null);
-        }
+            List<ContainerTag> spans = new ArrayList<>();
 
-        /**
-         * Creates the gradient for the distribution for each subitem of item to display in the table cell.
-         * 
-         * @return the html string with gradient.
-         */
-        protected String createGradient() {
             int total = item.getResult().values().stream().reduce(0, Integer::sum);
-            
-            StringBuilder builder = new StringBuilder();
-            double oldPercentage = 0;
 
             for (Map.Entry<String, String> color : colorProvider.getColorMapping().entrySet()) {
                 String id = color.getKey();
@@ -176,12 +160,19 @@ public class ItemTableModel extends TableModel {
                 
                 int val = item.getResult().get(id);
                 double percentage = (val / (double) total) * 100;
-                builder.append(String.format(", %s %s%%, %s %s%%", hex, oldPercentage, hex, oldPercentage + percentage));
-                oldPercentage += percentage;
+                
+                spans.add(span()
+                        .withTitle(String.format("%s: %.2f%%", id, percentage))
+                        .withClass("distribution")
+                        .withStyle(String.format("width: %.2f%%; background-color: %s", percentage, hex))
+                        .withText(item.getId())
+                        .attr("data-bs-toggle", "tooltip")
+                        .attr("data-bs-placement", "left"));
             }
             
-            return builder.toString();
+            return new DetailedCell<>(div().with(spans).render(), null);
         }
+
 
         /**
          * Formats the text of the specified property column. The text actually is a link to the UI representation of
