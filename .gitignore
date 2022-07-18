@@ -15,3 +15,7 @@ work
 .project
 
 .DS_Store
+
+pom.xml.versionsBackup
+pom.xml.releaseBackup
+release.properties
