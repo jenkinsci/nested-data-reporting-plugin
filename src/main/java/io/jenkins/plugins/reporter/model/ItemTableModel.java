@@ -128,7 +128,7 @@ public class ItemTableModel extends TableModel {
         }
         
         public String getId() {
-            return item.getId();
+            return render(item.getId());
         }
         
         public String getName() {
