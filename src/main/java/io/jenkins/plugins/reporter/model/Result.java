@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -43,13 +45,25 @@ public class Result implements Serializable {
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      * 
+     * @param filter
+     *          the filter to evaluate on the result.
      * @return the aggregated result.
      */
-    public LinkedHashMap<String, Integer> aggregate() {
+    public LinkedHashMap<String, Integer> aggregate(Predicate<? super Item> filter) {
         return getItems()
                 .stream()
+                .filter(filter)
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
+    }
+
+    /**
+     * Aggregates the results of all items. The values are added together, grouped by key. 
+     *
+     * @return the aggregated result.
+     */
+    public LinkedHashMap<String, Integer> aggregate() {
+        return aggregate(item -> {return true;});
     }
 }

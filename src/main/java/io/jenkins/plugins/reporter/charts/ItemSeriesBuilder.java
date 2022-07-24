@@ -28,6 +28,10 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
 
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
-        return item.getResult();
+        if (item.getId().equals(ReportAction.REPORT_ID)) {
+            return reportAction.getReport().getResult().aggregate();
+        }
+        
+        return reportAction.getReport().getResult().aggregate(i -> i.getId().equals(item.getId()));
     }
 }

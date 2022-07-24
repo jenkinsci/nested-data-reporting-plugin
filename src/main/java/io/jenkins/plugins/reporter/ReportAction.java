@@ -18,7 +18,7 @@ import org.kohsuke.stapler.StaplerProxy;
 public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
-    private final static String REPORT_ID = "report";
+    public final static String REPORT_ID = "report";
 
     /**
      * Creates a new instance of {@link ReportAction}.
