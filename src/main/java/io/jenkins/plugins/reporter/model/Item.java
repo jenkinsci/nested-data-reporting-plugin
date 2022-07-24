@@ -64,7 +64,7 @@ public class Item implements Serializable {
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
-
+    
     public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }
