@@ -11,6 +11,7 @@ import j2html.tags.ContainerTag;
 import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +57,10 @@ public class ItemTableModel extends TableModel {
         columns.add(createIdColumn());
         columns.add(createNameColumn());
 
-        item.getResult().keySet().forEach(property -> columns.add(createResultColumn(property)));
+        item.getResult().keySet().forEach(property -> {
+            columns.add(createResultAbsoluteColumn(property));
+            columns.add(createResultRelativeColumn(property));
+        });
         
         columns.add(createDistributionColumn());
      
@@ -87,11 +91,19 @@ public class ItemTableModel extends TableModel {
                 .build();
     }
 
-    protected TableColumn createResultColumn(String property) {
+    protected TableColumn createResultAbsoluteColumn(String property) {
         return new TableColumn.ColumnBuilder()
-                .withDataPropertyKey(property)
-                .withHeaderLabel(CaseUtils.toCamelCase(property, true))
+                .withDataPropertyKey(String.format("%s-absolute", property))
+                .withHeaderLabel(String.format("# %s", CaseUtils.toCamelCase(property, true)))
                 .withHeaderClass(TableColumn.ColumnCss.NUMBER)
+                .build();
+    }
+
+    protected TableColumn createResultRelativeColumn(String property) {
+        return new TableColumn.ColumnBuilder()
+                .withDataPropertyKey(String.format("%s-relative", property))
+                .withHeaderLabel(String.format("%s (in %%)", CaseUtils.toCamelCase(property, true)))
+                .withHeaderClass(TableColumn.ColumnCss.PERCENTAGE)
                 .build();
     }
 
@@ -145,21 +157,26 @@ public class ItemTableModel extends TableModel {
          * @return the result.
          */
         @JsonAnyGetter
-        public Map<String, Integer> getResult() {
-            return item.getResult();
+        public Map<String, Number> getResult() {
+            Map<String, Number> result = new HashMap<>();
+            
+            item.getResult().forEach((String key, Integer value) -> {
+                result.put(String.format("%s-absolute", key), value);
+                result.put(String.format("%s-relative", key), (value / (double) item.getTotal()));
+            });
+            
+            return result;
         }
         
         protected DetailedCell<String> createColoredResultColumn(final Item item) {
             List<ContainerTag> spans = new ArrayList<>();
-
-            int total = item.getResult().values().stream().reduce(0, Integer::sum);
 
             for (Map.Entry<String, String> color : colorProvider.getColorMapping().entrySet()) {
                 String id = color.getKey();
                 String hex = color.getValue();
                 
                 int val = item.getResult().get(id);
-                double percentage = (val / (double) total) * 100;
+                double percentage = (val / (double) item.getTotal()) * 100;
                 
                 spans.add(span()
                         .withTitle(String.format("%s: %.2f%%", id, percentage))
