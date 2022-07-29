@@ -78,4 +78,8 @@ public class Item implements Serializable {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+    
+    public int getTotal() {
+        return getResult().values().stream().reduce(0, Integer::sum);
+    }
 }
