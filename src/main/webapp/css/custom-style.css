@@ -75,3 +75,7 @@
 .distribution:hover {
     filter: brightness(110%);
 }
+
+tfoot {
+    font-weight: bold;
+}

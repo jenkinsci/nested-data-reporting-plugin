@@ -5,8 +5,6 @@ import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.RunList;
-import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
-import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
-public class ItemViewModel extends DefaultAsyncTableContentProvider implements ModelObject {
+public class ItemViewModel implements ModelObject {
     
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
@@ -127,9 +125,8 @@ public class ItemViewModel extends DefaultAsyncTableContentProvider implements M
                 new ItemSeriesBuilder(item), colorProvider));
     }
     
-    @Override
     @SuppressWarnings("unused") // Called by jelly view
-    public TableModel getTableModel(String id) {
+    public ItemTableModel getTableModel(String id) {
         return new ItemTableModel(item, colorProvider);
     }
 

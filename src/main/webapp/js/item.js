@@ -9,6 +9,21 @@
     redrawTrendCharts();
 
     /**
+     * Create a data table instance for all tables that are marked with class "item-table".
+     */
+    const tables = $('table.item-table');
+    tables.each(function () {
+        const table = jQuery3(this);
+        table.DataTable({
+            pagingType: 'numbers', // Page number button only
+            columnDefs: [{
+                targets: 'no-sort', // Columns with class 'no-sort' are not orderable
+                orderable: false
+            }]
+        });
+    });
+    
+    /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
      */
