@@ -1,13 +1,16 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" xmlns:dt="/data-tables" 
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts" 
     xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome">
     
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
-   
+    
   <bs:page it="${it}">
        
       <link rel="stylesheet" href="${resURL}/plugin/nested-data-reporting/css/custom-style.css"/>
-              
+      
+      <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+      <st:adjunct includes="io.jenkins.plugins.data-tables"/>
+               
       <div class="row py-3 flex-nowrap">
             
           <div class="col-5">
@@ -39,9 +42,77 @@
                 <div class="col-12">
                     
                     <bs:card class="h-100" bodyClass="pd-20" title="${%Distribution}" fontAwesomeIcon="bars-progress">
-                    
-                        <dt:table model="${it.getTableModel(it.item.id)}"/>
                         
+                        <j:set var="t" value="${it.getTableModel(it.item.id)}"/>
+                        <j:set var="rows" value="${t.rows}"/>
+                        <j:set var="columns" value="${t.columns}"/>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped display item-table" id="${t.id}" isLoaded="true">
+                                <colgroup>
+                                    <col class="col-width-5"/>
+                                        
+                                    <j:forEach var="column" items="${columns}">
+                                        <col class="col-width-1 text-end" />
+                                    </j:forEach>
+                                    
+                                    <col class="col-width-5"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>${%Name}</th>
+                                        
+                                        <j:forEach var="column" items="${columns}">
+                                            <th class="text-end">${column.headerLabel}</th>
+                                        </j:forEach>
+                                        
+                                        <th class="no-sort">${%Distribution}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <j:forEach var="row" items="${rows}">
+                                        <tr>
+                                            <td>
+                                                <a href="${row.id.hashCode()}/"
+                                                    data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
+                                                    ${row.name}</a>
+                                            </td>
+                                            
+                                            <j:forEach var="i" items="${row.item.result}">
+                                                <td class="text-end">${i.value}</td>
+                                            </j:forEach>
+                                                                                    
+                                            <td>
+                                                <div>
+                                                     <j:forEach var="color" items="${row.colorProvider.colorMapping}">
+                                                        <j:set var="id" value="${color.key}"/>
+                                                        <j:set var="hex" value="${color.value}"/>
+                                                        <j:set var="val" value="${row.item.result.get(id)}"/>
+                                                        <j:set var="percentage" value="${val / row.item.total * 100}"/>
+                                                        
+                                                        <span class="distribution" style="width: ${percentage}%; background-color: ${hex}"
+                                                              data-bs-toggle="tooltip" data-bs-placement="left" 
+                                                              title="${row.tooltip(id, percentage)}">.</span>
+                                                                                                          
+                                                    </j:forEach>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </j:forEach>
+                                    <tfoot>
+                                        <tr>
+                                            <td>${%Total}</td>
+                                            <j:forEach var="i" items="${t.item.result}">
+                                                <td class="text-end">${i.value}</td>
+                                            </j:forEach>
+                                           
+                                            <td/>
+                                        </tr>
+                                    </tfoot>
+                                </tbody>
+                            </table>
+                       </div>
+                            
                     </bs:card>
     
                 </div>

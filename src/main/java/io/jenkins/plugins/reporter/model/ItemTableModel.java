@@ -1,23 +1,13 @@
 package io.jenkins.plugins.reporter.model;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
-import io.jenkins.plugins.datatables.TableModel;
-import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.reporter.ColorProvider;
 import io.jenkins.plugins.reporter.ItemViewModel;
-import j2html.tags.ContainerTag;
 import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.span;
 
 /**
  * Provides the model for the item table. The model displays the distribution for the subitems and the id column is 
@@ -25,7 +15,7 @@ import static j2html.TagCreator.span;
  *
  * @author Simon Symhoven
  */
-public class ItemTableModel extends TableModel {
+public class ItemTableModel {
     
     private final Item item;
     private final ColorProvider colorProvider;
@@ -45,84 +35,40 @@ public class ItemTableModel extends TableModel {
         this.colorProvider = colorProvider;
     }
     
-    @Override
     public String getId() {
         return item.getId();
     }
 
-    @Override
+    public Item getItem() {
+        return item;
+    }
+    
     public List<TableColumn> getColumns() {
         List<TableColumn> columns = new ArrayList<>();
-        
-        columns.add(createIdColumn());
-        columns.add(createNameColumn());
-
-        item.getResult().keySet().forEach(property -> {
-            columns.add(createResultAbsoluteColumn(property));
-            columns.add(createResultRelativeColumn(property));
-        });
-        
-        columns.add(createDistributionColumn());
-     
+        item.getResult().keySet().forEach(property -> columns.add(createResultAbsoluteColumn(property)));
         return columns;
     }
-
-    @Override
-    public List<Object> getRows() {
+    
+    public List<ItemRow> getRows() {
         return item.getItems()
             .stream()
             .map(item -> new ItemRow(item, colorProvider))
             .collect(Collectors.toList());
     }
 
-    protected TableColumn createIdColumn() {
-        return new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("id")
-                .withHeaderLabel("ID")
-                .withHeaderClass(TableColumn.ColumnCss.HIDDEN)
-                .build();
-    }
-    
-    protected TableColumn createNameColumn() {
-        return new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("name")
-                .withHeaderLabel("Name")
-                .withHeaderClass(TableColumn.ColumnCss.NONE)
-                .build();
-    }
-
     protected TableColumn createResultAbsoluteColumn(String property) {
         return new TableColumn.ColumnBuilder()
                 .withDataPropertyKey(String.format("%s-absolute", property))
-                .withHeaderLabel(String.format("# %s", CaseUtils.toCamelCase(property, true)))
+                .withHeaderLabel(CaseUtils.toCamelCase(property, true))
                 .withHeaderClass(TableColumn.ColumnCss.NUMBER)
                 .build();
     }
 
-    protected TableColumn createResultRelativeColumn(String property) {
-        return new TableColumn.ColumnBuilder()
-                .withDataPropertyKey(String.format("%s-relative", property))
-                .withHeaderLabel(String.format("%s (in %%)", CaseUtils.toCamelCase(property, true)))
-                .withHeaderClass(TableColumn.ColumnCss.PERCENTAGE)
-                .build();
-    }
-
-    protected TableColumn createDistributionColumn() {
-        return new TableColumn.ColumnBuilder()
-                .withDataPropertyKey("distribution")
-                .withHeaderLabel("Distribution")
-                .withHeaderClass(TableColumn.ColumnCss.NO_SORT)
-                .withDetailedCell()
-                .build();
-    }
-    
     /**
      * A table row that shows the properties of an item.
      */
     public static class ItemRow {
         
-        private static final Sanitizer SANITIZER = new Sanitizer();
-       
         private final Item item;
         private final ColorProvider colorProvider;
 
@@ -140,82 +86,23 @@ public class ItemTableModel extends TableModel {
         }
         
         public String getId() {
-            return render(item.getId());
+            return item.getId();
         }
         
         public String getName() {
-            return formatProperty(item.getId(), item.getName());
+            return item.getName();
         }
         
-        public DetailedCell<String> getDistribution() {
-            return createColoredResultColumn(item);
-        }
-
-        /**
-         * Used to get a Getter for each property of the dynamic result of the item.
-         * 
-         * @return the result.
-         */
-        @JsonAnyGetter
-        public Map<String, Number> getResult() {
-            Map<String, Number> result = new HashMap<>();
-            
-            item.getResult().forEach((String key, Integer value) -> {
-                result.put(String.format("%s-absolute", key), value);
-                result.put(String.format("%s-relative", key), (value / (double) item.getTotal()));
-            });
-            
-            return result;
+        public Item getItem() {
+            return item;
         }
         
-        protected DetailedCell<String> createColoredResultColumn(final Item item) {
-            List<ContainerTag> spans = new ArrayList<>();
-
-            for (Map.Entry<String, String> color : colorProvider.getColorMapping().entrySet()) {
-                String id = color.getKey();
-                String hex = color.getValue();
-                
-                int val = item.getResult().get(id);
-                double percentage = (val / (double) item.getTotal()) * 100;
-                
-                spans.add(span()
-                        .withTitle(String.format("%s: %.2f%%", id, percentage))
-                        .withClass("distribution")
-                        .withStyle(String.format("width: %.2f%%; background-color: %s", percentage, hex))
-                        .withText(item.getId())
-                        .attr("data-bs-toggle", "tooltip")
-                        .attr("data-bs-placement", "left"));
-            }
-            
-            return new DetailedCell<>(div().with(spans).render(), null);
+        public ColorProvider getColorProvider() {
+            return colorProvider;
         }
-
-
-        /**
-         * Formats the text of the specified property column. The text actually is a link to the UI representation of
-         * the property.
-         *
-         * @param link
-         *         the property to use as link
-         * @param value
-         *         the value of the property to be shown
-         *
-         * @return the formatted column
-         */
-        protected String formatProperty(final String link, final String value) {
-            return String.format("<a href=\"%d/\">%s</a>", link.hashCode(), render(value));
-        }
-
-        /**
-         * Renders the specified HTML code. Removes unsafe HTML constructs.
-         *
-         * @param html
-         *         the HTML to render
-         *
-         * @return safe HTML
-         */
-        protected final String render(final String html) {
-            return SANITIZER.render(html);
+        
+        public String tooltip(String id, double percentage) {
+            return String.format("%s: %.2f%%", id, percentage);
         }
     }
 }
