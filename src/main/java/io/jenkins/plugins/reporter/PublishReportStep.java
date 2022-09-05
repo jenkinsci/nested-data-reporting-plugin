@@ -1,10 +1,6 @@
 package io.jenkins.plugins.reporter;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -104,20 +100,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         
         FilePath filePath = workspace.child(getReportFile());
         String extension =  FilenameUtils.getExtension(filePath.getName()).toLowerCase(Locale.ROOT);
-        ObjectMapper jsonWriter = new ObjectMapper();
+        
         String json;
 
         switch (extension) {
             case "yaml":
             case "yml": {
+                ObjectMapper jsonWriter = new ObjectMapper();
                 ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
                 Object obj = yamlReader.readValue(filePath.readToString(), Result.class);
-                json = jsonWriter.writeValueAsString(obj);
-                break;
-            }
-            case "xml": {
-                ObjectMapper xmlReader = new ObjectMapper(new XmlFactory());
-                Object obj = xmlReader.readValue(filePath.readToString(), Result.class);
                 json = jsonWriter.writeValueAsString(obj);
                 break;
             }
