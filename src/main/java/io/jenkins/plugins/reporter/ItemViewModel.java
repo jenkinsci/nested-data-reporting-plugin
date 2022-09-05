@@ -90,10 +90,7 @@ public class ItemViewModel implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getItemDataModel() {
-        PieChartModel model = new PieChartModel(item.getId());
-        item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                report.getColor(key)));
-        return new JacksonFacade().toJson(model);
+        return new JacksonFacade().toJson(item.getPieChartModel(report));
     }
 
     /**

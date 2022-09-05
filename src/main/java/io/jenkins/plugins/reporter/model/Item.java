@@ -2,6 +2,9 @@ package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.hm.hafner.echarts.JacksonFacade;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
@@ -97,5 +100,18 @@ public class Item implements Serializable {
         }
 
         return value.toString();
+    }
+    
+    public PieChartModel getPieChartModel(Report report) {
+        PieChartModel model = new PieChartModel(getId());
+        
+        if (getResult().size() == 1) {
+            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getColor(getId())));
+        } else {
+            getResult().forEach((key, value) -> model.add(new PieData(key, value),
+                    report.getColor(key)));
+        }
+        
+        return model;
     }
 }

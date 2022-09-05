@@ -16,7 +16,7 @@
   <h1 align="center">Nested Data Reporting Plugin</h1>
 
   <p align="center">
-    Jenkins plugin to report data from nested json as pie-charts, trend-charts and data tables.
+    Jenkins plugin to report data from nested data as pie-charts, trend-charts and data tables.
     <br />
     <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
