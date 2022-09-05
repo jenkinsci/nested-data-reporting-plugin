@@ -138,7 +138,7 @@ The limited visualization from version **2.3.0** is thus resolved.
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json", displayType: "absolute"
+publishReport reportFile: "etc/result.json", displayType: "absolute"
 ```
 
 ### Parameter: 
