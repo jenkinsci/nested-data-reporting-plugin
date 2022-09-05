@@ -6,6 +6,7 @@ import hudson.model.Job;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
+import io.jenkins.plugins.reporter.model.Report;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -54,10 +55,9 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
                 .filter(Optional::isPresent).findFirst().orElse(Optional.empty());
         
         if (reportAction.isPresent()) {
-            ColorProvider colorProvider = new ColorProvider(reportAction.get().getReport().getResult().getColors());
-            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), colorProvider);
+            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), reportAction.get().getReport());
         }
 
-        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new ColorProvider(Collections.emptyMap()));
+        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new Report());
     }
 }

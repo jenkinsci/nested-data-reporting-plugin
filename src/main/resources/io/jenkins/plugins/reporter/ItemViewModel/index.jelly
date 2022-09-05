@@ -79,12 +79,12 @@
                                             </td>
                                             
                                             <j:forEach var="i" items="${row.item.result}">
-                                                <td class="text-end">${i.value}</td>
+                                                <td class="text-end">${row.label(i.value)}</td>
                                             </j:forEach>
                                                                                     
                                             <td>
                                                 <div>
-                                                     <j:forEach var="color" items="${row.colorProvider.colorMapping}">
+                                                     <j:forEach var="color" items="${row.colors}">
                                                         <j:set var="id" value="${color.key}"/>
                                                         <j:set var="hex" value="${color.value}"/>
                                                         <j:set var="val" value="${row.item.result.get(id)}"/>
@@ -103,7 +103,7 @@
                                         <tr>
                                             <td>${%Total}</td>
                                             <j:forEach var="i" items="${t.item.result}">
-                                                <td class="text-end">${i.value}</td>
+                                                <td class="text-end">${t.label(i.value)}</td>
                                             </j:forEach>
                                            
                                             <td/>

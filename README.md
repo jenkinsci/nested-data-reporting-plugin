@@ -138,7 +138,7 @@ The limited visualization from version **2.3.0** is thus resolved.
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json"
+publishReport jsonFile: "etc/result.json", displayType: "absolute"
 ```
 
 #### Parameter: 
@@ -150,6 +150,11 @@ The currently supported parameters are:
 or 
 
 - **`jsonString`** the json model as string.
+
+and
+
+- **`displayType`** to specify weather the values should be displayed as `absolute`,
+`relative` or `dual` values (default: `absolute`).
 
 ## Issues
 
