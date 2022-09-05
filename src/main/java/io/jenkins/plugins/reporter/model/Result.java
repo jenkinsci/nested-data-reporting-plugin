@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
  * @author Simon Symhoven
  */
 public class Result implements Serializable {
-
+    
     private static final long serialVersionUID = 7878818807240640969L;
             
     @JsonProperty(value = "items", required = true)
     private List<Item> items;
     
-    @JsonProperty(required = true)
+    @JsonProperty(value = "colors", required = true)
     private Map<String, String> colors;
     
     public List<Item> getItems() {

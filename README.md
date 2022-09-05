@@ -138,23 +138,17 @@ The limited visualization from version **2.3.0** is thus resolved.
 ### Pipeline Step
 
 ```
-publishReport jsonFile: "etc/result.json", displayType: "absolute"
+publishReport reportFile: "etc/result.json", displayType: "absolute"
 ```
 
-#### Parameter: 
+### Parameter: 
 
-The currently supported parameters are:
+##### reportFile: 
+The path to the report file. At the moment yaml/yml or json files are supported.
 
-- **`jsonFile`** path to json file relative to the workspace.
-
-or 
-
-- **`jsonString`** the json model as string.
-
-and
-
-- **`displayType`** to specify weather the values should be displayed as `absolute`,
-`relative` or `dual` values (default: `absolute`).
+##### displayType (optional, default = `absolute`):
+This can be used to determine the representation of the values within the table.
+Choose between `absolute`, `relative` or `dual`. 
 
 ## Issues
 

@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jline.internal.Nullable;
 
@@ -18,23 +19,23 @@ import java.util.stream.Collectors;
  * @author Simon Symhoven
  */
 public class Item implements Serializable {
-    
+
     private static final long serialVersionUID = -2800979294230808946L;
 
     @JsonProperty(value = "id", required = true)
     private String id;
 
-    /** 
+    /**
      * @since 2.4.0
      */
     @JsonProperty(value = "name", required = true)
     private String name;
 
-    @JsonProperty(required = false)
+    @JsonProperty(value = "result", required = false)
     LinkedHashMap<String, Integer> result;
-    
+
     @Nullable
-    @JsonProperty(required = false)
+    @JsonProperty(value = "items", required = false)
     List<Item> items;
 
     public String getId() {
@@ -57,28 +58,31 @@ public class Item implements Serializable {
         if (result != null) {
             return result;
         }
-                
+
         return getItems()
                 .stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
-    
+
     public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }
-    
+
     public List<Item> getItems() {
         return items;
     }
-    
-    public boolean hasItems() { return !Objects.isNull(items) && !items.isEmpty(); }
+
+    public boolean hasItems() {
+        return !Objects.isNull(items) && !items.isEmpty();
+    }
 
     public void setItems(List<Item> items) {
         this.items = items;
     }
-    
+
+    @JsonIgnore
     public int getTotal() {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
