@@ -1,5 +1,7 @@
 package io.jenkins.plugins.reporter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
@@ -11,6 +13,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
@@ -27,6 +30,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
 import java.io.Serializable;
 
 /**
@@ -39,7 +43,10 @@ import java.io.Serializable;
 public class PublishReportStep extends Builder implements SimpleBuildStep, Serializable {
     
     private String jsonString;
+    
     private String jsonFile;
+    
+    private String reportFile;
     
     @DataBoundConstructor
     public PublishReportStep() {
@@ -49,8 +56,12 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public String getJsonString() {
         return jsonString;
     }
-    
+
+    /**
+     * use {@link #setReportFile(String)} instead.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setJsonString(final String jsonString) {
         this.jsonString = jsonString;
     }
@@ -59,9 +70,23 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         return jsonFile;
     }
 
+    
+    /**
+     * use {@link #setReportFile(String)} instead.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setJsonFile(final String jsonFile) {
         this.jsonFile = jsonFile;
+    }
+
+    public String getReportFile() {
+        return reportFile;
+    }
+
+    @DataBoundSetter
+    public void setReportFile(final String reportFile) {
+        this.reportFile = reportFile;
     }
     
     @Override
@@ -73,13 +98,19 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("[PublishReportStep] Report data... ");
         
+        FilePath filePath = workspace.child(getReportFile());
+        String extension =  FilenameUtils.getExtension(filePath.getName());
         String json;
         
-        if (StringUtils.isNotBlank(getJsonFile())) {
-            FilePath jsonFile = workspace.child(getJsonFile());
-            json = jsonFile.readToString();
+        if (extension.equals("yaml") || extension.equals("yml")) {
+            ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+            Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
+            ObjectMapper jsonWriter = new ObjectMapper();
+            json = jsonWriter.writeValueAsString(obj);
+        } else if (extension.equals("json")) {
+            json = filePath.readToString();
         } else {
-            json = getJsonString();
+            throw new InvalidObjectException("File extension is not supported!");
         }
         
         try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
