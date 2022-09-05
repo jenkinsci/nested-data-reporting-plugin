@@ -122,7 +122,7 @@ public class ItemViewModel implements ModelObject {
         }
 
         return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
-                new ItemSeriesBuilder(item), report));
+                new ItemSeriesBuilder(item), report, item.getItems()));
     }
     
     @SuppressWarnings("unused") // Called by jelly view

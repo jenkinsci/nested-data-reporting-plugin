@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Json Model class, which represents an {@link Item}. 
@@ -114,4 +115,12 @@ public class Item implements Serializable {
         
         return model;
     }
+
+    public Stream<Item> flattenDependencies(List<Item> items) {
+        return items.stream().flatMap(item -> {
+            Stream<Item> flattened = flattenDependencies(item.getItems());
+            return Stream.concat(Stream.of(item), flattened);
+        });
+    }
+
 }

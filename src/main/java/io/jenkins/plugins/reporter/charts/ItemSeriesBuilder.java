@@ -4,7 +4,9 @@ import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Builds one x-axis point for the series of a line chart 
@@ -28,6 +30,10 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
 
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
+        if (item.getResult().size() == 1) {
+            return item.getItems().stream().collect(Collectors.toMap(Item::getName, Item::getTotal));
+        }
+        
         if (item.getId().equals(ReportAction.REPORT_ID)) {
             return reportAction.getReport().getResult().aggregate();
         }
