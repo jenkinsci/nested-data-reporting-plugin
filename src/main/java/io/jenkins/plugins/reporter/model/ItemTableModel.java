@@ -1,12 +1,13 @@
 package io.jenkins.plugins.reporter.model;
 
 import io.jenkins.plugins.datatables.TableColumn;
-import io.jenkins.plugins.reporter.ColorProvider;
 import io.jenkins.plugins.reporter.ItemViewModel;
 import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -17,28 +18,34 @@ import java.util.stream.Collectors;
  */
 public class ItemTableModel {
     
+    private final Report report;
+    
     private final Item item;
-    private final ColorProvider colorProvider;
 
     /**
      * Creates a new instance of {@link ItemTableModel}.
      * 
+     * @param report
+     *         the report with result
+     *         
      * @param item
      *         the item to render
-     * @param colorProvider
-     *         the color mapping for the result.
      */
-    public ItemTableModel(Item item, ColorProvider colorProvider) {
+    public ItemTableModel(final Report report, final Item item) {
         super();
         
+        this.report = report;
         this.item = item;
-        this.colorProvider = colorProvider;
     }
     
     public String getId() {
         return item.getId();
     }
-
+    
+    public Report getReport() {
+        return report;
+    }
+    
     public Item getItem() {
         return item;
     }
@@ -52,7 +59,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
             .stream()
-            .map(item -> new ItemRow(item, colorProvider))
+            .map(item -> new ItemRow(report, item))
             .collect(Collectors.toList());
     }
 
@@ -64,25 +71,31 @@ public class ItemTableModel {
                 .build();
     }
 
+    public String label(Integer value) {
+        return item.getLabel(report, value);
+    }
+
     /**
      * A table row that shows the properties of an item.
      */
     public static class ItemRow {
         
+        private final Report report;
         private final Item item;
-        private final ColorProvider colorProvider;
+        
 
         /**
          * Creates a new instance of {@link ItemRow}.
          * 
+         * @param report
+         *          the report with the result.
+         *          
          * @param item
          *          the item to render.
-         * @param colorProvider
-         *          the color mapping for the result of the item.
          */
-        ItemRow(Item item, ColorProvider colorProvider) {
+        ItemRow(Report report, Item item) {
+            this.report = report;
             this.item = item;
-            this.colorProvider = colorProvider;
         }
         
         public String getId() {
@@ -97,8 +110,12 @@ public class ItemTableModel {
             return item;
         }
         
-        public ColorProvider getColorProvider() {
-            return colorProvider;
+        public Map<String, String> getColors() {
+            return report.getResult().getColors();
+        }
+
+        public String label(Integer value) {
+            return item.getLabel(report, value);
         }
         
         public String tooltip(String id, double percentage) {
