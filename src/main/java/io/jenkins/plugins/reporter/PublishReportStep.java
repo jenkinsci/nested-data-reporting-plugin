@@ -122,9 +122,9 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         switch (extension) {
             case "yaml":
             case "yml": {
-                ObjectMapper jsonWriter = new ObjectMapper();
                 ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-                Object obj = yamlReader.readValue(filePath.readToString(), Result.class);
+                Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
+                ObjectMapper jsonWriter = new ObjectMapper();
                 json = jsonWriter.writeValueAsString(obj);
                 break;
             }

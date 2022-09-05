@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jline.internal.Nullable;
 
@@ -81,6 +82,7 @@ public class Item implements Serializable {
         this.items = items;
     }
 
+    @JsonIgnore
     public int getTotal() {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
