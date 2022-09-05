@@ -21,6 +21,8 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
     
     static final String ICON = "/plugin/nested-data-reporting/icons/data-reporting-icon.svg";
     static final String ID = "nested-data-reporting";
+    private final Report report;
+    private final String label;
 
     /**
      * Creates a new instance of {@link ReportJobAction}.
@@ -28,8 +30,10 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
      * @param owner
      *         the job that owns this action
      */
-    public ReportJobAction(final Job<?, ?> owner) {
+    public ReportJobAction(final Job<?, ?> owner, Report report, String label) {
         super(owner, ReportAction.class);
+        this.report = report;
+        this.label = label;
     }
     
     @Override
@@ -39,25 +43,20 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     @Override
     public String getDisplayName() {
-        return Messages.Action_Name();
+        return label;
     }
 
     @Override
     public String getUrlName() {
-        return ID;
+        return ID + "-" + this.report.hashCode();
     }
 
     @Override
     protected LinesChartModel createChartModel(String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-        Optional<ReportAction> reportAction = getOwner().getBuilds()
-                .stream().map(build -> Optional.ofNullable(build.getAction(ReportAction.class)))
-                .filter(Optional::isPresent).findFirst().orElse(Optional.empty());
-        
-        if (reportAction.isPresent()) {
-            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), reportAction.get().getReport());
-        }
 
-        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new Report());
+        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), report);
+
+
     }
 }
