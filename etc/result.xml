@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<root>
+<report>
     <items>
         <id>Aktie</id>
         <name>Aktie</name>
@@ -80,4 +80,4 @@
         <manually>#FFF59D</manually>
         <accurate>#A5D6A7</accurate>
     </colors>
-</root>
+</report>

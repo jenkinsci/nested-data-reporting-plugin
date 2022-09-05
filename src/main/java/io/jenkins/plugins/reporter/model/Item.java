@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
@@ -18,23 +19,27 @@ import java.util.stream.Collectors;
  * @author Simon Symhoven
  */
 public class Item implements Serializable {
-    
+
     private static final long serialVersionUID = -2800979294230808946L;
 
     @JsonProperty(value = "id", required = true)
+    @JacksonXmlProperty(localName = "id")
     private String id;
 
     /** 
      * @since 2.4.0
      */
     @JsonProperty(value = "name", required = true)
+    @JacksonXmlProperty(localName = "name")
     private String name;
 
-    @JsonProperty(required = false)
+    @JsonProperty(value = "result", required = false)
+    @JacksonXmlProperty(localName = "result")
     LinkedHashMap<String, Integer> result;
     
     @Nullable
-    @JsonProperty(required = false)
+    @JsonProperty(value = "items", required = false)
+    @JacksonXmlProperty(localName = "items")
     List<Item> items;
 
     public String getId() {

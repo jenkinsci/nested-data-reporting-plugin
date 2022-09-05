@@ -1,7 +1,10 @@
 package io.jenkins.plugins.reporter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,7 +21,6 @@ import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -109,13 +111,13 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             case "yaml":
             case "yml": {
                 ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-                Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
+                Object obj = yamlReader.readValue(filePath.readToString(), Result.class);
                 json = jsonWriter.writeValueAsString(obj);
                 break;
             }
             case "xml": {
                 ObjectMapper xmlReader = new ObjectMapper(new XmlFactory());
-                Object obj = xmlReader.readValue(filePath.readToString(), Object.class);
+                Object obj = xmlReader.readValue(filePath.readToString(), Result.class);
                 json = jsonWriter.writeValueAsString(obj);
                 break;
             }

@@ -1,6 +1,8 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -15,14 +17,17 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
+@JacksonXmlRootElement(localName = "report")
 public class Result implements Serializable {
-
+    
     private static final long serialVersionUID = 7878818807240640969L;
             
     @JsonProperty(value = "items", required = true)
+    @JacksonXmlProperty(localName = "items")
     private List<Item> items;
     
-    @JsonProperty(required = true)
+    @JsonProperty(value = "colors", required = true)
+    @JacksonXmlProperty(localName = "colors")
     private Map<String, String> colors;
     
     public List<Item> getItems() {
