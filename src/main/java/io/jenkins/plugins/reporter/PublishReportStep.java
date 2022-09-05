@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -99,18 +101,29 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         listener.getLogger().println("[PublishReportStep] Report data... ");
         
         FilePath filePath = workspace.child(getReportFile());
-        String extension =  FilenameUtils.getExtension(filePath.getName());
+        String extension =  FilenameUtils.getExtension(filePath.getName()).toLowerCase(Locale.ROOT);
+        ObjectMapper jsonWriter = new ObjectMapper();
         String json;
-        
-        if (extension.equals("yaml") || extension.equals("yml")) {
-            ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-            Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
-            ObjectMapper jsonWriter = new ObjectMapper();
-            json = jsonWriter.writeValueAsString(obj);
-        } else if (extension.equals("json")) {
-            json = filePath.readToString();
-        } else {
-            throw new InvalidObjectException("File extension is not supported!");
+
+        switch (extension) {
+            case "yaml":
+            case "yml": {
+                ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+                Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
+                json = jsonWriter.writeValueAsString(obj);
+                break;
+            }
+            case "xml": {
+                ObjectMapper xmlReader = new ObjectMapper(new XmlFactory());
+                Object obj = xmlReader.readValue(filePath.readToString(), Object.class);
+                json = jsonWriter.writeValueAsString(obj);
+                break;
+            }
+            case "json":
+                json = filePath.readToString();
+                break;
+            default:
+                throw new InvalidObjectException("File extension is not supported!");
         }
         
         try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
