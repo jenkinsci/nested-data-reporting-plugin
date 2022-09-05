@@ -14,9 +14,11 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
+import io.jenkins.plugins.reporter.model.DisplayType;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -31,7 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -45,6 +49,8 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     private String jsonString;
     
     private String jsonFile;
+    
+    private String displayType;
     
     private String reportFile;
     
@@ -61,7 +67,6 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
      * use {@link #setReportFile(String)} instead.
      */
     @DataBoundSetter
-    @Deprecated
     public void setJsonString(final String jsonString) {
         this.jsonString = jsonString;
     }
@@ -89,13 +94,24 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         this.reportFile = reportFile;
     }
     
+    public String getDisplayType() {
+        return displayType;
+    }
+    
+    @DataBoundSetter
+    public void setDisplayType(final String displayType) {
+        this.displayType = displayType;
+    }
+    
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
     }
     
     @Override
-    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, 
+                        @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, 
+                        IOException {
         listener.getLogger().println("[PublishReportStep] Report data... ");
         
         FilePath filePath = workspace.child(getReportFile());
@@ -131,10 +147,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             
             JacksonFacade jackson = new JacksonFacade();
             Result result =  jackson.fromJson(json, Result.class);
-            Report report = new Report(result);
+
+            DisplayType dt = Arrays.stream(DisplayType.values())
+                    .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
+                    .findFirst().orElse(DisplayType.ABSOLUTE);
+                    
+            Report report = new Report(result, dt);
             run.addAction(new ReportAction(run, report));
 
-            listener.getLogger().println("[PublishReportStep] Add report to current build.");
+            listener.getLogger().println(String.format("[PublishReportStep] Add report with display type %s to current build.", dt.name()));
             
         } catch (ValidationException e) {
             listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());

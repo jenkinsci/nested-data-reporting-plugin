@@ -99,7 +99,6 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         
-        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), 
-                new ColorProvider(report.getResult().getColors()), null);
+        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , getReport());
     }
 }

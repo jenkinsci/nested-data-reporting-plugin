@@ -9,6 +9,7 @@ import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ItemTableModel;
+import io.jenkins.plugins.reporter.model.Report;
 import jline.internal.Nullable;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -29,13 +30,15 @@ import java.util.stream.Collectors;
 public class ItemViewModel implements ModelObject {
     
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
-
+    
+    
     private final Run<?, ?> owner;
     private final Item item;
     private final String url;
     private final String label;
-    private final ColorProvider colorProvider;
     private final ItemViewModel parentViewModel;
+    
+    private final Report report;
 
 
     /**
@@ -49,21 +52,21 @@ public class ItemViewModel implements ModelObject {
      *          the corresponding item of this view.
      * @param label
      *          the label to be shown for this view.
-     * @param colorProvider
-     *          the colorProvider (mapping for the item result).
      * @param parentViewModel 
      *          the view model of parent item.
+     * @param report 
+     *          the report attached to this run.
      */
     public ItemViewModel(final Run<?, ?> owner, final String url, final Item item, final String label, 
-                         final ColorProvider colorProvider, @Nullable final ItemViewModel parentViewModel) {
+                         @Nullable final ItemViewModel parentViewModel, final Report report) {
         super();
 
         this.owner = owner;
         this.url = url;
         this.item = item;
         this.label = label;
-        this.colorProvider = colorProvider;
         this.parentViewModel = parentViewModel;
+        this.report = report;
     }
 
     /**
@@ -89,7 +92,7 @@ public class ItemViewModel implements ModelObject {
     public String getItemDataModel() {
         PieChartModel model = new PieChartModel(item.getId());
         item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                colorProvider.getColor(key)));
+                report.getColor(key)));
         return new JacksonFacade().toJson(model);
     }
 
@@ -122,12 +125,12 @@ public class ItemViewModel implements ModelObject {
         }
 
         return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
-                new ItemSeriesBuilder(item), colorProvider));
+                new ItemSeriesBuilder(item), report));
     }
     
     @SuppressWarnings("unused") // Called by jelly view
     public ItemTableModel getTableModel(String id) {
-        return new ItemTableModel(item, colorProvider);
+        return new ItemTableModel(report, item);
     }
 
     /**
@@ -170,7 +173,8 @@ public class ItemViewModel implements ModelObject {
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ItemViewModel(owner, url, subItem, Messages.Module_Description(subItem.getName()), colorProvider, this);
+            return new ItemViewModel(owner, url, subItem, Messages.Module_Description(subItem.getName()), 
+                    this, report);
         }
         catch (NoSuchElementException ignored) {
             try {

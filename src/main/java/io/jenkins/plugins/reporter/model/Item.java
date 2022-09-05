@@ -1,7 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
@@ -85,5 +84,16 @@ public class Item implements Serializable {
     public int getTotal() {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
+    
+    public String getLabel(Report report, Integer value) {
+        if (report.getDisplayType().equals(DisplayType.DUAL)) {
+            return String.format("%s (%.2f%%)", value.toString(), value / (double) getTotal() * 100);
+        }
 
+        if (report.getDisplayType().equals(DisplayType.RELATIVE)) {
+            return String.format("%.2f%%", value / (double) getTotal() * 100);
+        }
+
+        return value.toString();
+    }
 }
