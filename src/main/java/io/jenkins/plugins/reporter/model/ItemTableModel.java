@@ -69,7 +69,7 @@ public class ItemTableModel {
     }
 
     public String label(Integer value) {
-        return item.getLabel(report, value);
+        return item.getLabel(report, value, value / (double) item.getTotal() * 100);
     }
 
     /**
@@ -137,7 +137,7 @@ public class ItemTableModel {
         }
 
         public String label(Integer value) {
-            return item.getLabel(report, value);
+            return item.getLabel(report, value, getPercentage(item.getId()));
         }
         
         public String tooltip(String id, double percentage) {

@@ -91,13 +91,13 @@ public class Item implements Serializable {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
     
-    public String getLabel(Report report, Integer value) {
+    public String getLabel(Report report, Integer value, double percentage) {
         if (report.getDisplayType().equals(DisplayType.DUAL)) {
-            return String.format("%s (%.2f%%)", value.toString(), value / (double) getTotal() * 100);
+            return String.format("%s (%.2f%%)", value.toString(), percentage);
         }
 
         if (report.getDisplayType().equals(DisplayType.RELATIVE)) {
-            return String.format("%.2f%%", value / (double) getTotal() * 100);
+            return String.format("%.2f%%", value / percentage);
         }
 
         return value.toString();
