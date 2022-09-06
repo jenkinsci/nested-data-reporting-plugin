@@ -1,16 +1,12 @@
 package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.*;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.reporter.model.Result;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 /**
  * Builds the Java side model for a trend chart showing the accurate, manually and incorrect parts of an asset or report.
@@ -41,7 +37,7 @@ public class TrendChart {
      */
     public LinesChartModel create(final Iterable<? extends BuildResult<ReportAction>> results,
                                   final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder,
-                                  Report report, List<Item> items) {
+                                  Report report, @Nullable List<Item> items) {
 
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
         LinesChartModel model = new LinesChartModel(dataSet);
@@ -50,30 +46,28 @@ public class TrendChart {
             model.useContinuousRangeAxis();
             model.setRangeMin(0);
             
-            /*if (dataSet.getDataSetIds().size() == 1) {
-                items.forEach(item -> {
-                    LineSeries series = new LineSeries(item.getName(), report.getColor(item.getId()),
+            dataSet.getDataSetIds().forEach(id -> {
+                
+                Optional<Item> item = items != null ? 
+                        items.stream().filter(i -> i.getId().equals(id)).findFirst() : Optional.empty();
+
+                if (item.isPresent()) {
+                    // Line Series for items with only one result
+                    Item i = item.get();
+                    LineSeries series = new LineSeries(i.getName(), report.getColor(i.getId()),
                             LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
-                    
-                    List<Integer> values = new ArrayList<>();
-                    
-                    for (BuildResult<ReportAction> result : results) {
-                        Result r = result.getResult().getReport().getResult();
-                        
-                        values.add(r.aggregate(i -> i.getId().equals(item.getId())).values().iterator().next());
-                    }
-                    
-                    series.addAll(values);
+                    series.addAll(dataSet.getSeries(i.getId()));
                     model.addSeries(series);
-                });
-            } else {*/
-                dataSet.getDataSetIds().forEach(id -> {
+                } else {
+                    // Line Series for items with multiple results
                     LineSeries series = new LineSeries(id, report.getColor(id),
                             LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
                     series.addAll(dataSet.getSeries(id));
                     model.addSeries(series);
-                });
-            // }
+                }
+                
+            });
+            
         }
         
         return model;

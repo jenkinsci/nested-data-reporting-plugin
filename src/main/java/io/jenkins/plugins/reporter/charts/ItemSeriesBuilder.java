@@ -31,7 +31,7 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
         if (item.getResult().size() == 1) {
-            return item.getItems().stream().collect(Collectors.toMap(Item::getName, Item::getTotal));
+            return item.getItems().stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
         
         if (item.getId().equals(ReportAction.REPORT_ID)) {

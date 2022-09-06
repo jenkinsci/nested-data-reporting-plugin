@@ -29,7 +29,7 @@
 
 ## Introduction
 
-This plugin reports data from a nested json file as pie-charts, trend-charts and data tables. 
+This plugin reports data from a nested data file as pie-charts, trend-charts and data tables. 
 If an item has `items`, the `result` will be computed automatically for this parent item.
 An example json file looks like this: 
 
@@ -96,6 +96,8 @@ An example json file looks like this:
 }
 ```
 
+![ui](etc/ui-3.8.0.png)
+
 To check your json you can use the [json schema](src/main/resources/report.json) to validate it.
 
 > ⚠️ **Color Mapping**:
@@ -104,6 +106,97 @@ To check your json you can use the [json schema](src/main/resources/report.json)
 > items and assigns a color to each attribute, which is used for the graphical representation. Otherwise
 > a default color `#E9E9E9` is used for the missing property!
 
+If your items only have one result, the visualization is different from the default one, 
+because the representation then makes no sense. Instead of the attributes of the result object, 
+the keys of the individual items are used as the basis for distribution. For example:
+
+```
+{
+  "items": [
+    {
+      "id": "Aktie",
+      "name": "Aktie",
+      "items": [
+        {
+          "id": "Aktie_1",
+          "name": "Aktie 1",
+          "result": {
+            "incorrect": 3541
+          }
+        },
+        {
+          "id": "Aktie_2",
+          "name": "Aktie 2",
+          "result": {
+            "incorrect": 4488
+          }
+        },
+        {
+          "id": "Aktie_3",
+          "name": "Aktie 3",
+          "result": {
+            "incorrect": 2973
+          }
+        }
+      ]
+    },
+    {
+      "id": "Not_Found",
+      "name": "Not_Found",
+      "result": {
+        "incorrect": 8701
+      }
+    },  
+    {
+      "id": "Renten",
+      "name": "Renten",
+      "items": [
+        {
+          "id": "Rente_1",
+          "name": "Rente1",
+          "result": {
+            "incorrect": 5762
+          }
+        },
+        {
+          "id": "Rente_2",
+          "name": "Rente2",
+          "result": {
+            "incorrect": 2271
+          }
+        }
+      ]
+    },
+    {
+      "id": "Derivat",
+      "name": "Derivat",
+      "result": {
+        "incorrect": 2271
+      }
+    }
+  ],
+  "colors": {
+    "Aktie": "#EF9A9A",
+    "Aktie_1": "#FFF59D",
+    "Aktie_2": "#A5D6A7",
+    "Aktie_3": "#FFCE30",
+    "Not_Found": "#E83845",
+    "Renten": "#E389B9",
+    "Rente_1": "#746AB0",
+    "Rente_2": "#288BA8",
+    "Derivat": "#0088FF"
+  }
+}
+```
+
+Then your dashboard looks like this:
+![ui](etc/ui-3.8.0-oc.png)
+
+
+### Supported file formats
+
+* JSON
+* YAML/YML
 
 ### Visualization
 
@@ -128,10 +221,6 @@ The limited visualization from version **2.3.0** is thus resolved.
 > The values of all items below are not displayed visually, but are 
 > of course represented in the aggregation of the first two levels.~~
 
-
-### Example
-
-![ui](etc/ui-3.2.0.png)
 
 ## Getting started
 
