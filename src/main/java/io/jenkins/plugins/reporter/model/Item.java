@@ -97,7 +97,7 @@ public class Item implements Serializable {
         }
 
         if (report.getDisplayType().equals(DisplayType.RELATIVE)) {
-            return String.format("%.2f%%", value / percentage);
+            return String.format("%.2f%%", percentage);
         }
 
         return value.toString();
