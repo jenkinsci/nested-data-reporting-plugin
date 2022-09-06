@@ -39,14 +39,14 @@
       "name": "Renten",
       "items": [
         {
-          "id": "Rente1",
+          "id": "Rente_1",
           "name": "Rente1",
           "result": {
             "incorrect": 5762
           }
         },
         {
-          "id": "Rente2",
+          "id": "Rente_2",
           "name": "Rente2",
           "result": {
             "incorrect": 2271
@@ -64,13 +64,13 @@
   ],
   "colors": {
     "Aktie": "#EF9A9A",
-    "Aktie1": "#FFF59D",
-    "Aktie2": "#A5D6A7",
-    "Aktie3": "#FFCE30",
+    "Aktie_1": "#FFF59D",
+    "Aktie_2": "#A5D6A7",
+    "Aktie_3": "#FFCE30",
     "Not_Found": "#E83845",
     "Renten": "#E389B9",
-    "Rente1": "#746AB0",
-    "Rente2": "#288BA8",
+    "Rente_1": "#746AB0",
+    "Rente_2": "#288BA8",
     "Derivat": "#0088FF"
   }
 }

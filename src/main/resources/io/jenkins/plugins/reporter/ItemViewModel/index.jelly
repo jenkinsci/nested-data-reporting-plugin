@@ -73,14 +73,9 @@
                                     <j:forEach var="row" items="${rows}">
                                         <tr>
                                             <td>
-                                                <j:if test="${row.item.hasItems()}">
-                                                    <a href="${row.id.hashCode()}/"
-                                                        data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
-                                                        ${row.name}</a>
-                                                </j:if>
-                                                <j:if test="${!row.item.hasItems()}">
-                                                    ${row.name}
-                                                </j:if>
+                                                <a href="${row.id.hashCode()}/"
+                                                    data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
+                                                    ${row.name}</a>
                                             </td>
                                             
                                             <j:forEach var="i" items="${row.item.result}">

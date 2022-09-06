@@ -107,7 +107,7 @@ public class Item implements Serializable {
         PieChartModel model = new PieChartModel(getId());
         
         if (getResult().size() == 1) {
-            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getColor(getId())));
+            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getColor(item.getId())));
         } else {
             getResult().forEach((key, value) -> model.add(new PieData(key, value),
                     report.getColor(key)));
@@ -115,12 +115,4 @@ public class Item implements Serializable {
         
         return model;
     }
-
-    public Stream<Item> flattenDependencies(List<Item> items) {
-        return items.stream().flatMap(item -> {
-            Stream<Item> flattened = flattenDependencies(item.getItems());
-            return Stream.concat(Stream.of(item), flattened);
-        });
-    }
-
 }

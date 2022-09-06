@@ -38,6 +38,10 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
             return reportAction.getReport().getResult().aggregate();
         }
         
+        if (!item.hasItems()) {
+            return item.getResult();
+        }
+        
         return reportAction.getReport().getResult().aggregate(i -> i.getId().equals(item.getId()));
     }
 }

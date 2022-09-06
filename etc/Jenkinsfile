@@ -6,9 +6,8 @@ pipeline {
 			steps {
 				checkout scm
 				publishReport reportFile: "etc/result.json"
-				publishReport reportFile: "etc/result-mix.json"
 				publishReport reportFile: "etc/result-oc.json"
-			}
+			} 
 		}
 	}
 }
