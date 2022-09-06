@@ -90,10 +90,7 @@ public class ItemViewModel implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getItemDataModel() {
-        PieChartModel model = new PieChartModel(item.getId());
-        item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                report.getColor(key)));
-        return new JacksonFacade().toJson(model);
+        return new JacksonFacade().toJson(item.getPieChartModel(report));
     }
 
     /**
@@ -125,7 +122,7 @@ public class ItemViewModel implements ModelObject {
         }
 
         return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
-                new ItemSeriesBuilder(item), report));
+                new ItemSeriesBuilder(item), report, item.getItems()));
     }
     
     @SuppressWarnings("unused") // Called by jelly view

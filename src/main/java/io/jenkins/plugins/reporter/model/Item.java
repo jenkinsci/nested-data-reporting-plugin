@@ -2,6 +2,9 @@ package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.hm.hafner.echarts.JacksonFacade;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Json Model class, which represents an {@link Item}. 
@@ -87,15 +91,28 @@ public class Item implements Serializable {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
     
-    public String getLabel(Report report, Integer value) {
+    public String getLabel(Report report, Integer value, double percentage) {
         if (report.getDisplayType().equals(DisplayType.DUAL)) {
-            return String.format("%s (%.2f%%)", value.toString(), value / (double) getTotal() * 100);
+            return String.format("%s (%.2f%%)", value.toString(), percentage);
         }
 
         if (report.getDisplayType().equals(DisplayType.RELATIVE)) {
-            return String.format("%.2f%%", value / (double) getTotal() * 100);
+            return String.format("%.2f%%", percentage);
         }
 
         return value.toString();
+    }
+    
+    public PieChartModel getPieChartModel(Report report) {
+        PieChartModel model = new PieChartModel(getId());
+        
+        if (getResult().size() == 1) {
+            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getColor(item.getId())));
+        } else {
+            getResult().forEach((key, value) -> model.add(new PieData(key, value),
+                    report.getColor(key)));
+        }
+        
+        return model;
     }
 }

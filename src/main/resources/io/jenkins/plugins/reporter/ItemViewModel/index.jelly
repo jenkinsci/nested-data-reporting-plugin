@@ -72,13 +72,13 @@
                                 <tbody>
                                     <j:forEach var="row" items="${rows}">
                                         <tr>
-                                            <td>
-                                                <j:if test="${row.item.hasItems()}">
+                                            <td>                                            
+                                                <j:if test="${row.item.result.size() > 1 or row.item.result.size() == 1 and row.item.hasItems()}">
                                                     <a href="${row.id.hashCode()}/"
                                                         data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
                                                         ${row.name}</a>
                                                 </j:if>
-                                                <j:if test="${!row.item.hasItems()}">
+                                                <j:if test="${row.item.result.size() == 1 and !row.item.hasItems()}">
                                                     ${row.name}
                                                 </j:if>
                                             </td>
@@ -92,12 +92,14 @@
                                                      <j:forEach var="color" items="${row.colors}">
                                                         <j:set var="id" value="${color.key}"/>
                                                         <j:set var="hex" value="${color.value}"/>
-                                                        <j:set var="val" value="${row.item.result.get(id)}"/>
-                                                        <j:set var="percentage" value="${val / row.item.total * 100}"/>
+                                                        <j:set var="percentage" value="${row.getPercentage(id)}"/>
                                                         
-                                                        <span class="distribution" style="width: ${percentage}%; background-color: ${hex}"
-                                                              data-bs-toggle="tooltip" data-bs-placement="left" 
-                                                              title="${row.tooltip(id, percentage)}">.</span>
+                                                        <j:if test="${row.containsColorItem(id)}">
+                                                            <span class="distribution" style="width: ${percentage}%; background-color: ${hex}"
+                                                                  data-bs-toggle="tooltip" data-bs-placement="left" 
+                                                                  title="${row.tooltip(id, percentage)}">.</span>
+                                                        </j:if>
+                                                        
                                                                                                           
                                                     </j:forEach>
                                                 </div>

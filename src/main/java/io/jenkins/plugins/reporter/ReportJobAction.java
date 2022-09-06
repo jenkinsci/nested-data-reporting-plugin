@@ -8,6 +8,7 @@ import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Report;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -55,9 +56,10 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
                 .filter(Optional::isPresent).findFirst().orElse(Optional.empty());
         
         if (reportAction.isPresent()) {
-            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), reportAction.get().getReport());
+            return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), 
+                    reportAction.get().getReport(), reportAction.get().getReport().getResult().getItems());
         }
 
-        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new Report());
+        return new TrendChart().create(createBuildHistory(), modelConfiguration, new ReportSeriesBuilder(), new Report(), new ArrayList<>());
     }
 }

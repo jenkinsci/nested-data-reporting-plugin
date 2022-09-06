@@ -4,10 +4,7 @@ import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.reporter.ItemViewModel;
 import org.apache.commons.text.CaseUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,7 +56,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
             .stream()
-            .map(item -> new ItemRow(report, item))
+            .map(item -> new ItemRow(report, item, this))
             .collect(Collectors.toList());
     }
 
@@ -72,7 +69,7 @@ public class ItemTableModel {
     }
 
     public String label(Integer value) {
-        return item.getLabel(report, value);
+        return item.getLabel(report, value, value / (double) item.getTotal() * 100);
     }
 
     /**
@@ -82,6 +79,8 @@ public class ItemTableModel {
         
         private final Report report;
         private final Item item;
+        
+        private final ItemTableModel model;
         
 
         /**
@@ -93,9 +92,10 @@ public class ItemTableModel {
          * @param item
          *          the item to render.
          */
-        ItemRow(Report report, Item item) {
+        ItemRow(Report report, Item item, ItemTableModel model) {
             this.report = report;
             this.item = item;
+            this.model = model;
         }
         
         public String getId() {
@@ -110,12 +110,38 @@ public class ItemTableModel {
             return item;
         }
         
+        public double getPercentage(String id) {
+            int val = item.getResult().getOrDefault(id, -1);
+            
+            if (val == -1) {
+                val = item.getTotal();
+                
+                return val / (double) model.getItem().getTotal() * 100;
+            }
+            
+            return val / (double) item.getTotal() * 100;
+        }
+        
+        public boolean containsColorItem(String id) {
+            int val = item.getResult().getOrDefault(id, -1);
+
+            if (val == -1) {
+                return Objects.equals(item.getId(), id);
+            }
+            
+            return true;
+        }
+        
         public Map<String, String> getColors() {
             return report.getResult().getColors();
         }
 
         public String label(Integer value) {
-            return item.getLabel(report, value);
+            if (item.getResult().size() == 1) {
+                return item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
+            }
+            
+            return item.getLabel(report, value, value / (double) item.getTotal() * 100);
         }
         
         public String tooltip(String id, double percentage) {
