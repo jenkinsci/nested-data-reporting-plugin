@@ -5,8 +5,8 @@
       "name": "Aktie",
       "items": [
         {
-          "id": "Aktien1",
-          "name": "Aktien1",
+          "id": "Aktie_1",
+          "name": "Aktie 1",
           "result": {
             "incorrect": 3541,
             "manually": 58,
@@ -14,8 +14,8 @@
           }
         },
         {
-          "id": "Aktie2",
-          "name": "Aktie2",
+          "id": "Aktie_2",
+          "name": "Aktie 2",
           "result": {
             "incorrect": 4488,
             "manually": 55,
@@ -23,8 +23,8 @@
           }
         },
         {
-          "id": "Aktie3",
-          "name": "Aktie3",
+          "id": "Aktie_3",
+          "name": "Aktie 3",
           "result": {
             "incorrect": 2973,
             "manually": 72,
@@ -36,17 +36,11 @@
     {
       "id": "Not_Found",
       "name": "Not_Found",
-      "items": [
-        {
-          "id": "Not_Found",
-          "name": "Not_Found",
-          "result": {
-            "incorrect": 8701,
-            "manually": 0,
-            "accurate": 1298
-          }
-        }
-      ]
+      "result": {
+        "incorrect": 8701,
+        "manually": 0,
+        "accurate": 1298
+      }
     },  
     {
       "id": "Renten",

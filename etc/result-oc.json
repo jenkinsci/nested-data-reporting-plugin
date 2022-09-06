@@ -1,0 +1,76 @@
+{
+  "items": [
+    {
+      "id": "Aktie",
+      "name": "Aktie",
+      "items": [
+        {
+          "id": "Aktie_1",
+          "name": "Aktie 1",
+          "result": {
+            "incorrect": 3541
+          }
+        },
+        {
+          "id": "Aktie_2",
+          "name": "Aktie 2",
+          "result": {
+            "incorrect": 4488
+          }
+        },
+        {
+          "id": "Aktie_3",
+          "name": "Aktie 3",
+          "result": {
+            "incorrect": 2973
+          }
+        }
+      ]
+    },
+    {
+      "id": "Not_Found",
+      "name": "Not_Found",
+      "result": {
+        "incorrect": 8701
+      }
+    },  
+    {
+      "id": "Renten",
+      "name": "Renten",
+      "items": [
+        {
+          "id": "Rente1",
+          "name": "Rente1",
+          "result": {
+            "incorrect": 5762
+          }
+        },
+        {
+          "id": "Rente2",
+          "name": "Rente2",
+          "result": {
+            "incorrect": 2271
+          }
+        }
+      ]
+    },
+    {
+      "id": "Derivat",
+      "name": "Derivat",
+      "result": {
+        "incorrect": 2271
+      }
+    }
+  ],
+  "colors": {
+    "Aktie": "#EF9A9A",
+    "Aktie1": "#FFF59D",
+    "Aktie2": "#A5D6A7",
+    "Aktie3": "#FFCE30",
+    "Not_Found": "#E83845",
+    "Renten": "#E389B9",
+    "Rente1": "#746AB0",
+    "Rente2": "#288BA8",
+    "Derivat": "#0088FF"
+  }
+}

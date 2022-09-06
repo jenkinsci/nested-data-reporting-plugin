@@ -5,7 +5,9 @@ pipeline {
 		stage('Publish Data') {
 			steps {
 				checkout scm
-				publishReport reportFile: "etc/result.yaml"
+				publishReport reportFile: "etc/result.json"
+				publishReport reportFile: "etc/result-mix.json"
+				publishReport reportFile: "etc/result-oc.json"
 			}
 		}
 	}
