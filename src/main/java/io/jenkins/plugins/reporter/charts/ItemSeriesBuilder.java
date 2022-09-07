@@ -5,10 +5,7 @@ import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
 import org.apache.commons.collections.ListUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,18 +47,21 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
             return items.stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
         
-        //TODO: fix missing recursion for aggregation
-        return reportAction.getReport().getResult().aggregate(i -> i.getId().equals(item.getId()));
+        return reportAction.getReport().getResult().aggregate(items);
     }
 
     private List<Item> findItems(String id, List<Item> items)
     {
         for (Item i: items) {
-            if (i.getId().equals(id) && i.hasItems()) {
-                return i.hasItems() ? i.getItems() : findItems(id, i.getItems());
+            if (i.getId().equals(id)) {
+                return i.hasItems() ? i.getItems() : Collections.singletonList(i);
+            } 
+            
+            if (i.hasItems()) {
+                return findItems(id, i.getItems());
             }
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

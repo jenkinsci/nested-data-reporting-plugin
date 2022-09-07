@@ -67,14 +67,13 @@ public class Result implements Serializable {
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      * 
-     * @param filter
-     *          the filter to evaluate on the result.
+     * @param items
+     *              the items to aggregate the childs for.
      * @return the aggregated result.
      */
-    public LinkedHashMap<String, Integer> aggregate(Predicate<? super Item> filter) {
-        return getItems()
+    public LinkedHashMap<String, Integer> aggregate(List<Item> items) {
+        return items
                 .stream()
-                .filter(filter)
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
@@ -86,6 +85,6 @@ public class Result implements Serializable {
      * @return the aggregated result.
      */
     public LinkedHashMap<String, Integer> aggregate() {
-        return aggregate(item -> {return true;});
+        return aggregate(getItems());
     }
 }
