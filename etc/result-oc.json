@@ -10,21 +10,21 @@
           "id": "Aktie_1",
           "name": "Aktie 1",
           "result": {
-            "incorrect": 4541
+            "incorrect": 6541
           }
         },
         {
           "id": "Aktie_2",
           "name": "Aktie 2",
           "result": {
-            "incorrect": 3488
+            "incorrect": 7488
           }
         },
         {
           "id": "Aktie_3",
           "name": "Aktie 3",
           "result": {
-            "incorrect": 1973
+            "incorrect": 5973
           }
         }
       ]
@@ -33,7 +33,7 @@
       "id": "Not_Found",
       "name": "Not_Found",
       "result": {
-        "incorrect": 5701
+        "incorrect": 7701
       }
     },  
     {
@@ -44,7 +44,7 @@
           "id": "Rente_1",
           "name": "Rente1",
           "result": {
-            "incorrect": 7762
+            "incorrect": 9762
           }
         },
         {
@@ -60,7 +60,7 @@
       "id": "Derivat",
       "name": "Derivat",
       "result": {
-        "incorrect": 2279
+        "incorrect": 8279
       }
     }
   ],

@@ -10,26 +10,26 @@
           "id": "Aktie_1",
           "name": "Aktie 1",
           "result": {
-            "incorrect": 3241,
-            "manually": 448,
-            "accurate": 6199
+            "incorrect": 3441,
+            "manually": 348,
+            "accurate": 5199
           }
         },
         {
           "id": "Aktie_2",
           "name": "Aktie 2",
           "result": {
-            "incorrect": 5488,
-            "manually": 155,
-            "accurate": 4456
+            "incorrect": 7488,
+            "manually": 455,
+            "accurate": 1456
           }
         },
         {
           "id": "Aktie_3",
           "name": "Aktie 3",
           "result": {
-            "incorrect": 1973,
-            "manually": 372,
+            "incorrect": 2973,
+            "manually": 572,
             "accurate": 5954
           }
         }
@@ -39,9 +39,9 @@
       "id": "Not_Found",
       "name": "Not_Found",
       "result": {
-        "incorrect": 7701,
-        "manually": 100,
-        "accurate": 1400
+        "incorrect": 17701,
+        "manually": 1200,
+        "accurate": 14400
       }
     },  
     {
@@ -52,18 +52,18 @@
           "id": "Rente1",
           "name": "Rente1",
           "result": {
-            "incorrect": 6762,
-            "manually": 549,
-            "accurate": 3187
+            "incorrect": 7762,
+            "manually": 749,
+            "accurate": 4187
           }
         },
         {
           "id": "Rente2",
           "name": "Rente2",
           "result": {
-            "incorrect": 3271,
-            "manually": 179,
-            "accurate": 3648
+            "incorrect": 4271,
+            "manually": 279,
+            "accurate": 5648
           }
         }
       ]
@@ -72,9 +72,9 @@
       "id": "Derivat",
       "name": "Derivat",
       "result": {
-        "incorrect": 2271,
-        "manually": 79,
-        "accurate": 7648
+        "incorrect": 1271,
+        "manually": 229,
+        "accurate": 4648
       }
     }
   ],
