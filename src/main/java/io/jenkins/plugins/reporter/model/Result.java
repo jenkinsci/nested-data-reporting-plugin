@@ -3,6 +3,7 @@ package io.jenkins.plugins.reporter.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,34 @@ import java.util.stream.Collectors;
 public class Result implements Serializable {
     
     private static final long serialVersionUID = 7878818807240640969L;
-            
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @JsonProperty(value = "id", required = true)
+    private String id = String.valueOf(hashCode());
+
+    @JsonProperty(value = "name", required = true)
+    private String name = String.valueOf(hashCode());
+    
     @JsonProperty(value = "items", required = true)
     private List<Item> items;
     
     @JsonProperty(value = "colors", required = true)
     private Map<String, String> colors;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
     
     public List<Item> getItems() {
         return items;

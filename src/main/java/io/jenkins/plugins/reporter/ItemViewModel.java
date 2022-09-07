@@ -16,10 +16,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -107,22 +104,21 @@ public class ItemViewModel implements ModelObject {
         Job<?, ?> job = getOwner().getParent();
         RunList<?> runs = job.getBuilds();
 
-        List<Optional<ReportAction>> reports = runs.stream()
+        List<ReportAction> reports = runs.stream()
                 .filter(run -> run.getNumber() <= getOwner().getNumber())
-                .map(run -> Optional.ofNullable(run.getAction(ReportAction.class)))
+                .map(run -> Optional.of(run.getActions(ReportAction.class)))
+                .map(Optional::get)
+                .flatMap(List::stream)
+                .filter(reportAction -> Objects.equals(reportAction.getReport().getResult().getId(), this.report.getResult().getId()))
+                .collect(Collectors.toList());
+        
+        List<BuildResult<ReportAction>> history = reports.stream()
+                .map(reportAction -> new BuildResult<>(new Build(reportAction.getOwner().getNumber(),
+                        reportAction.getOwner().getDisplayName(), 0), reportAction))
                 .collect(Collectors.toList());
 
-        List<BuildResult<ReportAction>> history = new ArrayList<>();
-        for (Optional<ReportAction> report : reports) {
-            if (report.isPresent()) {
-                ReportAction reportAction = report.get();
-                Build build = new Build(reportAction.getOwner().getNumber(), reportAction.getOwner().getDisplayName(), 0);
-                history.add(new BuildResult<>(build, reportAction));
-            }
-        }
-
-        return new JacksonFacade().toJson(new TrendChart().create(history, ChartModelConfiguration.fromJson(configuration),
-                new ItemSeriesBuilder(item), report, item.getItems()));
+        return new JacksonFacade().toJson(new TrendChart().create(history, 
+                ChartModelConfiguration.fromJson(configuration), new ItemSeriesBuilder(item), report, item.getItems()));
     }
     
     @SuppressWarnings("unused") // Called by jelly view

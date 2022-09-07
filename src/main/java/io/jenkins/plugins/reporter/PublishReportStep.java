@@ -104,7 +104,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void setDisplayType(final String displayType) {
         this.displayType = displayType;
     }
-    
+
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -157,7 +157,8 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             Report report = new Report(result, dt);
             run.addAction(new ReportAction(run, report));
 
-            listener.getLogger().println(String.format("[PublishReportStep] Add report with display type %s to current build.", dt.name()));
+            listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.", 
+                    report.getResult().getId()));
             
         } catch (ValidationException e) {
             listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());

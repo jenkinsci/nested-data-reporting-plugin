@@ -30,11 +30,15 @@
 ## Introduction
 
 This plugin reports data from a nested data file as pie-charts, trend-charts and data tables. 
-If an item has `items`, the `result` will be computed automatically for this parent item.
+If an item has `items`, the `result` will be computed automatically for this parent item. 
+Please make sure you use a unique identifier for the `id`!
+
 An example json file looks like this: 
 
 ```
 {
+  "id": "my-json-report"
+  "name": "My JSON report"
   "items": [
     {
       "id": "stocks",
@@ -112,6 +116,8 @@ the keys of the individual items are used as the basis for distribution. For exa
 
 ```
 {
+  "id": "my-second-json-report"
+  "name": "My second JSON report"
   "items": [
     {
       "id": "Aktie",
@@ -213,15 +219,6 @@ By clicking on a corresponding row, the view is filtered according to the select
 However, the structure remains the same. This can be continued until no more subitems are 
 available in the json model. On the lowest level only the pie chart and the history will be displayed.
 
-The limited visualization from version **2.3.0** is thus resolved.
-
-> ~~⭕  **Limited visualization**:~~
->
-> ~~In version **2.3.0** currently only the first two levels are visualized. 
-> The values of all items below are not displayed visually, but are 
-> of course represented in the aggregation of the first two levels.~~
-
-
 ## Getting started
 
 ### Pipeline Step
@@ -237,7 +234,7 @@ The path to the report file. At the moment yaml/yml or json files are supported.
 
 ##### displayType (optional, default = `absolute`):
 This can be used to determine the representation of the values within the table.
-Choose between `absolute`, `relative` or `dual`. 
+Choose between `absolute`, `relative` or `dual`.
 
 ## Issues
 
