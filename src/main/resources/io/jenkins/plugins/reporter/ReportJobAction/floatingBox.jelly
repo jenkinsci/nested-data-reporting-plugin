@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
 
-  <c:trend-chart it="${from}" title="${%title}" enableLinks="true" configurationId="default"/>
+  <c:trend-chart it="${from}" title="${it.displayName}" enableLinks="true" configurationId="default"/>
   
 </j:jelly>

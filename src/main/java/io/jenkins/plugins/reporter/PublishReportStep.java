@@ -53,6 +53,8 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     private String displayType;
     
     private String reportFile;
+
+    private String label = "Nested Data Reporting";
     
     @DataBoundConstructor
     public PublishReportStep() {
@@ -103,6 +105,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     @DataBoundSetter
     public void setDisplayType(final String displayType) {
         this.displayType = displayType;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    @DataBoundSetter
+    public void setLabel(String label) {
+        this.label = label;
     }
     
     @Override
@@ -155,7 +166,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                     .findFirst().orElse(DisplayType.ABSOLUTE);
                     
             Report report = new Report(result, dt);
-            run.addAction(new ReportAction(run, report));
+            run.addAction(new ReportAction(run, report, getLabel()));
 
             listener.getLogger().println(String.format("[PublishReportStep] Add report with display type %s to current build.", dt.name()));
             

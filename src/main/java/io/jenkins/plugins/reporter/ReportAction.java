@@ -20,6 +20,8 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
     private final Report report;
     public final static String REPORT_ID = "report";
 
+    private final String label;
+    
     /**
      * Creates a new instance of {@link ReportAction}.
      *
@@ -27,24 +29,29 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      *         the associated build/run that created the static analysis result
      * @param report
      *         the report to add to the action.
+     * @param label
+     *         the label of the report.
      */
-    protected ReportAction(Run<?, ?> owner, Report report) {
-        this(owner, report, true);
+    protected ReportAction(Run<?, ?> owner, Report report, String label) {
+        this(owner, report, label, true);
     }
 
     /**
      * Creates a new instance of {@link ReportAction}.
      *
      * @param owner
-     *         the associated build/run that created the static analysis result
+     *         the associated build/run that created the static analysis result.
      * @param report
-     *         the report to add to the action
+     *         the report to add to the action.
+     * @param label 
+     *         the label of the report.
      * @param canSerialize
      *         if the action can be serialized.
      */
-    public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
+    public ReportAction(Run<?, ?> owner, Report report, String label, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
+        this.label = label;
     }
 
     /**
@@ -63,7 +70,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     protected JobAction<? extends BuildAction<Report>> createProjectAction() {
-        return new ReportJobAction(getOwner().getParent());
+        return new ReportJobAction(getOwner().getParent(), getReport(), label);
     }
 
     @Override
@@ -78,12 +85,12 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getDisplayName() {
-        return Messages.Action_Name();
+        return label;
     }
 
     @Override
     public String getUrlName() {
-        return ReportJobAction.ID + "-" + report.hashCode();
+        return ReportJobAction.ID + "-" + getReport().hashCode();
     }
 
     /**
