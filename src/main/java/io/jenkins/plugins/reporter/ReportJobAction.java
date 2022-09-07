@@ -25,7 +25,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     private final Report report;
     
-    private final String label;
+    private String label = Messages.Action_Name();
     
     /**
      * Creates a new instance of {@link ReportJobAction}.
@@ -51,7 +51,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     @Override
     public String getUrlName() {
-        return ID;
+        return ID + "-" + report.hashCode();
     }
 
     @Override

@@ -20,7 +20,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
     private final Report report;
     public final static String REPORT_ID = "report";
 
-    private final String label;
+    private String label = Messages.Action_Name();
     
     /**
      * Creates a new instance of {@link ReportAction}.
