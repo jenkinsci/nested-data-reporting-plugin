@@ -3,8 +3,11 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
+import org.apache.commons.collections.ListUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,18 +33,35 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
 
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
-        if (item.getResult().size() == 1) {
-            return item.getItems().stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
-        }
-        
+
         if (item.getId().equals(ReportAction.REPORT_ID)) {
+            
+            if (item.getResult().size() == 1) {
+                return reportAction.getReport().getResult().getItems().stream()
+                        .collect(Collectors.toMap(Item::getId, Item::getTotal));
+            }
+            
             return reportAction.getReport().getResult().aggregate();
         }
         
-        if (!item.hasItems()) {
-            return item.getResult();
+        List<Item> items = findItems(item.getId(), reportAction.getReport().getResult().getItems());
+        
+        if (item.getResult().size() == 1) {
+            return items.stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
         
+        //TODO: fix missing recursion for aggregation
         return reportAction.getReport().getResult().aggregate(i -> i.getId().equals(item.getId()));
+    }
+
+    private List<Item> findItems(String id, List<Item> items)
+    {
+        for (Item i: items) {
+            if (i.getId().equals(id) && i.hasItems()) {
+                return i.hasItems() ? i.getItems() : findItems(id, i.getItems());
+            }
+        }
+
+        return new ArrayList<>();
     }
 }

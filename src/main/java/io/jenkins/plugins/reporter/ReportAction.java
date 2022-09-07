@@ -83,7 +83,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getUrlName() {
-        return ReportJobAction.ID + "-" + getReport().hashCode();
+        return ReportJobAction.ID + "-" + getReport().getResult().getId().hashCode();
     }
 
     /**

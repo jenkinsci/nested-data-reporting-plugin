@@ -27,16 +27,18 @@ public class TrendChart {
      *         build is the head of the list, then the previous builds, and so on
      * @param configuration
      *         the chart configuration to be used
+     * @param builder
+     *          the {@link SeriesBuilder} to use for the model. {@link ItemSeriesBuilder} for each asset on
+     *          build level or {@link ReportSeriesBuilder} for the aggregated result on job level.
      * @param report
      *          the report
      *
      * @return the chart model, ready to be serialized to JSON
      */
     public LinesChartModel create(final Iterable<? extends BuildResult<ReportAction>> results,
-                                  final ChartModelConfiguration configuration,
+                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder,
                                   Report report, @Nullable List<Item> items) {
-        
-        ReportSeriesBuilder builder = new ReportSeriesBuilder(report);
+
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
         LinesChartModel model = new LinesChartModel(dataSet);
 

@@ -8,7 +8,6 @@ import hudson.model.Job;
 import hudson.util.RunList;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ReportSeriesBuilder;
-import io.jenkins.plugins.reporter.charts.ReportTrendChart;
 import io.jenkins.plugins.reporter.charts.TrendChart;
 import io.jenkins.plugins.reporter.model.Report;
 
@@ -51,7 +50,8 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     @Override
     public String getUrlName() {
-        return ID + "-" + report.hashCode();
+        //TODO: fix missing build number in url
+        return ID + "-" + report.getResult().getId().hashCode();
     }
 
     @Override
@@ -72,7 +72,8 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
                         reportAction.getOwner().getDisplayName(), 0), reportAction))
                 .collect(Collectors.toList());
         
-        return new ReportTrendChart().create(history, modelConfiguration, report, report.getResult().getItems());
+        return new TrendChart().create(history, modelConfiguration, new ReportSeriesBuilder(),
+                report, report.getResult().getItems());
         
 
     }

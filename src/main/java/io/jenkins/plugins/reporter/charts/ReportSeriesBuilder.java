@@ -16,21 +16,13 @@ import java.util.stream.Collectors;
  */
 public class ReportSeriesBuilder extends SeriesBuilder<ReportAction> {
     
-    private final Report report;
-    
-     public ReportSeriesBuilder(Report report) {
-        this.report = report;
-    }
-    
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
-
-        System.out.println(reportAction.getDisplayName());
-        
-        Map<String, Integer> result = report.getResult().aggregate();
+         
+        Map<String, Integer> result = reportAction.getReport().getResult().aggregate();
         
         if (result.size() == 1) {
-            return report.getResult().getItems().stream()
+            return reportAction.getReport().getResult().getItems().stream()
                     .collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
         
