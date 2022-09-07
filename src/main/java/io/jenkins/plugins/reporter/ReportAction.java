@@ -46,7 +46,12 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
     public ReportAction(Run<?, ?> owner, Report report, String label, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
-        this.label = label;
+        if (label == null) {
+            this.label = Messages.Action_Name();
+        } else {
+            this.label = label;
+        }
+
     }
 
     /**
@@ -101,6 +106,6 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         
-        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , getReport());
+        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , report);
     }
 }
