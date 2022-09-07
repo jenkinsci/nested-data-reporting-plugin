@@ -50,8 +50,7 @@ public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportActio
 
     @Override
     public String getUrlName() {
-        //TODO: fix missing build number in url
-        return ID + "-" + report.getResult().getId().hashCode();
+        return getOwner().getLastBuild().getNumber() + "/" + ID + "-" + report.getResult().getId().hashCode();
     }
 
     @Override
