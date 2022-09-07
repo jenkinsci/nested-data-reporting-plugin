@@ -19,8 +19,6 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
     public final static String REPORT_ID = "report";
-
-    private String label = Messages.Action_Name();
     
     /**
      * Creates a new instance of {@link ReportAction}.
@@ -29,11 +27,9 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      *         the associated build/run that created the static analysis result
      * @param report
      *         the report to add to the action.
-     * @param label
-     *         the label of the report.
      */
-    protected ReportAction(Run<?, ?> owner, Report report, String label) {
-        this(owner, report, label, true);
+    protected ReportAction(Run<?, ?> owner, Report report) {
+        this(owner, report, true);
     }
 
     /**
@@ -43,15 +39,12 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      *         the associated build/run that created the static analysis result.
      * @param report
      *         the report to add to the action.
-     * @param label 
-     *         the label of the report.
      * @param canSerialize
      *         if the action can be serialized.
      */
-    public ReportAction(Run<?, ?> owner, Report report, String label, boolean canSerialize) {
+    public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
-        this.label = label;
     }
 
     /**
@@ -70,7 +63,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     protected JobAction<? extends BuildAction<Report>> createProjectAction() {
-        return new ReportJobAction(getOwner().getParent(), getReport(), label);
+        return new ReportJobAction(getOwner().getParent(), getReport());
     }
 
     @Override
@@ -85,7 +78,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getDisplayName() {
-        return label;
+        return report.getResult().getName();
     }
 
     @Override

@@ -1,4 +1,6 @@
 {
+  "id": "json2",
+  "name": "My fancy JSON report with one column",
   "items": [
     {
       "id": "Aktie",
