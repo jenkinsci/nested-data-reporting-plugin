@@ -138,7 +138,7 @@ The limited visualization from version **2.3.0** is thus resolved.
 ### Pipeline Step
 
 ```
-publishReport reportFile: "etc/result.json", displayType: "absolute"
+publishReport reportFile: "etc/result.json", displayType: "absolute", label: "label-name"
 ```
 
 ### Parameter: 
@@ -149,6 +149,9 @@ The path to the report file. At the moment yaml/yml or json files are supported.
 ##### displayType (optional, default = `absolute`):
 This can be used to determine the representation of the values within the table.
 Choose between `absolute`, `relative` or `dual`. 
+
+##### label (optional: default = `Nested Data Reporting`)
+This can be used to change the label-name of your report.
 
 ## Issues
 
