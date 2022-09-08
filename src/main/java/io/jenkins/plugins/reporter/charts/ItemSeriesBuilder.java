@@ -3,8 +3,10 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
+import org.apache.commons.collections.ListUtils;
 
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Builds one x-axis point for the series of a line chart 
@@ -28,10 +30,38 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
 
     @Override
     protected Map<String, Integer> computeSeries(ReportAction reportAction) {
+
         if (item.getId().equals(ReportAction.REPORT_ID)) {
+            
+            if (item.getResult().size() == 1) {
+                return reportAction.getReport().getResult().getItems().stream()
+                        .collect(Collectors.toMap(Item::getId, Item::getTotal));
+            }
+            
             return reportAction.getReport().getResult().aggregate();
         }
         
-        return reportAction.getReport().getResult().aggregate(i -> i.getId().equals(item.getId()));
+        List<Item> items = findItems(item.getId(), reportAction.getReport().getResult().getItems());
+        
+        if (item.getResult().size() == 1) {
+            return items.stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
+        }
+        
+        return reportAction.getReport().getResult().aggregate(items);
+    }
+
+    private List<Item> findItems(String id, List<Item> items)
+    {
+        for (Item i: items) {
+            if (i.getId().equals(id)) {
+                return i.hasItems() ? i.getItems() : Collections.singletonList(i);
+            } 
+            
+            if (i.hasItems()) {
+                return findItems(id, i.getItems());
+            }
+        }
+
+        return Collections.emptyList();
     }
 }

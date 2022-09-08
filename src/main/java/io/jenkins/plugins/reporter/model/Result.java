@@ -3,6 +3,7 @@ package io.jenkins.plugins.reporter.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,34 @@ import java.util.stream.Collectors;
 public class Result implements Serializable {
     
     private static final long serialVersionUID = 7878818807240640969L;
-            
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @JsonProperty(value = "id", required = true)
+    private String id = String.valueOf(hashCode());
+
+    @JsonProperty(value = "name", required = true)
+    private String name = String.valueOf(hashCode());
+    
     @JsonProperty(value = "items", required = true)
     private List<Item> items;
     
     @JsonProperty(value = "colors", required = true)
     private Map<String, String> colors;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
     
     public List<Item> getItems() {
         return items;
@@ -44,14 +67,13 @@ public class Result implements Serializable {
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      * 
-     * @param filter
-     *          the filter to evaluate on the result.
+     * @param items
+     *              the items to aggregate the childs for.
      * @return the aggregated result.
      */
-    public LinkedHashMap<String, Integer> aggregate(Predicate<? super Item> filter) {
-        return getItems()
+    public LinkedHashMap<String, Integer> aggregate(List<Item> items) {
+        return items
                 .stream()
-                .filter(filter)
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
@@ -63,6 +85,6 @@ public class Result implements Serializable {
      * @return the aggregated result.
      */
     public LinkedHashMap<String, Integer> aggregate() {
-        return aggregate(item -> {return true;});
+        return aggregate(getItems());
     }
 }

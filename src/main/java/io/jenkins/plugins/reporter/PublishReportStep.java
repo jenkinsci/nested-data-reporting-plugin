@@ -18,7 +18,6 @@ import io.jenkins.plugins.reporter.model.DisplayType;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -35,7 +34,6 @@ import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -46,22 +44,22 @@ import java.util.Optional;
 @Extension
 public class PublishReportStep extends Builder implements SimpleBuildStep, Serializable {
     
+    @Deprecated
     private String jsonString;
     
+    @Deprecated
     private String jsonFile;
     
     private String displayType;
     
     private String reportFile;
-
-
-    private String label;
     
     @DataBoundConstructor
     public PublishReportStep() {
         super();
     }
     
+    @Deprecated
     public String getJsonString() {
         return jsonString;
     }
@@ -74,11 +72,11 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void setJsonString(final String jsonString) {
         this.jsonString = jsonString;
     }
-
+    
+    @Deprecated
     public String getJsonFile() {
         return jsonFile;
     }
-
     
     /**
      * use {@link #setReportFile(String)} instead.
@@ -105,15 +103,6 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     @DataBoundSetter
     public void setDisplayType(final String displayType) {
         this.displayType = displayType;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    @DataBoundSetter
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     @Override
@@ -166,9 +155,10 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                     .findFirst().orElse(DisplayType.ABSOLUTE);
                     
             Report report = new Report(result, dt);
-            run.addAction(new ReportAction(run, report, getLabel()));
+            run.addAction(new ReportAction(run, report));
 
-            listener.getLogger().println(String.format("[PublishReportStep] Add report with display type %s to current build.", dt.name()));
+            listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.", 
+                    report.getResult().getId()));
             
         } catch (ValidationException e) {
             listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());

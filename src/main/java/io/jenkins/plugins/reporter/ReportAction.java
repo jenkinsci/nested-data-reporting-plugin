@@ -19,8 +19,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     private final Report report;
     public final static String REPORT_ID = "report";
-    private final String label;
-
+    
     /**
      * Creates a new instance of {@link ReportAction}.
      *
@@ -29,29 +28,23 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      * @param report
      *         the report to add to the action.
      */
-    protected ReportAction(Run<?, ?> owner, Report report, String label) {
-        this(owner, report, label, true);
+    protected ReportAction(Run<?, ?> owner, Report report) {
+        this(owner, report, true);
     }
 
     /**
      * Creates a new instance of {@link ReportAction}.
      *
      * @param owner
-     *         the associated build/run that created the static analysis result
+     *         the associated build/run that created the static analysis result.
      * @param report
-     *         the report to add to the action
+     *         the report to add to the action.
      * @param canSerialize
      *         if the action can be serialized.
      */
-    public ReportAction(Run<?, ?> owner, Report report, String label, boolean canSerialize) {
+    public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
         super(owner, report, canSerialize);
         this.report = report;
-        if (label == null) {
-            this.label = Messages.Action_Name();
-        } else {
-            this.label = label;
-        }
-
     }
 
     /**
@@ -70,7 +63,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     protected JobAction<? extends BuildAction<Report>> createProjectAction() {
-        return new ReportJobAction(getOwner().getParent(), getReport(), label);
+        return new ReportJobAction(getOwner().getParent(), getReport());
     }
 
     @Override
@@ -85,12 +78,12 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getDisplayName() {
-        return label;
+        return report.getResult().getName();
     }
 
     @Override
     public String getUrlName() {
-        return ReportJobAction.ID + "-" + this.getReport().hashCode();
+        return ReportJobAction.ID + "-" + getReport().getResult().getId().hashCode();
     }
 
     /**
@@ -106,6 +99,6 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
         item.setResult(report.getResult().aggregate());
         item.setItems(report.getResult().getItems());
         
-        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , report);
+        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , getReport());
     }
 }

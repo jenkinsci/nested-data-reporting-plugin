@@ -1,34 +1,36 @@
-{
+{ 
+  "id": "json1",
+  "name": "My fancy JSON report",
   "items": [
     {
       "id": "Aktie",
       "name": "Aktie",
       "items": [
         {
-          "id": "Aktien1",
-          "name": "Aktien1",
+          "id": "Aktie_1",
+          "name": "Aktie 1",
           "result": {
-            "incorrect": 3541,
-            "manually": 58,
-            "accurate": 6399
+            "incorrect": 3441,
+            "manually": 348,
+            "accurate": 5199
           }
         },
         {
-          "id": "Aktie2",
-          "name": "Aktie2",
+          "id": "Aktie_2",
+          "name": "Aktie 2",
           "result": {
-            "incorrect": 4488,
-            "manually": 55,
-            "accurate": 5456
+            "incorrect": 7488,
+            "manually": 455,
+            "accurate": 1456
           }
         },
         {
-          "id": "Aktie3",
-          "name": "Aktie3",
+          "id": "Aktie_3",
+          "name": "Aktie 3",
           "result": {
             "incorrect": 2973,
-            "manually": 72,
-            "accurate": 6954
+            "manually": 572,
+            "accurate": 5954
           }
         }
       ]
@@ -36,17 +38,11 @@
     {
       "id": "Not_Found",
       "name": "Not_Found",
-      "items": [
-        {
-          "id": "Not_Found",
-          "name": "Not_Found",
-          "result": {
-            "incorrect": 8701,
-            "manually": 0,
-            "accurate": 1298
-          }
-        }
-      ]
+      "result": {
+        "incorrect": 17701,
+        "manually": 1200,
+        "accurate": 14400
+      }
     },  
     {
       "id": "Renten",
@@ -56,8 +52,8 @@
           "id": "Rente1",
           "name": "Rente1",
           "result": {
-            "incorrect": 5762,
-            "manually": 49,
+            "incorrect": 7762,
+            "manually": 749,
             "accurate": 4187
           }
         },
@@ -65,9 +61,9 @@
           "id": "Rente2",
           "name": "Rente2",
           "result": {
-            "incorrect": 2271,
-            "manually": 79,
-            "accurate": 7648
+            "incorrect": 4271,
+            "manually": 279,
+            "accurate": 5648
           }
         }
       ]
@@ -76,9 +72,9 @@
       "id": "Derivat",
       "name": "Derivat",
       "result": {
-        "incorrect": 2271,
-        "manually": 79,
-        "accurate": 7648
+        "incorrect": 1271,
+        "manually": 229,
+        "accurate": 4648
       }
     }
   ],

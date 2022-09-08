@@ -1,0 +1,78 @@
+{
+  "id": "json2",
+  "name": "My fancy JSON report with one column",
+  "items": [
+    {
+      "id": "Aktie",
+      "name": "Aktie",
+      "items": [
+        {
+          "id": "Aktie_1",
+          "name": "Aktie 1",
+          "result": {
+            "incorrect": 6541
+          }
+        },
+        {
+          "id": "Aktie_2",
+          "name": "Aktie 2",
+          "result": {
+            "incorrect": 7488
+          }
+        },
+        {
+          "id": "Aktie_3",
+          "name": "Aktie 3",
+          "result": {
+            "incorrect": 5973
+          }
+        }
+      ]
+    },
+    {
+      "id": "Not_Found",
+      "name": "Not_Found",
+      "result": {
+        "incorrect": 7701
+      }
+    },  
+    {
+      "id": "Renten",
+      "name": "Renten",
+      "items": [
+        {
+          "id": "Rente_1",
+          "name": "Rente1",
+          "result": {
+            "incorrect": 9762
+          }
+        },
+        {
+          "id": "Rente_2",
+          "name": "Rente2",
+          "result": {
+            "incorrect": 2671
+          }
+        }
+      ]
+    },
+    {
+      "id": "Derivat",
+      "name": "Derivat",
+      "result": {
+        "incorrect": 8279
+      }
+    }
+  ],
+  "colors": {
+    "Aktie": "#EF9A9A",
+    "Aktie_1": "#FFF59D",
+    "Aktie_2": "#A5D6A7",
+    "Aktie_3": "#FFCE30",
+    "Not_Found": "#E83845",
+    "Renten": "#E389B9",
+    "Rente_1": "#746AB0",
+    "Rente_2": "#288BA8",
+    "Derivat": "#0088FF"
+  }
+}
