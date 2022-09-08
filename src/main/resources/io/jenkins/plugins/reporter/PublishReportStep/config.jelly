@@ -6,5 +6,19 @@
               <f:textbox field="reportFile" />
               
         </f:entry>
+        
+        <f:entry name="displayType" title="${%title.displayType}" field="displayType">
+          
+          <select name="displayType">
+            
+            <option value="absolute">absolute</option>
+            
+            <option value="relative">relative</option>
+            
+            <option value="relative">dual</option>
+          
+          </select>
+       
+        </f:entry>
 
 </j:jelly>
