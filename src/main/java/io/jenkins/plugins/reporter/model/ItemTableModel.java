@@ -4,7 +4,10 @@ import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.reporter.ItemViewModel;
 import org.apache.commons.text.CaseUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
