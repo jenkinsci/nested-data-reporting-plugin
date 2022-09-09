@@ -5,7 +5,7 @@ pipeline {
 		stage('Publish Data') {
 			steps {
 				checkout scm
-				publishReport pattern: "**/*.json", displayType: "dual"
+				publishReport pattern: "etc/*.json", displayType: "dual"
 			} 
 		}
 	}
