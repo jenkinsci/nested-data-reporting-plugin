@@ -14,10 +14,16 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
+import io.jenkins.cli.shaded.org.apache.commons.io.filefilter.WildcardFileFilter;
 import io.jenkins.plugins.reporter.model.DisplayType;
+import io.jenkins.plugins.reporter.model.FilesScanner;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.selectors.TypeSelector;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -28,11 +34,9 @@ import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidObjectException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -51,8 +55,11 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     private String jsonFile;
     
     private String displayType;
-    
+
+    @Deprecated
     private String reportFile;
+
+    private String pattern;
     
     @DataBoundConstructor
     public PublishReportStep() {
@@ -86,11 +93,14 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void setJsonFile(final String jsonFile) {
         this.jsonFile = jsonFile;
     }
-
+    
     public String getReportFile() {
         return reportFile;
     }
 
+    /**
+     * use {@link #setPattern(String)} instead.
+     */
     @DataBoundSetter
     public void setReportFile(final String reportFile) {
         this.reportFile = reportFile;
@@ -105,6 +115,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         this.displayType = displayType;
     }
 
+    public String getPattern() {
+        return pattern;
+    }
+
+    @DataBoundSetter
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+    
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -115,6 +134,9 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                         @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, 
                         IOException {
         listener.getLogger().println("[PublishReportStep] Report data... ");
+
+        List<File> files = workspace.act(
+                new FilesScanner(getPattern()));
         
         FilePath filePath = workspace.child(getReportFile());
         String extension =  FilenameUtils.getExtension(filePath.getName()).toLowerCase(Locale.ROOT);
