@@ -1,6 +1,5 @@
 package io.jenkins.plugins.reporter.model;
 
-import edu.hm.hafner.echarts.Palette;
 
 import java.io.Serializable;
 
@@ -14,7 +13,7 @@ import java.io.Serializable;
 public class Report implements Serializable {
 
     private static final long serialVersionUID = -4523053939010906220L;
-    private static final String DEFAULT_COLOR = "#9E9E9E";
+    
     private final Result result;
 
     private final DisplayType displayType;
@@ -42,21 +41,6 @@ public class Report implements Serializable {
     
     public Result getResult() {
         return result;
-    }
-    
-    public String getColor(String id) {
-        String color = result.getColors().getOrDefault(id, DEFAULT_COLOR);
-        
-        if (!color.startsWith("#")) {
-            try {
-                return Palette.valueOf(color).getNormal();
-            } catch (IllegalArgumentException e) {
-                return DEFAULT_COLOR;
-            }
-        } 
-        
-        return color;
-        
     }
     
     public DisplayType getDisplayType() {

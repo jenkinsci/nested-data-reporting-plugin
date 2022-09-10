@@ -130,7 +130,7 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             
             Optional<Report> prevReport = findPreviousReport(run, result.getId());
 
-            List<String> colorIds = new ArrayList<>(result.getIds());
+            List<String> colorIds = new ArrayList<>(result.getColorIds());
             ColorPalette palette = new ColorPalette(colorIds);
             
             if (prevReport.isPresent()) {

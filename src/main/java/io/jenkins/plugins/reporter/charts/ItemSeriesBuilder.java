@@ -59,10 +59,10 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
             } 
             
             if (i.hasItems()) {
-                return findItems(id, i.getItems());
+                findItems(id, i.getItems());
             }
         }
-
+        
         return Collections.emptyList();
     }
 }

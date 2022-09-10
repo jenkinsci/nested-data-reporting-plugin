@@ -55,13 +55,13 @@ public class TrendChart {
                 if (item.isPresent()) {
                     // Line Series for items with only one result
                     Item i = item.get();
-                    LineSeries series = new LineSeries(i.getName(), report.getColor(i.getId()),
+                    LineSeries series = new LineSeries(i.getName(), report.getResult().getColor(i.getId()),
                             LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
                     series.addAll(dataSet.getSeries(i.getId()));
                     model.addSeries(series);
                 } else {
                     // Line Series for items with multiple results
-                    LineSeries series = new LineSeries(id, report.getColor(id),
+                    LineSeries series = new LineSeries(id, report.getResult().getColor(id),
                             LineSeries.StackedMode.STACKED, LineSeries.FilledMode.FILLED);
                     series.addAll(dataSet.getSeries(id));
                     model.addSeries(series);

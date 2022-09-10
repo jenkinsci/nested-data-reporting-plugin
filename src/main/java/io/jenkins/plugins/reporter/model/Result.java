@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 public class Result implements Serializable {
     
     private static final long serialVersionUID = 7878818807240640969L;
-
+    private static final String DEFAULT_COLOR = "#9E9E9E";
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -62,6 +63,20 @@ public class Result implements Serializable {
     public void setColors(Map<String, String> colors) {
         this.colors = colors;
     }
+
+    public String getColor(String id) {
+        String color = getColors().getOrDefault(id, DEFAULT_COLOR);
+
+        if (!color.startsWith("#")) {
+            try {
+                return Palette.valueOf(color).getColor();
+            } catch (IllegalArgumentException e) {
+                return DEFAULT_COLOR;
+            }
+        }
+
+        return color;
+    }
     
     public boolean hasColors() {
         return this.colors != null && this.colors.size() > 0;
@@ -81,7 +96,7 @@ public class Result implements Serializable {
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
     
-    public List<String> getIds() {
+    public List<String> getColorIds() {
         if (aggregate().size() == 1) {
             return findItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
         }
