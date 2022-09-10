@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import io.jenkins.cli.shaded.org.apache.commons.io.FileUtils;
@@ -9,6 +10,7 @@ import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -23,16 +25,19 @@ public class ResultParser {
     public Optional<Result> parseResult(File file) throws IOException {
         
         String extension =  FilenameUtils.getExtension(file.getName()).toLowerCase(Locale.ROOT);
-
+        ObjectMapper jsonWriter = new ObjectMapper();
         String json;
 
         switch (extension) {
             case "yaml":
             case "yml": {
-                ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-                Object obj = yamlReader.readValue(file, Object.class);
-                ObjectMapper jsonWriter = new ObjectMapper();
-                json = jsonWriter.writeValueAsString(obj);
+                Result result = new ObjectMapper(new YAMLFactory()).readerFor(Result.class).readValue(file);
+                json = jsonWriter.writeValueAsString(result);
+                break;
+            }
+            case "xml": {
+                Result result = new ObjectMapper(new XmlFactory()).readerFor(Result.class).readValue(file);
+                json = jsonWriter.writeValueAsString(result);
                 break;
             }
             case "json":
