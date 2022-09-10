@@ -68,7 +68,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     protected String getBuildResultBaseName() {
-        return "nested-data-report.xml";
+        return String.format("nested-data-report-%s.xml", super.getResult().getResult().getId().hashCode());
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
 
     @Override
     public String getDisplayName() {
-        return report.getResult().getName();
+        return getReport().getResult().getName();
     }
 
     @Override
