@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ColorPalette {
     
-    private static final Random RANDOM = new Random();
     private final List<String> ids;
     
     public ColorPalette(List<String> ids) {
@@ -19,7 +19,8 @@ public class ColorPalette {
         Map<String, String> colors = new HashMap<>();
         
         ids.forEach(id -> {
-            int rand_num = RANDOM.nextInt(0xffffff + 1);
+            Random random = ThreadLocalRandom.current();
+            int rand_num = random.nextInt(0xffffff + 1);
             String color = String.format("#%06x", rand_num);
 
             colors.put(id, color);
