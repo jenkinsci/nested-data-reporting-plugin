@@ -1,9 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;

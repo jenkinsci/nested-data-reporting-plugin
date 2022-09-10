@@ -10,7 +10,6 @@ import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
