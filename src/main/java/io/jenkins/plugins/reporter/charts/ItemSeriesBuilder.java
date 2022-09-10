@@ -53,13 +53,16 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
 
     private List<Item> findItems(String id, List<Item> items)
     {
-        for (Item i: items) {
-            if (i.getId().equals(id)) {
-                return i.hasItems() ? i.getItems() : Collections.singletonList(i);
-            } 
-            
-            if (i.hasItems()) {
-                findItems(id, i.getItems());
+        if (items != null) {
+            for (Item i: items) {
+                if (i.getId().equals(id)) {
+                    return i.hasItems() ? i.getItems() : Collections.singletonList(i);
+                } else {
+                    List<Item> sub = findItems(id, i.getItems());
+                    if (sub.size() > 0) {
+                        return sub;
+                    }
+                }
             }
         }
         
