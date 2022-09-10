@@ -40,7 +40,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<List<Result>> {
         return results;
     }
 
-    private void scanFiles(final File workspace, final String[] fileNames, final List<Result> results) throws IOException, InterruptedException {
+    private void scanFiles(final File workspace, final String[] fileNames, final List<Result> results) throws IOException {
         ResultParser parser = new ResultParser();
         for (String fileName : fileNames) {
             Path file = workspace.toPath().resolve(fileName);

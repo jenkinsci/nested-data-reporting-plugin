@@ -57,9 +57,13 @@ public class Result implements Serializable {
     public Map<String, String> getColors() {
         return colors;
     }
-
+    
     public void setColors(Map<String, String> colors) {
         this.colors = colors;
+    }
+    
+    public boolean hasColors() {
+        return this.colors != null && this.colors.size() > 0;
     }
 
     public void addColor(String id, String color) {

@@ -1,7 +1,7 @@
 {
   "type":"object",
   "id":"report.json",
-  "required": ["id", "name","colors", "items"],
+  "required": ["id", "name", "items"],
   "properties":{
     "id": {
       "type": "string"
