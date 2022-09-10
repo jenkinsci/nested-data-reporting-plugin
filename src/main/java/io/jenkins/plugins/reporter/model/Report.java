@@ -1,5 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
+import hudson.util.ColorPalette;
+
 import java.io.Serializable;
 import java.util.Random;
 
@@ -44,21 +46,10 @@ public class Report implements Serializable {
     }
     
     public String getColor(String id) {
-        if (result.getColors().getOrDefault(id, DEFAULT_COLOR).equals(DEFAULT_COLOR)) {
-            this.setRandomColor(id);
-        }
         return result.getColors().getOrDefault(id, DEFAULT_COLOR);
+        
     }
-
-    public void setRandomColor(String id) {
-        Random obj = new Random();
-        int rand_num = obj.nextInt(0xffffff + 1);
-        String colorCode = String.format("#%06x", rand_num);
-
-        result.addColor(id, colorCode);
-
-    }
-
+    
     public DisplayType getDisplayType() {
         if (displayType == null) return DisplayType.ABSOLUTE;
         return displayType;

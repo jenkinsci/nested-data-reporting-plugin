@@ -52,7 +52,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<List<Result>> {
                 System.out.printf("Skipping file '%s' because it's empty", fileName);
             }
             else {
-                Optional<Result> result = parser.parseResult(file.toFile());
+                Optional<Result> result = parser.parseResult(file.toFile()); 
                 result.ifPresent(results::add);
             }
         }

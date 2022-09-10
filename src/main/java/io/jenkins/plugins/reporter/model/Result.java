@@ -3,9 +3,7 @@ package io.jenkins.plugins.reporter.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,11 +63,6 @@ public class Result implements Serializable {
     public boolean hasColors() {
         return this.colors != null && this.colors.size() > 0;
     }
-
-    public void addColor(String id, String color) {
-        colors.put(id, color);
-    }
-
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      * 
@@ -84,7 +77,30 @@ public class Result implements Serializable {
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
+    
+    public List<String> getIds() {
+        if (aggregate().size() == 1) {
+            return findItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
+        }
+        
+        return new ArrayList<>(aggregate().keySet());
+    }
 
+    public List<Item> findItems(List<Item> items)
+    {
+        List<Item> flatten = new ArrayList<>();
+        
+        for (Item i: items) {
+            if (i.hasItems()) {
+                flatten.addAll(findItems(i.getItems()));
+            }
+            
+            flatten.add(i);
+        }
+
+        return flatten;
+    }
+    
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      *
