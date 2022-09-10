@@ -224,20 +224,20 @@ available in the json model. On the lowest level only the pie chart and the hist
 ### Pipeline Step
 
 ```
-publishReport reportFile: "etc/result.json", displayType: "absolute", label: "label-name"
+publishReport pattern: "**/result-*.json", displayType: "absolute"
 ```
 
 ### Parameter: 
 
-##### reportFile: 
-The path to the report file. At the moment yaml/yml or json files are supported.
+##### pattern: 
+
+This is an ant include pattern for the files should be parsed and scanned (see Patterns in the Apache Ant Manual). 
+Multiple includes can be specified by separating each pattern with a comma.
+At the moment only yaml/yml or json files are supported.
 
 ##### displayType (optional, default = `absolute`):
 This can be used to determine the representation of the values within the table.
 Choose between `absolute`, `relative` or `dual`.
-
-##### label (optional: default = `Nested Data Reporting`)
-This can be used to change the label-name of your report.
 
 ## Issues
 

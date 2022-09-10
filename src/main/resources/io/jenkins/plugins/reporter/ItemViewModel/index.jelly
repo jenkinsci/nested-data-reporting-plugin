@@ -84,7 +84,7 @@
                                             </td>
                                             
                                             <j:forEach var="i" items="${row.item.result}">
-                                                <td class="text-end">${row.label(i.value)}</td>
+                                                <td class="text-end">${row.label(i.key, i.value)}</td>
                                             </j:forEach>
                                                                                     
                                             <td>
@@ -99,8 +99,7 @@
                                                                   data-bs-toggle="tooltip" data-bs-placement="left" 
                                                                   title="${row.tooltip(id, percentage)}">.</span>
                                                         </j:if>
-                                                        
-                                                                                                          
+                                                                                        
                                                     </j:forEach>
                                                 </div>
                                             </td>

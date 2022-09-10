@@ -1,6 +1,9 @@
 package io.jenkins.plugins.reporter;
 
-import edu.hm.hafner.echarts.*;
+import edu.hm.hafner.echarts.Build;
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.JacksonFacade;
 import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -16,7 +19,10 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

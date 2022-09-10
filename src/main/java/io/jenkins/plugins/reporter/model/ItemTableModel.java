@@ -4,7 +4,10 @@ import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.reporter.ItemViewModel;
 import org.apache.commons.text.CaseUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -136,12 +139,12 @@ public class ItemTableModel {
             return report.getResult().getColors();
         }
 
-        public String label(Integer value) {
+        public String label(String id, Integer value) {
             if (item.getResult().size() == 1) {
                 return item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
             }
             
-            return item.getLabel(report, value, value / (double) item.getTotal() * 100);
+            return item.getLabel(report, value, value / (double) model.getItem().getResult().get(id) * 100);
         }
         
         public String tooltip(String id, double percentage) {

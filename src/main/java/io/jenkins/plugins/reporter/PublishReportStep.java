@@ -1,8 +1,5 @@
 package io.jenkins.plugins.reporter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -13,26 +10,19 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
 import io.jenkins.plugins.reporter.model.DisplayType;
+import io.jenkins.plugins.reporter.model.FilesScanner;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.Result;
 import jenkins.tasks.SimpleBuildStep;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaClient;
-import org.everit.json.schema.loader.SchemaLoader;
 import org.jenkinsci.Symbol;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -51,8 +41,11 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     private String jsonFile;
     
     private String displayType;
-    
+
+    @Deprecated
     private String reportFile;
+
+    private String pattern;
     
     @DataBoundConstructor
     public PublishReportStep() {
@@ -86,12 +79,17 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void setJsonFile(final String jsonFile) {
         this.jsonFile = jsonFile;
     }
-
+    
+    @Deprecated
     public String getReportFile() {
         return reportFile;
     }
 
+    /**
+     * use {@link #setPattern(String)} instead.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setReportFile(final String reportFile) {
         this.reportFile = reportFile;
     }
@@ -105,6 +103,15 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
         this.displayType = displayType;
     }
 
+    public String getPattern() {
+        return pattern;
+    }
+
+    @DataBoundSetter
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+    
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -115,54 +122,20 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                         @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, 
                         IOException {
         listener.getLogger().println("[PublishReportStep] Report data... ");
-        
-        FilePath filePath = workspace.child(getReportFile());
-        String extension =  FilenameUtils.getExtension(filePath.getName()).toLowerCase(Locale.ROOT);
-        
-        String json;
 
-        switch (extension) {
-            case "yaml":
-            case "yml": {
-                ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-                Object obj = yamlReader.readValue(filePath.readToString(), Object.class);
-                ObjectMapper jsonWriter = new ObjectMapper();
-                json = jsonWriter.writeValueAsString(obj);
-                break;
-            }
-            case "json":
-                json = filePath.readToString();
-                break;
-            default:
-                throw new InvalidObjectException("File extension is not supported!");
-        }
+        List<Result> results = workspace.act(new FilesScanner(getPattern()));
         
-        try (InputStream inputStream = getClass().getResourceAsStream("/report.json")) {
-            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-            SchemaLoader schemaLoader = SchemaLoader.builder()
-                    .schemaClient(SchemaClient.classPathAwareClient())
-                    .schemaJson(rawSchema)
-                    .resolutionScope("classpath:/")
-                    .build();
-            Schema schema = schemaLoader.load().build();
-            schema.validate(new JSONObject(json));
-            
-            JacksonFacade jackson = new JacksonFacade();
-            Result result =  jackson.fromJson(json, Result.class);
-
-            DisplayType dt = Arrays.stream(DisplayType.values())
-                    .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
-                    .findFirst().orElse(DisplayType.ABSOLUTE);
-                    
-            Report report = new Report(result, dt);
-            run.addAction(new ReportAction(run, report));
-
-            listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.", 
-                    report.getResult().getId()));
-            
-        } catch (ValidationException e) {
-            listener.getLogger().printf("[PublishReportStep] error: %s", e.getMessage());
-        }
+        DisplayType dt = Arrays.stream(DisplayType.values())
+                .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
+                .findFirst().orElse(DisplayType.ABSOLUTE);
+        
+        results.stream()
+                .map(result ->  new Report(result, dt))
+                .forEach(report -> {
+                    run.addAction(new ReportAction(run, report));
+                    listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.",
+                            report.getResult().getId()));
+                });
     }
  
     @Extension 

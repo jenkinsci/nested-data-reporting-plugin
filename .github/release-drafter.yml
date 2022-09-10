@@ -1,9 +1,9 @@
-_extends: .github
 name-template: 'v$RESOLVED_VERSION 🎁'
 tag-template: 'v$RESOLVED_VERSION'
 
 template: |
   $CHANGES
+  
 # Emoji reference: https://gitmoji.carloscuesta.me/
 categories:
   - title: 💥 Removed

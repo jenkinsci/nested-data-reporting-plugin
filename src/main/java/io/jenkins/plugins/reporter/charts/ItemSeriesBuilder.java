@@ -3,9 +3,10 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.model.Item;
-import org.apache.commons.collections.ListUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
