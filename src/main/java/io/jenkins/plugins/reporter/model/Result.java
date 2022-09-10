@@ -62,6 +62,10 @@ public class Result implements Serializable {
         this.colors = colors;
     }
 
+    public void addColor(String id, String color) {
+        colors.put(id, color);
+    }
+
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      * 
