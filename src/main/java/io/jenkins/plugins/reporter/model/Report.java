@@ -1,9 +1,8 @@
 package io.jenkins.plugins.reporter.model;
 
-import hudson.util.ColorPalette;
+import edu.hm.hafner.echarts.Palette;
 
 import java.io.Serializable;
-import java.util.Random;
 
 /**
  * Json Model class, which represents an {@link Report}. 
@@ -46,7 +45,17 @@ public class Report implements Serializable {
     }
     
     public String getColor(String id) {
-        return result.getColors().getOrDefault(id, DEFAULT_COLOR);
+        String color = result.getColors().getOrDefault(id, DEFAULT_COLOR);
+        
+        if (!color.startsWith("#")) {
+            try {
+                return Palette.valueOf(color).getNormal();
+            } catch (IllegalArgumentException e) {
+                return DEFAULT_COLOR;
+            }
+        } 
+        
+        return color;
         
     }
     
