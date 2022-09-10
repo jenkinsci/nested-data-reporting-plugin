@@ -60,6 +60,10 @@ public class Result implements Serializable {
         return colors;
     }
 
+    public void addColor(String id, String color) {
+        colors.put(id, color);
+    }
+
     public void setColors(Map<String, String> colors) {
         this.colors = colors;
     }
