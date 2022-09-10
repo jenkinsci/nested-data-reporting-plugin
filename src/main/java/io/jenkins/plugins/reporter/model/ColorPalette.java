@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class ColorPalette {
     
+    private static final Random RANDOM = new Random();
     private final List<String> ids;
     
     public ColorPalette(List<String> ids) {
@@ -14,11 +15,11 @@ public class ColorPalette {
     }
     
     public Map<String, String> generatePalette() {
-        Random obj = new Random();
+        
         Map<String, String> colors = new HashMap<>();
         
         ids.forEach(id -> {
-            int rand_num = obj.nextInt(0xffffff + 1);
+            int rand_num = RANDOM.nextInt(0xffffff + 1);
             String color = String.format("#%06x", rand_num);
 
             colors.put(id, color);
