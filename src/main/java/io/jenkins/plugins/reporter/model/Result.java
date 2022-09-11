@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,15 +18,12 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Result implements Serializable {
     
     private static final long serialVersionUID = 7878818807240640969L;
     private static final String DEFAULT_COLOR = "#9E9E9E";
     
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @JsonProperty(value = "id", required = true)
     private String id = String.valueOf(hashCode());
 
@@ -36,7 +34,7 @@ public class Result implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Item> items;
     
-    @JsonProperty(value = "colors", required = true)
+    @JsonProperty(value = "colors")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> colors;
 
@@ -51,7 +49,11 @@ public class Result implements Serializable {
     public String getName() {
         return name;
     }
-    
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Item> getItems() {
         return items;
     }
