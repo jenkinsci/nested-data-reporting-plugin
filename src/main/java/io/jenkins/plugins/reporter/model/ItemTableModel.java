@@ -138,6 +138,10 @@ public class ItemTableModel {
         public Map<String, String> getColors() {
             return report.getResult().getColors();
         }
+        
+        public String getColor(String id) {
+            return report.getResult().getColor(id);
+        }
 
         public String label(String id, Integer value) {
             if (item.getResult().size() == 1) {

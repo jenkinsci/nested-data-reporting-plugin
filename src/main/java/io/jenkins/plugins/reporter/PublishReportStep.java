@@ -10,10 +10,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import io.jenkins.plugins.reporter.model.DisplayType;
-import io.jenkins.plugins.reporter.model.FilesScanner;
-import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.reporter.model.Result;
+import io.jenkins.plugins.reporter.model.*;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,9 +18,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
@@ -121,9 +117,35 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, 
                         @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, 
                         IOException {
+        
         listener.getLogger().println("[PublishReportStep] Report data... ");
-
+        
         List<Result> results = workspace.act(new FilesScanner(getPattern()));
+        
+        List<Result> resultsWithoutColor = results.stream()
+                .filter(result -> !result.hasColors())
+                .collect(Collectors.toList());
+        
+        for (Result result : resultsWithoutColor) {
+            
+            Optional<Report> prevReport = findPreviousReport(run, result.getId());
+
+            List<String> colorIds = new ArrayList<>(result.getColorIds());
+            ColorPalette palette = new ColorPalette(colorIds);
+            
+            if (prevReport.isPresent()) {
+                Report report = prevReport.get();
+                
+                if (report.getResult().hasColors()) {
+                    result.setColors(report.getResult().getColors());
+                } else {
+                    result.setColors(palette.generatePalette());
+                }
+                
+            } else {
+                result.setColors(palette.generatePalette());
+            }
+        }
         
         DisplayType dt = Arrays.stream(DisplayType.values())
                 .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
@@ -136,6 +158,23 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
                     listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.",
                             report.getResult().getId()));
                 });
+    }
+    
+    public Optional<Report> findPreviousReport(Run<?,?> run, String id) {
+        Run<?, ?> prevBuild = run.getPreviousBuild();
+        
+        if (prevBuild != null) {
+            List<ReportAction> prevReportActions = prevBuild.getActions(ReportAction.class);
+            Optional<ReportAction> prevReportAction = prevReportActions.stream()
+                    .filter(reportAction -> Objects.equals(reportAction.getReport().getResult().getId(), id))
+                    .findFirst();
+
+            return prevReportAction
+                    .map(reportAction -> Optional.of(reportAction.getReport()))
+                    .orElseGet(() -> findPreviousReport(prevBuild, id));
+        } 
+        
+        return Optional.empty();
     }
  
     @Extension 

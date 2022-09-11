@@ -34,7 +34,6 @@ public class ItemViewModel implements ModelObject {
     
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
     
-    
     private final Run<?, ?> owner;
     private final Item item;
     private final String url;

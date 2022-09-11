@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
+
 import java.io.Serializable;
 
 /**
@@ -12,7 +13,7 @@ import java.io.Serializable;
 public class Report implements Serializable {
 
     private static final long serialVersionUID = -4523053939010906220L;
-    private static final String DEFAULT_COLOR = "#9E9E9E";
+    
     private final Result result;
 
     private final DisplayType displayType;
@@ -42,10 +43,6 @@ public class Report implements Serializable {
         return result;
     }
     
-    public String getColor(String id) {
-        return result.getColors().getOrDefault(id, DEFAULT_COLOR);
-    }
-
     public DisplayType getDisplayType() {
         if (displayType == null) return DisplayType.ABSOLUTE;
         return displayType;
