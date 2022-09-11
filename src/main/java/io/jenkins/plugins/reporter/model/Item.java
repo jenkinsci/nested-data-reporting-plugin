@@ -105,10 +105,10 @@ public class Item implements Serializable {
         PieChartModel model = new PieChartModel(getId());
         
         if (getResult().size() == 1) {
-            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getColor(item.getId())));
+            getItems().forEach(item -> model.add(new PieData(item.getName(), item.getTotal()), report.getResult().getColor(item.getId())));
         } else {
             getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                    report.getColor(key)));
+                    report.getResult().getColor(key)));
         }
         
         return model;

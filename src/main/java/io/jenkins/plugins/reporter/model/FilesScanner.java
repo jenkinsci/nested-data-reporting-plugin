@@ -40,7 +40,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<List<Result>> {
         return results;
     }
 
-    private void scanFiles(final File workspace, final String[] fileNames, final List<Result> results) throws IOException, InterruptedException {
+    private void scanFiles(final File workspace, final String[] fileNames, final List<Result> results) throws IOException {
         ResultParser parser = new ResultParser();
         for (String fileName : fileNames) {
             Path file = workspace.toPath().resolve(fileName);
@@ -52,7 +52,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<List<Result>> {
                 System.out.printf("Skipping file '%s' because it's empty", fileName);
             }
             else {
-                Optional<Result> result = parser.parseResult(file.toFile());
+                Optional<Result> result = parser.parseResult(file.toFile()); 
                 result.ifPresent(results::add);
             }
         }

@@ -105,10 +105,25 @@ An example json file looks like this:
 To check your json you can use the [json schema](src/main/resources/report.json) to validate it.
 
 > ⚠️ **Color Mapping**:
->
-> The attribute "colors" needs exactly the same attributes as the result of the 
-> items and assigns a color to each attribute, which is used for the graphical representation. Otherwise
-> a default color `#E9E9E9` is used for the missing property!
+> 
+> You can provide a color mapping. Then, please make sure, that the attribute `colors needs exactly the same 
+> attributes as the result of the items and assigns a color to each attribute, which is used for the graphical representation. 
+> Otherwise a default color `#E9E9E9` is used for the missing property! 
+> 
+> If no `colors` object is provided, 
+> a color palette will be calculated. You can use own HEX values or the following predefined colors are supported:
+> * YELLOW
+> * LIME 
+> * GREEN
+> * BLUE
+> * TEAL
+> * ORANGE
+> * INDIGO
+> * PURPLE
+> * RED
+> * BROWN
+> * GRAY
+> * WHITE
 
 If your items only have one result, the visualization is different from the default one, 
 because the representation then makes no sense. Instead of the attributes of the result object, 
@@ -182,15 +197,15 @@ the keys of the individual items are used as the basis for distribution. For exa
     }
   ],
   "colors": {
-    "Aktie": "#EF9A9A",
-    "Aktie_1": "#FFF59D",
-    "Aktie_2": "#A5D6A7",
-    "Aktie_3": "#FFCE30",
-    "Not_Found": "#E83845",
-    "Renten": "#E389B9",
-    "Rente_1": "#746AB0",
-    "Rente_2": "#288BA8",
-    "Derivat": "#0088FF"
+    "Aktie": "GREEN",
+    "Aktie_1": "YELLOW",
+    "Aktie_2": "RED",
+    "Aktie_3": "PURPLE",
+    "Not_Found": "BROWN",
+    "Renten": "ORANGE",
+    "Rente_1": "TEAL",
+    "Rente_2": "BLUE",
+    "Derivat": "INDIGO"
   }
 }
 ```

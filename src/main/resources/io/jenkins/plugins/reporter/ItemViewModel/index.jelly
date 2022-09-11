@@ -91,7 +91,7 @@
                                                 <div>
                                                      <j:forEach var="color" items="${row.colors}">
                                                         <j:set var="id" value="${color.key}"/>
-                                                        <j:set var="hex" value="${color.value}"/>
+                                                        <j:set var="hex" value="${row.getColor(id)}"/>
                                                         <j:set var="percentage" value="${row.getPercentage(id)}"/>
                                                         
                                                         <j:if test="${row.containsColorItem(id)}">
