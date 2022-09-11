@@ -73,6 +73,7 @@ public class ResultParser {
 
                 result.setItems(items);
                 json = jsonWriter.writeValueAsString(result);
+                break;
             default:
                 return Optional.empty();
         }

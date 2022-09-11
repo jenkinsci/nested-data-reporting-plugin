@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Result implements Serializable {
     
     private static final long serialVersionUID = 7878818807240640969L;
