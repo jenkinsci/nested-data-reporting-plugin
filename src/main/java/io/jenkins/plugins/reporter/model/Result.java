@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -29,9 +30,11 @@ public class Result implements Serializable {
     private String name = String.valueOf(hashCode());
     
     @JsonProperty(value = "items", required = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Item> items;
     
     @JsonProperty(value = "colors", required = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> colors;
 
     public String getId() {
