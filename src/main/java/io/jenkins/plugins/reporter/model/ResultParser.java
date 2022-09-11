@@ -59,10 +59,6 @@ public class ResultParser {
             JacksonFacade jackson = new JacksonFacade();
             Result result =  jackson.fromJson(json, Result.class);
             
-            if (!result.hasColors()) {
-                
-            }
-            
             return Optional.of(result);
         
         } catch (ValidationException e) {
