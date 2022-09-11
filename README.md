@@ -219,6 +219,7 @@ Then your dashboard looks like this:
 * JSON
 * YAML/YML
 * XML
+* CSV
 
 For examples of report files, please have look into [etc](/etc) folder.
 
