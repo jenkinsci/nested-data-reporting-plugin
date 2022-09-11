@@ -1,5 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -31,9 +33,11 @@ public class Result implements Serializable {
     private String name = String.valueOf(hashCode());
     
     @JsonProperty(value = "items", required = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Item> items;
     
     @JsonProperty(value = "colors", required = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> colors;
 
     public String getId() {
@@ -64,6 +68,7 @@ public class Result implements Serializable {
         this.colors = colors;
     }
 
+    @JsonIgnore
     public String getColor(String id) {
         String color = getColors().getOrDefault(id, DEFAULT_COLOR);
 
@@ -78,6 +83,7 @@ public class Result implements Serializable {
         return color;
     }
     
+    @JsonIgnore
     public boolean hasColors() {
         return this.colors != null && this.colors.size() > 0;
     }
@@ -88,6 +94,7 @@ public class Result implements Serializable {
      *              the items to aggregate the childs for.
      * @return the aggregated result.
      */
+    @JsonIgnore
     public LinkedHashMap<String, Integer> aggregate(List<Item> items) {
         return items
                 .stream()
@@ -96,6 +103,7 @@ public class Result implements Serializable {
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
     
+    @JsonIgnore
     public List<String> getColorIds() {
         if (aggregate().size() == 1) {
             return findItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
@@ -104,6 +112,7 @@ public class Result implements Serializable {
         return new ArrayList<>(aggregate().keySet());
     }
 
+    @JsonIgnore
     public List<Item> findItems(List<Item> items)
     {
         List<Item> flatten = new ArrayList<>();
@@ -124,6 +133,7 @@ public class Result implements Serializable {
      *
      * @return the aggregated result.
      */
+    @JsonIgnore
     public LinkedHashMap<String, Integer> aggregate() {
         return aggregate(getItems());
     }

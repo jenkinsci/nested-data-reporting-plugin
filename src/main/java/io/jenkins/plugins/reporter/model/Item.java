@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
@@ -34,10 +35,12 @@ public class Item implements Serializable {
     private String name;
 
     @JsonProperty(value = "result", required = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     LinkedHashMap<String, Integer> result;
 
     @Nullable
     @JsonProperty(value = "items", required = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     List<Item> items;
 
     public String getId() {
@@ -56,6 +59,7 @@ public class Item implements Serializable {
         this.name = name;
     }
 
+    @JsonIgnore
     public LinkedHashMap<String, Integer> getResult() {
         if (result != null) {
             return result;
