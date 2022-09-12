@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
 
@@ -64,7 +63,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
             }
             else {
                 Report reportParsed = parser.parse(file.toFile());
-                report.addAll(reportParsed);
+                report.add(reportParsed);
                 report.setOriginReportFile(file.toString());
                 report.logInfo("Successfully parsed file %s", file);
             }

@@ -20,8 +20,6 @@ public class PublishReportsStep extends Step implements Serializable {
 
     private static final long serialVersionUID = 423552861898621744L;
     
-    private String name = StringUtils.EMPTY;
-    
     private Provider provider;
 
     private String displayType;
@@ -34,15 +32,6 @@ public class PublishReportsStep extends Step implements Serializable {
         super();
 
         // empty constructor required for Stapler
-    }
-
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @DataBoundSetter
@@ -82,8 +71,6 @@ public class PublishReportsStep extends Step implements Serializable {
         @Override
         protected ReportResult run() throws Exception {
             ReportsRecorder recorder = new ReportsRecorder();
-            recorder.setId("ID TODO");
-            recorder.setName(step.getName());
             recorder.setProvider(step.getProvider());
             
             return recorder.perform(getContext().get(Run.class), getContext().get(FilePath.class), 

@@ -106,8 +106,8 @@ public class Report implements Serializable {
         Collections.addAll(this.errorMessages, ExceptionUtils.getRootCauseStackTrace(exception));
     }
 
-    public Report addAll(Report... reports) {
-        // TODO
+    public Report add(Report report) {
+        setId(report.getId());
         return this;
     }
     

@@ -47,11 +47,11 @@ public class AnnotatedReport implements Serializable {
     }
 
     private void addReport(Report report) {
-        // TODO
+        System.out.printf("Add Report='%s'\n", report.getId());
     }
 
     public void add(final AnnotatedReport other) {
-        // TODO
+        System.out.printf("Add AnnotatedReport='%s'\n", other.getId());
     }
 
 

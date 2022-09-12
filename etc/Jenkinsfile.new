@@ -7,7 +7,6 @@ pipeline {
 				checkout scm
 				publishReports displayType: "dual", provider: json(name: "JSON Report", pattern: "etc/*.json")
 				publishReports displayType: "dual", provider: xml(name: "XML Report", pattern: "etc/*.xml")
-				publishReports displayType: "dual", provider: csv(name: "CSV Report", pattern: "etc/*.csv")
 				publishReports displayType: "dual", provider: yaml(name: "YAML Report", pattern: "etc/*.yaml")
 			} 
 		}

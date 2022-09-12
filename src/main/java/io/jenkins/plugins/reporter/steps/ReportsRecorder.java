@@ -13,10 +13,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import java.io.IOException;
 
 public class ReportsRecorder extends Recorder {
-
-    private String id = StringUtils.EMPTY;
-
-    private String name = StringUtils.EMPTY;
     
     private Provider provider;
 
@@ -38,24 +34,6 @@ public class ReportsRecorder extends Recorder {
      */
     protected Object readResolve() {
         return this;
-    }
-    
-    @DataBoundSetter
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @DataBoundSetter

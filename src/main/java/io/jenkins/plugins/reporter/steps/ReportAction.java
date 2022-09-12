@@ -4,14 +4,15 @@ import hudson.model.Action;
 import hudson.model.Run;
 import io.jenkins.plugins.reporter.ReportJobAction;
 import jenkins.model.RunAction2;
-import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.StaplerProxy;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 
-public class ReportAction implements SimpleBuildStep.LastBuildAction, RunAction2, StaplerProxy, Serializable {
+public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, Serializable {
 
     private static final long serialVersionUID = 7179008520286494522L;
 
@@ -56,12 +57,12 @@ public class ReportAction implements SimpleBuildStep.LastBuildAction, RunAction2
     
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return null;
+        return Collections.singleton(new JobAction(owner.getParent()));
     }
 
     @Override
     public String getIconFileName() {
-        return ReportJobAction.ICON;
+        return JobAction.ICON;
     }
 
     @Override
