@@ -1,0 +1,12 @@
+pipeline {
+	agent any
+	
+	stages {
+		stage('Publish Data') {
+			steps {
+				checkout scm
+				publishReports failOnError: true, displayType: "dual", json(pattern: "etc/*.json")
+			} 
+		}
+	}
+}

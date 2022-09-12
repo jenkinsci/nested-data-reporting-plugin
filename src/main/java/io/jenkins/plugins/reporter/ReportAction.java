@@ -28,7 +28,7 @@ public class ReportAction extends BuildAction<Report> implements StaplerProxy {
      * @param report
      *         the report to add to the action.
      */
-    protected ReportAction(Run<?, ?> owner, Report report) {
+    public ReportAction(Run<?, ?> owner, Report report) {
         this(owner, report, true);
     }
 
