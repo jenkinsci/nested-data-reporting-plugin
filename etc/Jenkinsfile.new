@@ -6,6 +6,9 @@ pipeline {
 			steps {
 				checkout scm
 				publishReports failOnError: true, displayType: "dual", provider: json(pattern: "etc/*.json")
+				publishReports failOnError: true, displayType: "dual", provider: xml(pattern: "etc/*.xml")
+				publishReports failOnError: true, displayType: "dual", provider: csv(pattern: "etc/*.csv")
+				publishReports failOnError: true, displayType: "dual", provider: yaml(pattern: "etc/*.yaml")
 			} 
 		}
 	}

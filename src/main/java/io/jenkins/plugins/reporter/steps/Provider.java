@@ -1,12 +1,17 @@
 package io.jenkins.plugins.reporter.steps;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Run;
+import io.jenkins.plugins.reporter.steps.FilesScanner;
 import io.jenkins.plugins.util.JenkinsFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public abstract class Provider extends AbstractDescribableImpl<Provider>  implements Serializable {
@@ -16,6 +21,8 @@ public abstract class Provider extends AbstractDescribableImpl<Provider>  implem
     private String id = StringUtils.EMPTY;
     
     private String name = StringUtils.EMPTY;
+
+    private String pattern = StringUtils.EMPTY;
 
     private JenkinsFacade jenkins = new JenkinsFacade();
 
@@ -49,6 +56,23 @@ public abstract class Provider extends AbstractDescribableImpl<Provider>  implem
     }
 
     /**
+     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
+     * scanned.
+     *
+     * @param pattern
+     *         the pattern to use
+     */
+    @DataBoundSetter
+    public void setPattern(final String pattern) {
+        this.pattern = pattern;
+    }
+
+    @CheckForNull
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
      * Returns the {@link Symbol} name of this provider.
      *
      * @return the name of this provider, or "undefined" if no symbol has been defined
@@ -62,7 +86,28 @@ public abstract class Provider extends AbstractDescribableImpl<Provider>  implem
         return (ProviderDescriptor) jenkins.getDescriptorOrDie(getClass());
     }
 
+    Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+        return scanInWorkspace(workspace, getPattern(), logger);
+        
+    }
+
+    private Report scanInWorkspace(final FilePath workspace, final String pattern, final LogHandler logger) {
+        try {
+            Report report = workspace.act(
+                    new FilesScanner(getPattern()));
+
+            logger.log(report);
+
+            return report;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public abstract static class ProviderDescriptor extends Descriptor<Provider> {
+        
         private final String defaultId;
 
         /**

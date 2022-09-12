@@ -39,7 +39,7 @@ public class Json extends Provider {
     }
 
     /** Descriptor for this provider. */
-    @Symbol("Json")
+    @Symbol("json")
     @Extension
     public static class Descriptor extends ProviderDescriptor {
         /** Creates the descriptor instance. */

@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public class FilesScanner extends MasterToSlaveFileCallable<List<Result>> {
 
+    private static final long serialVersionUID = -5990116507861450675L;
+    
     private final String filePattern;
 
     /**

@@ -89,7 +89,8 @@ public class ReportsRecorder extends Recorder {
 
     private ReportResult record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) 
             throws IOException, InterruptedException {
-        AnnotatedReport report = new AnnotatedReport();
+        AnnotatedReport report = new AnnotatedReport(provider.getId(), report);
+        
         return  publishResult(run, listener, provider.getName(), provider.getName(), report);
     }
 
