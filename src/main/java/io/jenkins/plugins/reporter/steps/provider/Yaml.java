@@ -1,12 +1,20 @@
 package io.jenkins.plugins.reporter.steps.provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
+import io.jenkins.plugins.reporter.model.Result;
 import io.jenkins.plugins.reporter.steps.Provider;
+import io.jenkins.plugins.reporter.steps.Report;
+import io.jenkins.plugins.reporter.steps.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Yaml extends Provider {
     
@@ -15,6 +23,8 @@ public class Yaml extends Provider {
     private static final String ID = "yaml";
     private String pattern = StringUtils.EMPTY;
 
+    private String name = StringUtils.EMPTY;
+    
     @DataBoundConstructor
     public Yaml() {
         super();
@@ -38,6 +48,20 @@ public class Yaml extends Provider {
         return pattern;
     }
 
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ReportParser createParser() {
+        return new YamlParser();
+    }
+
     /** Descriptor for this provider. */
     @Symbol({"yaml", "yml"})
     @Extension
@@ -45,6 +69,16 @@ public class Yaml extends Provider {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+    }
+
+    public static class YamlParser extends ReportParser {
+
+        private static final long serialVersionUID = 8953162360286690397L;
+
+        @Override
+        public Report parse(File file) throws IOException {
+            return new ObjectMapper(new YAMLFactory()).readerFor(Report.class).readValue(file);
         }
     }
 }

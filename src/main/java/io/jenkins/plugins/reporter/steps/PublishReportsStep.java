@@ -19,16 +19,12 @@ import java.util.Set;
 public class PublishReportsStep extends Step implements Serializable {
 
     private static final long serialVersionUID = 423552861898621744L;
-        
-    private String id = StringUtils.EMPTY;
     
     private String name = StringUtils.EMPTY;
     
     private Provider provider;
 
     private String displayType;
-
-    private boolean failOnError = false;
 
     /**
      * Creates a new instance of {@link PublishReportsStep}.
@@ -38,15 +34,6 @@ public class PublishReportsStep extends Step implements Serializable {
         super();
 
         // empty constructor required for Stapler
-    }
-    
-    @DataBoundSetter
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
     }
 
     @DataBoundSetter
@@ -76,16 +63,6 @@ public class PublishReportsStep extends Step implements Serializable {
         return displayType;
     }
     
-    @DataBoundSetter
-    public void setFailOnError(final boolean failOnError) {
-        this.failOnError = failOnError;
-    }
-
-    
-    public boolean getFailOnError() {
-        return failOnError;
-    }
-    
     @Override
     public StepExecution start(final StepContext context) throws Exception {
         return new Execution(context, this);
@@ -105,10 +82,9 @@ public class PublishReportsStep extends Step implements Serializable {
         @Override
         protected ReportResult run() throws Exception {
             ReportsRecorder recorder = new ReportsRecorder();
-            recorder.setId(step.getId());
+            recorder.setId("ID TODO");
             recorder.setName(step.getName());
             recorder.setProvider(step.getProvider());
-            recorder.setFailOnError(step.getFailOnError());
             
             return recorder.perform(getContext().get(Run.class), getContext().get(FilePath.class), 
                     getContext().get(TaskListener.class));

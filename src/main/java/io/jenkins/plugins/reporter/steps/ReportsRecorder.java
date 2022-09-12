@@ -20,8 +20,6 @@ public class ReportsRecorder extends Recorder {
     
     private Provider provider;
 
-    private boolean failOnError = false;
-
     /**
      * Creates a new instance of {@link ReportsRecorder}.
      */
@@ -32,6 +30,16 @@ public class ReportsRecorder extends Recorder {
         // empty constructor required for Stapler
     }
 
+    /**
+     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
+     * otherwise initialized to {@code null}).
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        return this;
+    }
+    
     @DataBoundSetter
     public void setId(final String id) {
         this.id = id;
@@ -58,18 +66,7 @@ public class ReportsRecorder extends Recorder {
     public Provider getProvider() {
         return provider;
     }
-
-
-    @DataBoundSetter
-    public void setFailOnError(final boolean failOnError) {
-        this.failOnError = failOnError;
-    }
-
-
-    public boolean getFailOnError() {
-        return failOnError;
-    }
-
+    
     /**
      * Executes the build step.
      *
@@ -89,19 +86,26 @@ public class ReportsRecorder extends Recorder {
 
     private ReportResult record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) 
             throws IOException, InterruptedException {
-        AnnotatedReport report = new AnnotatedReport(provider.getId(), report);
-        
-        return  publishResult(run, listener, provider.getName(), provider.getName(), report);
+        AnnotatedReport report = new AnnotatedReport(provider.getSymbolName());
+        report.add(scan(run, workspace, listener, provider));
+        return publishResult(run, listener, provider.getSymbolName(), provider.getName(), report);
     }
 
     ReportResult publishResult(final Run<?, ?> run, final TaskListener listener, final String reportName, 
                                final String loggerName, final AnnotatedReport report) {
        
         ReportsPublisher publisher = new ReportsPublisher(run, report, reportName,
-                new LogHandler(listener, loggerName, new FilteredLog("")));
+                new LogHandler(listener, loggerName, new FilteredLog("ReportsPublisher")));
         
         ReportAction action = publisher.attachAction();
         
         return action.getResult();
+    }
+
+    private AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+                                         final Provider provider) throws IOException, InterruptedException {
+        
+        ReportScanner reportScanner = new ReportScanner(run, provider, workspace, listener);
+        return reportScanner.scan();
     }
 }

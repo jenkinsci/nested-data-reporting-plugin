@@ -3,7 +3,7 @@ package io.jenkins.plugins.reporter.charts;
 import edu.hm.hafner.echarts.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.jenkins.plugins.reporter.ReportAction;
-import io.jenkins.plugins.reporter.model.Item;
+import io.jenkins.plugins.reporter.steps.Item;
 import io.jenkins.plugins.reporter.model.Report;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package io.jenkins.plugins.reporter;
 
 import hudson.model.Run;
-import io.jenkins.plugins.reporter.model.Item;
+import io.jenkins.plugins.reporter.steps.Item;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.util.BuildAction;
 import io.jenkins.plugins.util.JobAction;

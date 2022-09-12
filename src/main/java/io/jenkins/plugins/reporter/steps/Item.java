@@ -1,10 +1,11 @@
-package io.jenkins.plugins.reporter.model;
+package io.jenkins.plugins.reporter.steps;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
+import io.jenkins.plugins.reporter.model.Report;
 import jline.internal.Nullable;
 
 import java.io.Serializable;
@@ -93,7 +94,7 @@ public class Item implements Serializable {
         return getResult().values().stream().reduce(0, Integer::sum);
     }
     
-    public String getLabel(Report report, Integer value, double percentage) {
+    public String getLabel(io.jenkins.plugins.reporter.model.Report report, Integer value, double percentage) {
         if (report.getDisplayType().equals(DisplayType.DUAL)) {
             return String.format("%s (%.2f%%)", value.toString(), percentage);
         }

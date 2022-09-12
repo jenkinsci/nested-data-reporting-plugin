@@ -2,6 +2,7 @@ package io.jenkins.plugins.reporter.model;
 
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.reporter.ItemViewModel;
+import io.jenkins.plugins.reporter.steps.Item;
 import org.apache.commons.text.CaseUtils;
 
 import java.util.ArrayList;

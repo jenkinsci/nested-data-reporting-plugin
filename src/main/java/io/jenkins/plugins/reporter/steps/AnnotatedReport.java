@@ -12,6 +12,16 @@ public class AnnotatedReport implements Serializable {
     
     private final Report aggregatedReport = new Report();
 
+    /**
+     * Creates a new instance of {@link AnnotatedReport}.
+     *
+     * @param id
+     *         the ID of the report
+     */
+    public AnnotatedReport(final String id) {
+        this.id = id;
+    }
+    
     public AnnotatedReport(final String id, Report report) {
         this.id = id;
         addReport(report);
@@ -37,6 +47,10 @@ public class AnnotatedReport implements Serializable {
     }
 
     private void addReport(Report report) {
+        // TODO
+    }
+
+    public void add(final AnnotatedReport other) {
         // TODO
     }
 

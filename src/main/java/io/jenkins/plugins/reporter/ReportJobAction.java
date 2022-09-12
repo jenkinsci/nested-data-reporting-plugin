@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  * @author Simon Symhoven
  */
 public class ReportJobAction extends AsyncConfigurableTrendJobAction<ReportAction> {
-    
-    static final String ICON = "/plugin/nested-data-reporting/icons/data-reporting-icon.svg";
+
+    public static final String ICON = "/plugin/nested-data-reporting/icons/data-reporting-icon.svg";
     static final String ID = "nested-data-reporting";
 
     private final Report report;

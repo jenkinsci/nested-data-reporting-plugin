@@ -24,9 +24,9 @@ public class ReportScanner {
     }
     
     public AnnotatedReport scan() throws IOException, InterruptedException {
-        LogHandler logger = new LogHandler(listener, provider.getName());
+        LogHandler logger = new LogHandler(listener, provider.getSymbolName());
         Report report = provider.scan(run, workspace, logger);
-        AnnotatedReport annotatedReport = new AnnotatedReport(provider.getId(), report);
+        AnnotatedReport annotatedReport = new AnnotatedReport(provider.getSymbolName(), report);
         logger.log(annotatedReport.getReport());
 
         return annotatedReport;

@@ -3,10 +3,14 @@ package io.jenkins.plugins.reporter.steps.provider;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
 import io.jenkins.plugins.reporter.steps.Provider;
+import io.jenkins.plugins.reporter.steps.Report;
+import io.jenkins.plugins.reporter.steps.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import java.io.File;
 
 public class Csv extends Provider {
     
@@ -15,6 +19,8 @@ public class Csv extends Provider {
     private static final String ID = "csv";
     private String pattern = StringUtils.EMPTY;
 
+    private String name = StringUtils.EMPTY;
+    
     @DataBoundConstructor
     public Csv() {
         super();
@@ -38,6 +44,20 @@ public class Csv extends Provider {
         return pattern;
     }
 
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ReportParser createParser() {
+        return new CsvParser();
+    }
+
     /** Descriptor for this provider. */
     @Symbol("csv")
     @Extension
@@ -45,6 +65,16 @@ public class Csv extends Provider {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+    }
+
+    public static class CsvParser extends ReportParser {
+
+        private static final long serialVersionUID = -8689695008930386640L;
+
+        @Override
+        public Report parse(File file) {
+            return null;
         }
     }
 }

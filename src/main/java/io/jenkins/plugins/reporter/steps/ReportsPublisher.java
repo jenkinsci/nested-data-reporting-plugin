@@ -21,10 +21,14 @@ public class ReportsPublisher {
     }
     
     ReportAction attachAction() {
-        ReportResult result = new ReportResult();
+        ReportResult result = new ReportResult(run);
         ReportAction action = new ReportAction(run, result);
         run.addAction(action);
         
         return action;
+    }
+
+    private String getId() {
+        return report.getId();
     }
 }

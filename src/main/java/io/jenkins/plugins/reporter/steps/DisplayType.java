@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.model;
+package io.jenkins.plugins.reporter.steps;
 
 public enum DisplayType {
     ABSOLUTE,

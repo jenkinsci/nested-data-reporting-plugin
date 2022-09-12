@@ -1,9 +1,10 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jenkins.plugins.reporter.steps.Item;
+import io.jenkins.plugins.reporter.steps.Palette;
 
 import java.io.Serializable;
 import java.util.ArrayList;

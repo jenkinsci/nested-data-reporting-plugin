@@ -1,6 +1,8 @@
 package io.jenkins.plugins.reporter.model;
 
 
+import io.jenkins.plugins.reporter.steps.DisplayType;
+
 import java.io.Serializable;
 
 /**
