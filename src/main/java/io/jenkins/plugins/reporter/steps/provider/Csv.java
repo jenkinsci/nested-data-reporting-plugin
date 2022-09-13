@@ -2,8 +2,8 @@ package io.jenkins.plugins.reporter.steps.provider;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
+import io.jenkins.plugins.reporter.steps.ReportDto;
 import io.jenkins.plugins.reporter.steps.Provider;
-import io.jenkins.plugins.reporter.steps.Report;
 import io.jenkins.plugins.reporter.steps.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -73,7 +73,7 @@ public class Csv extends Provider {
         private static final long serialVersionUID = -8689695008930386640L;
 
         @Override
-        public Report parse(File file) {
+        public ReportDto parse(File file) {
             return null;
         }
     }

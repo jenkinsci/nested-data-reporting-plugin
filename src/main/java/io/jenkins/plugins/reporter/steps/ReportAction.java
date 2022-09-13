@@ -2,7 +2,6 @@ package io.jenkins.plugins.reporter.steps;
 
 import hudson.model.Action;
 import hudson.model.Run;
-import io.jenkins.plugins.reporter.ReportJobAction;
 import jenkins.model.RunAction2;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.StaplerProxy;
@@ -17,12 +16,15 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     private static final long serialVersionUID = 7179008520286494522L;
 
     private transient Run<?, ?> owner;
-
+    
+    private final String name;
+    
     private final ReportResult result;
     
-    public ReportAction(final Run<?, ?> owner, final ReportResult result) {
+    public ReportAction(final Run<?, ?> owner, final ReportResult result, String name) {
         this.owner = owner;
         this.result = result;
+        this.name = name;
     }
     
     @Override
@@ -67,21 +69,30 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
 
     @Override
     public String getDisplayName() {
-        return null;
+        return getName();
     }
 
     @Override
     public String getUrlName() {
-        return null;
+        return "report-" + getName().hashCode();
     }
 
     @Override
     public Object getTarget() {
-        return null;
+        return new ReportDetails(getOwner(), getUrlName(),result, name);
     }
 
     @Whitelisted
     public ReportResult getResult() {
         return result;
+    }
+
+    /**
+     * Returns the name of the report.
+     *
+     * @return the ID
+     */
+    public String getName() {
+        return name;
     }
 }

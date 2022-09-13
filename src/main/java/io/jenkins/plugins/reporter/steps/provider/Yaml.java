@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
-import io.jenkins.plugins.reporter.model.Result;
+import io.jenkins.plugins.reporter.steps.ReportDto;
 import io.jenkins.plugins.reporter.steps.Provider;
-import io.jenkins.plugins.reporter.steps.Report;
 import io.jenkins.plugins.reporter.steps.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -77,8 +76,8 @@ public class Yaml extends Provider {
         private static final long serialVersionUID = 8953162360286690397L;
 
         @Override
-        public Report parse(File file) throws IOException {
-            return new ObjectMapper(new YAMLFactory()).readerFor(Report.class).readValue(file);
+        public ReportDto parse(File file) throws IOException {
+            return new ObjectMapper(new YAMLFactory()).readerFor(ReportDto.class).readValue(file);
         }
     }
 }

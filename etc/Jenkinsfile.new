@@ -5,9 +5,9 @@ pipeline {
 		stage('Publish Data') {
 			steps {
 				checkout scm
-				publishReports displayType: "dual", provider: json(name: "JSON Report", pattern: "etc/*.json")
-				publishReports displayType: "dual", provider: xml(name: "XML Report", pattern: "etc/*.xml")
-				publishReports displayType: "dual", provider: yaml(name: "YAML Report", pattern: "etc/*.yaml")
+				publishReports name: "JSON Report", displayType: "dual", provider: json(pattern: "etc/*.json")
+				publishReports name: "XML Report", displayType: "dual", provider: xml(pattern: "etc/*.xml")
+				publishReports name: "YAML Report", displayType: "dual", provider: yaml(pattern: "etc/*.yaml")
 			} 
 		}
 	}

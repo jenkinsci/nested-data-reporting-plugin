@@ -6,13 +6,14 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.Recorder;
 import io.jenkins.plugins.util.LogHandler;
-import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 
 public class ReportsRecorder extends Recorder {
+    
+    private String name;
     
     private Provider provider;
 
@@ -36,6 +37,14 @@ public class ReportsRecorder extends Recorder {
         return this;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     @DataBoundSetter
     public void setProvider(final Provider provider) {
         this.provider = provider;
@@ -66,7 +75,7 @@ public class ReportsRecorder extends Recorder {
             throws IOException, InterruptedException {
         AnnotatedReport report = new AnnotatedReport(provider.getSymbolName());
         report.add(scan(run, workspace, listener, provider));
-        return publishResult(run, listener, provider.getSymbolName(), provider.getName(), report);
+        return publishResult(run, listener, getName(), provider.getSymbolName(), report);
     }
 
     ReportResult publishResult(final Run<?, ?> run, final TaskListener listener, final String reportName, 

@@ -1,13 +1,11 @@
 package io.jenkins.plugins.reporter.steps.provider;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
-import io.jenkins.plugins.reporter.model.Result;
+import io.jenkins.plugins.reporter.steps.ReportDto;
 import io.jenkins.plugins.reporter.steps.Provider;
-import io.jenkins.plugins.reporter.steps.Report;
 import io.jenkins.plugins.reporter.steps.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -79,8 +77,8 @@ public class Xml extends Provider {
         private static final long serialVersionUID = 5363254965545196251L;
 
         @Override
-        public Report parse(File file) throws IOException {
-            return new ObjectMapper(new XmlFactory()).readerFor(Report.class).readValue(file);
+        public ReportDto parse(File file) throws IOException {
+            return new ObjectMapper(new XmlFactory()).readerFor(ReportDto.class).readValue(file);
         }
     }
 }

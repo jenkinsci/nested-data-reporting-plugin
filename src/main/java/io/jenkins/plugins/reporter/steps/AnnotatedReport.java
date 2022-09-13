@@ -1,8 +1,10 @@
 package io.jenkins.plugins.reporter.steps;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class AnnotatedReport implements Serializable {
     
@@ -26,7 +28,21 @@ public class AnnotatedReport implements Serializable {
         this.id = id;
         addReport(report);
     }
-   
+
+    /**
+     * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports.
+     *
+     * @param id
+     *         the ID of the report
+     * @param reports
+     *         the reports to aggregate
+     */
+    public AnnotatedReport(@CheckForNull final String id, final List<Report> reports) {
+        this(id);
+
+        addAllReports(reports);
+    }
+
     /**
      * Returns the ID of this report.
      *
@@ -54,5 +70,9 @@ public class AnnotatedReport implements Serializable {
         System.out.printf("Add AnnotatedReport='%s'\n", other.getId());
     }
 
+    private void addAllReports(List<Report> reports) {
+        reports.forEach(this::addReport);
+    }
+    
 
 }

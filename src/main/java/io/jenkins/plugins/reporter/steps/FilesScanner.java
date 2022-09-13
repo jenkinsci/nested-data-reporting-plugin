@@ -1,9 +1,8 @@
 package io.jenkins.plugins.reporter.steps;
 
 import hudson.remoting.VirtualChannel;
+import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.reporter.model.FileFinder;
-import io.jenkins.plugins.reporter.model.Result;
-import io.jenkins.plugins.reporter.model.ResultParser;
 import jenkins.MasterToSlaveFileCallable;
 
 import java.io.File;
@@ -62,11 +61,25 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
                 report.logError("Skipping file '%s' because it's empty", fileName);
             }
             else {
-                Report reportParsed = parser.parse(file.toFile());
-                report.add(reportParsed);
-                report.setOriginReportFile(file.toString());
-                report.logInfo("Successfully parsed file %s", file);
+                aggregateReport(file, report);
             }
+        }
+    }
+
+    private void aggregateReport(final Path file, final Report aggregatedReport) {
+        try {
+            ReportDto reportDto = parser.parse(file.toFile());
+            Report report = new Report();
+            report.setId(reportDto.getId());
+            report.setName(report.getName());
+            report.setItems(report.getItems());
+            report.setColors(report.getColors());
+            report.setOriginReportFile(file.toString());
+            
+            aggregatedReport.logInfo("Successfully parsed file %s", file);
+            aggregatedReport.add(report);
+        } catch (IOException exception) {
+            aggregatedReport.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
         }
     }
 

@@ -7,10 +7,7 @@ import edu.hm.hafner.util.PathUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Report implements Serializable {
 
@@ -20,21 +17,36 @@ public class Report implements Serializable {
     
     private List<String> errorMessages;
 
-    private String originReportFile;
-
-    @JsonProperty(value = "id", required = true)
+    private List<Report> subReports;
+    
     private String id;
-
-    @JsonProperty(value = "name", required = true)
+    
     private String name;
 
-    @JsonProperty(value = "items", required = true)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Item> items;
-
-    @JsonProperty(value = "colors")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    
     private Map<String, String> colors;
+    
+    private String originReportFile;
+    
+    public Report() {
+        this("-", "-", "-");
+    }
+
+    public Report(String id, String name) {
+        this(id, name, "-");
+    }
+    
+    public Report(String id, String name, String originReportFile) {
+        this.infoMessages = new ArrayList<>();
+        this.errorMessages = new ArrayList<>();
+        this.subReports = new ArrayList<>();
+        this.colors = new HashMap<>();
+        this.items = new ArrayList<>();
+        this.id = id;
+        this.name = name;
+        this.originReportFile = originReportFile;
+    }
 
     public String getId() {
         return id;
@@ -52,7 +64,19 @@ public class Report implements Serializable {
         this.name = name;
     }
 
+    public List<Report> getSubReports() {
+        return subReports;
+    }
+
+    public void setSubReports(List<Report> subReports) {
+        this.subReports = subReports;
+    }
+
     public List<Item> getItems() {
+        if (items == null) {
+            return Collections.emptyList();
+        }
+
         return items;
     }
 
@@ -61,6 +85,10 @@ public class Report implements Serializable {
     }
 
     public Map<String, String> getColors() {
+        if (colors == null) {
+            return Collections.emptyMap();
+        }
+        
         return colors;
     }
 
@@ -68,12 +96,10 @@ public class Report implements Serializable {
         this.colors = colors;
     }
     
-    public Report() {
-        this.infoMessages = new ArrayList<>();
-        this.errorMessages = new ArrayList<>();
-        this.originReportFile = "-";
+    public void add(Report report) {
+        this.subReports.add(report);
     }
-
+    
     public List<String> getInfoMessages() {
         return this.infoMessages;
     }
@@ -85,7 +111,7 @@ public class Report implements Serializable {
     public String getOriginReportFile() {
         return this.originReportFile;
     }
-
+    
     public void setOriginReportFile(String originReportFile) {
         this.originReportFile = (new PathUtil()).getAbsolutePath(originReportFile);
     }
@@ -105,11 +131,5 @@ public class Report implements Serializable {
         this.logError(format, args);
         Collections.addAll(this.errorMessages, ExceptionUtils.getRootCauseStackTrace(exception));
     }
-
-    public Report add(Report report) {
-        setId(report.getId());
-        return this;
-    }
-    
     
 }

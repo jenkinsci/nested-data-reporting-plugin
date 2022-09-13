@@ -22,7 +22,7 @@ public class ReportsPublisher {
     
     ReportAction attachAction() {
         ReportResult result = new ReportResult(run);
-        ReportAction action = new ReportAction(run, result);
+        ReportAction action = new ReportAction(run, result, name);
         run.addAction(action);
         
         return action;
