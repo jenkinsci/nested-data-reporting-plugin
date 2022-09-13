@@ -1,9 +1,9 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import hudson.model.Run;
 import io.jenkins.plugins.util.LogHandler;
 
-public class ReportsPublisher {
+public class ReportPublisher {
 
     private final Run<?, ?> run;
 
@@ -13,7 +13,7 @@ public class ReportsPublisher {
 
     private final LogHandler logger;
     
-    ReportsPublisher(final Run<?, ?> run, final AnnotatedReport report, final String name, final LogHandler logger) {
+    ReportPublisher(final Run<?, ?> run, final AnnotatedReport report, final String name, final LogHandler logger) {
         this.run = run;
         this.report = report;
         this.name = name;

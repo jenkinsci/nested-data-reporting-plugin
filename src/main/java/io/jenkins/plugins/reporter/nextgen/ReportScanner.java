@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import hudson.FilePath;
 import hudson.model.Run;

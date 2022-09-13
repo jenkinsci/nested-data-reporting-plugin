@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import java.io.File;
 import java.io.IOException;

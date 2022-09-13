@@ -1,7 +1,5 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.FormatMethod;
 import edu.hm.hafner.util.PathUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;

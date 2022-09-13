@@ -9,7 +9,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.hm.hafner.echarts.JacksonFacade;
 import io.jenkins.cli.shaded.org.apache.commons.io.FileUtils;
 import io.jenkins.cli.shaded.org.apache.commons.io.FilenameUtils;
-import io.jenkins.plugins.reporter.steps.Item;
+import io.jenkins.plugins.reporter.nextgen.Item;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;

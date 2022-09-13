@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import hudson.model.Action;
 import hudson.model.Run;
@@ -59,7 +59,7 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent()));
+        return Collections.singleton(new JobAction(owner.getParent(), name));
     }
 
     @Override

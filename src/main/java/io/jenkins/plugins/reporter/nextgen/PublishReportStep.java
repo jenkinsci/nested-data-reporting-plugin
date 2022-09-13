@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -6,7 +6,6 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import io.jenkins.plugins.reporter.Messages;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.*;
@@ -16,7 +15,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import java.io.Serializable;
 import java.util.Set;
 
-public class PublishReportsStep extends Step implements Serializable {
+public class PublishReportStep extends Step implements Serializable {
 
     private static final long serialVersionUID = 423552861898621744L;
     
@@ -27,10 +26,10 @@ public class PublishReportsStep extends Step implements Serializable {
     private String displayType;
 
     /**
-     * Creates a new instance of {@link PublishReportsStep}.
+     * Creates a new instance of {@link PublishReportStep}.
      */
     @DataBoundConstructor
-    public PublishReportsStep() {
+    public PublishReportStep() {
         super();
 
         // empty constructor required for Stapler
@@ -72,16 +71,16 @@ public class PublishReportsStep extends Step implements Serializable {
 
         private static final long serialVersionUID = -6468854519922975080L;
 
-        private final PublishReportsStep step;
+        private final PublishReportStep step;
         
-        protected Execution(@NonNull StepContext context, final PublishReportsStep step) {
+        protected Execution(@NonNull StepContext context, final PublishReportStep step) {
             super(context);
             this.step = step;
         }
 
         @Override
         protected ReportResult run() throws Exception {
-            ReportsRecorder recorder = new ReportsRecorder();
+            ReportRecorder recorder = new ReportRecorder();
             recorder.setName(step.getName());
             recorder.setProvider(step.getProvider());
             
@@ -102,7 +101,7 @@ public class PublishReportsStep extends Step implements Serializable {
 
         @Override
         public String getFunctionName() {
-            return "publishReports";
+            return "publishReport";
         }
 
         @NonNull

@@ -2,7 +2,7 @@ package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
-import io.jenkins.plugins.reporter.steps.Item;
+import io.jenkins.plugins.reporter.nextgen.Item;
 
 import java.util.Map;
 import java.util.stream.Collectors;

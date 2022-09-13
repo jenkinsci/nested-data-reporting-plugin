@@ -1,7 +1,6 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import hudson.remoting.VirtualChannel;
-import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.reporter.model.FileFinder;
 import jenkins.MasterToSlaveFileCallable;
 

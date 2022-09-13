@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import edu.hm.hafner.util.FilteredLog;
 import hudson.FilePath;
@@ -11,17 +11,17 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 
-public class ReportsRecorder extends Recorder {
+public class ReportRecorder extends Recorder {
     
     private String name;
     
     private Provider provider;
 
     /**
-     * Creates a new instance of {@link ReportsRecorder}.
+     * Creates a new instance of {@link ReportRecorder}.
      */
     @DataBoundConstructor
-    public ReportsRecorder() {
+    public ReportRecorder() {
         super();
 
         // empty constructor required for Stapler
@@ -81,7 +81,7 @@ public class ReportsRecorder extends Recorder {
     ReportResult publishResult(final Run<?, ?> run, final TaskListener listener, final String reportName, 
                                final String loggerName, final AnnotatedReport report) {
        
-        ReportsPublisher publisher = new ReportsPublisher(run, report, reportName,
+        ReportPublisher publisher = new ReportPublisher(run, report, reportName,
                 new LogHandler(listener, loggerName, new FilteredLog("ReportsPublisher")));
         
         ReportAction action = publisher.attachAction();

@@ -10,7 +10,7 @@ import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.charts.TrendChart;
-import io.jenkins.plugins.reporter.steps.Item;
+import io.jenkins.plugins.reporter.nextgen.Item;
 import io.jenkins.plugins.reporter.model.ItemTableModel;
 import io.jenkins.plugins.reporter.model.Report;
 import jline.internal.Nullable;

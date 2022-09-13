@@ -1,12 +1,12 @@
-package io.jenkins.plugins.reporter.steps.provider;
+package io.jenkins.plugins.reporter.nextgen.provider;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
-import io.jenkins.plugins.reporter.steps.ReportDto;
-import io.jenkins.plugins.reporter.steps.Provider;
-import io.jenkins.plugins.reporter.steps.ReportParser;
+import io.jenkins.plugins.reporter.nextgen.ReportDto;
+import io.jenkins.plugins.reporter.nextgen.Provider;
+import io.jenkins.plugins.reporter.nextgen.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;

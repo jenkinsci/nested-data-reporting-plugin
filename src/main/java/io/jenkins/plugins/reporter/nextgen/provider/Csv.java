@@ -1,31 +1,28 @@
-package io.jenkins.plugins.reporter.steps.provider;
+package io.jenkins.plugins.reporter.nextgen.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
-import io.jenkins.plugins.reporter.steps.ReportDto;
-import io.jenkins.plugins.reporter.steps.Provider;
-import io.jenkins.plugins.reporter.steps.ReportParser;
+import io.jenkins.plugins.reporter.nextgen.ReportDto;
+import io.jenkins.plugins.reporter.nextgen.Provider;
+import io.jenkins.plugins.reporter.nextgen.ReportParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
-import java.io.IOException;
 
-public class Yaml extends Provider {
+public class Csv extends Provider {
     
     private static final long serialVersionUID = 9141170397250309265L;
 
-    private static final String ID = "yaml";
+    private static final String ID = "csv";
     private String pattern = StringUtils.EMPTY;
 
     private String name = StringUtils.EMPTY;
     
     @DataBoundConstructor
-    public Yaml() {
+    public Csv() {
         super();
         // empty constructor required for stapler
     }
@@ -58,11 +55,11 @@ public class Yaml extends Provider {
 
     @Override
     public ReportParser createParser() {
-        return new YamlParser();
+        return new CsvParser();
     }
 
     /** Descriptor for this provider. */
-    @Symbol({"yaml", "yml"})
+    @Symbol("csv")
     @Extension
     public static class Descriptor extends ProviderDescriptor {
         /** Creates the descriptor instance. */
@@ -71,13 +68,13 @@ public class Yaml extends Provider {
         }
     }
 
-    public static class YamlParser extends ReportParser {
+    public static class CsvParser extends ReportParser {
 
-        private static final long serialVersionUID = 8953162360286690397L;
+        private static final long serialVersionUID = -8689695008930386640L;
 
         @Override
-        public ReportDto parse(File file) throws IOException {
-            return new ObjectMapper(new YAMLFactory()).readerFor(ReportDto.class).readValue(file);
+        public ReportDto parse(File file) {
+            return null;
         }
     }
 }

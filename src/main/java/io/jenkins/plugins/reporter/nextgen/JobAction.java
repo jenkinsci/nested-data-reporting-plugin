@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import edu.hm.hafner.echarts.JacksonFacade;
 import hudson.model.Action;
@@ -7,7 +7,9 @@ import hudson.model.Job;
 public class JobAction implements Action {
 
     private final Job<?, ?> owner;
-
+    
+    private final String name;
+    
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
     
     public static final String ICON = "/plugin/nested-data-reporting/icons/data-reporting-icon.svg";
@@ -17,9 +19,12 @@ public class JobAction implements Action {
      *
      * @param owner
      *         the job that owns this action
+     * @param name 
+     *          the human-readable name
      */
-    public JobAction(final Job<?, ?> owner) {
+    public JobAction(final Job<?, ?> owner, String name) {
         this.owner = owner;
+        this.name = name;
     }
     
     @Override
@@ -29,12 +34,12 @@ public class JobAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return null;
+        return name;
     }
 
     @Override
     public String getUrlName() {
-        return null;
+        return "report-" + name.hashCode();
     }
 
     /**

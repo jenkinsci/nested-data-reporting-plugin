@@ -1,9 +1,7 @@
-package io.jenkins.plugins.reporter.steps;
+package io.jenkins.plugins.reporter.nextgen;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.jenkins.plugins.reporter.steps.Item;
-import io.jenkins.plugins.reporter.steps.Report;
 
 import java.util.List;
 import java.util.Map;
