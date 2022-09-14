@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+
+    <div class="row py-3 flex-nowrap">
+                                                                
+        <div class="col-12">
+            
+            <bs:card class="h-100" bodyClass="pd-20" title="${%Distribution}" fontAwesomeIcon="bars-progress">
+               
+            </bs:card>
+    
+        </div>
+    
+    </div>
+
+</j:jelly>

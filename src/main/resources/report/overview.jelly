@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+
+    <bs:card class="h-100" title="${%Overview}" fontAwesomeIcon="chart-pie">
+    
+  
+    </bs:card>
+
+</j:jelly>

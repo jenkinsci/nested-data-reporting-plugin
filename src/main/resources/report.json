@@ -1,12 +1,9 @@
 {
   "type":"object",
   "id":"report.json",
-  "required": ["id", "name", "items"],
+  "required": ["id", "items"],
   "properties":{
     "id": {
-      "type": "string"
-    },
-    "name": {
       "type": "string"
     },
     "colors":{

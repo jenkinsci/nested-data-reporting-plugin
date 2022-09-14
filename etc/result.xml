@@ -1,6 +1,5 @@
 <root>
     <id>xml1</id>
-    <name>My fancy XML report without colors</name>
     <items>
         <item>
             <id>Aktie</id>
