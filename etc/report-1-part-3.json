@@ -1,0 +1,20 @@
+{ 
+  "id": "report-one",
+  "items": [
+    {
+      "id": "Renten",
+      "name": "Renten",
+      "items": [
+        {
+          "id": "Rente2",
+          "name": "Rente2",
+          "result": {
+            "incorrect": 4271,
+            "manually": 279,
+            "accurate": 5648
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,10 +1,11 @@
 package io.jenkins.plugins.reporter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class ReportDto {
 
@@ -43,4 +44,12 @@ public class ReportDto {
         this.colors = colors;
     }
     
+    @JsonIgnore
+    public Report toReport() {
+        Report report = new Report();
+        report.setId(getId());
+        report.setItems(Optional.ofNullable(getItems()).orElseGet(Collections::emptyList));
+        report.setColors(Optional.ofNullable(getColors()).orElseGet(Collections::emptyMap));
+        return report;
+    }
 }

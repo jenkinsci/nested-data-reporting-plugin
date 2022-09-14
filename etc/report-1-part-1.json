@@ -1,5 +1,5 @@
 { 
-  "id": "json3",
+  "id": "report-one",
   "items": [
     {
       "id": "Aktie",
@@ -42,39 +42,11 @@
         "manually": 1200,
         "accurate": 14400
       }
-    },  
-    {
-      "id": "Renten",
-      "name": "Renten",
-      "items": [
-        {
-          "id": "Rente1",
-          "name": "Rente1",
-          "result": {
-            "incorrect": 7762,
-            "manually": 749,
-            "accurate": 4187
-          }
-        },
-        {
-          "id": "Rente2",
-          "name": "Rente2",
-          "result": {
-            "incorrect": 4271,
-            "manually": 279,
-            "accurate": 5648
-          }
-        }
-      ]
-    },
-    {
-      "id": "Derivat",
-      "name": "Derivat",
-      "result": {
-        "incorrect": 1271,
-        "manually": 229,
-        "accurate": 4648
-      }
     }
-  ]
+  ],
+  "colors": {
+    "incorrect": "#EF9A9A",
+    "manually": "#FFF59D",
+    "accurate": "#A5D6A7"
+  }
 }

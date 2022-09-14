@@ -3,9 +3,11 @@ package io.jenkins.plugins.reporter.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.errorprone.annotations.FormatMethod;
 import edu.hm.hafner.util.PathUtil;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,32 +24,22 @@ public class Report implements Serializable {
     private List<Report> subReports;
     
     private String id;
-    
-    private String name;
 
     private List<Item> items;
     
     private Map<String, String> colors;
     
-    private String originReportFile;
-    
     public Report() {
-        this("-", "-", "-");
-    }
-
-    public Report(String id, String name) {
-        this(id, name, "-");
+        this("-");
     }
     
-    public Report(String id, String name, String originReportFile) {
+    public Report(String id) {
         this.infoMessages = new ArrayList<>();
         this.errorMessages = new ArrayList<>();
         this.subReports = new ArrayList<>();
         this.colors = new HashMap<>();
         this.items = new ArrayList<>();
         this.id = id;
-        this.name = name;
-        this.originReportFile = originReportFile;
     }
 
     public String getId() {
@@ -56,14 +48,6 @@ public class Report implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<Report> getSubReports() {
@@ -110,14 +94,6 @@ public class Report implements Serializable {
 
     public List<String> getErrorMessages() {
         return this.errorMessages;
-    }
-
-    public String getOriginReportFile() {
-        return this.originReportFile;
-    }
-    
-    public void setOriginReportFile(String originReportFile) {
-        this.originReportFile = (new PathUtil()).getAbsolutePath(originReportFile);
     }
 
     @JsonIgnore
@@ -204,6 +180,20 @@ public class Report implements Serializable {
     public void logException(Exception exception, String format, Object... args) {
         this.logError(format, args);
         Collections.addAll(this.errorMessages, ExceptionUtils.getRootCauseStackTrace(exception));
+    }
+
+    public Report merge(Report remote) {
+        
+        if (!getId().equals(remote.getId())) {
+            return remote;
+        }
+        
+        this.infoMessages.addAll(remote.getInfoMessages());
+        this.errorMessages.addAll(remote.getErrorMessages());
+        this.subReports.addAll(remote.getSubReports());
+        setItems(ListUtils.union(getItems(), remote.getItems()));
+        
+        return this;
     }
     
 }

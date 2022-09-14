@@ -2,7 +2,6 @@ package io.jenkins.plugins.reporter;
 
 import hudson.remoting.VirtualChannel;
 import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.reporter.model.ReportDto;
 import io.jenkins.plugins.reporter.model.ReportParser;
 import jenkins.MasterToSlaveFileCallable;
 
@@ -69,14 +68,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
 
     private void aggregateReport(final Path file, final Report aggregatedReport) {
         try {
-            ReportDto reportDto = parser.parse(file.toFile());
-            Report report = new Report();
-            report.setId(reportDto.getId());
-            report.setName(report.getName());
-            report.setItems(report.getItems());
-            report.setColors(report.getColors());
-            report.setOriginReportFile(file.toString());
-            
+            Report report = parser.parse(file.toFile()).toReport();;
             aggregatedReport.logInfo("Successfully parsed file %s", file);
             aggregatedReport.add(report);
         } catch (IOException exception) {
