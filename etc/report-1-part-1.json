@@ -8,11 +8,17 @@
         {
           "id": "Aktie_1",
           "name": "Aktie 1",
-          "result": {
-            "incorrect": 3441,
-            "manually": 348,
-            "accurate": 5199
-          }
+          "items": [
+            {
+              "id": "Aktie_1_1",
+              "name": "Aktie 1 1",
+              "result": {
+                "incorrect": 3441,
+                "manually": 348,
+                "accurate": 5199
+              }
+            }
+          ]
         },
         {
           "id": "Aktie_2",

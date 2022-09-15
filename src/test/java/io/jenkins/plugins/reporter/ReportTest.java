@@ -23,9 +23,5 @@ public class ReportTest {
         Report reportPart1 = parser.parse(file1).toReport();
         Report reportPart2 = parser.parse(file2).toReport();
         Report reportPart3 = parser.parse(file3).toReport();
-        
-        Report merged = reportPart1.merge(reportPart2).merge(reportPart3);
-        
-        System.out.println(merged);
     }
 }

@@ -10,13 +10,8 @@ import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.util.LogHandler;
 
 import java.io.IOException;
-import java.util.List;
 
 public class ReportRecorder extends Recorder {
-
-   
-
-    private String id;
     
     private String name;
     
@@ -49,14 +44,6 @@ public class ReportRecorder extends Recorder {
         return name;
     }
     
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-    
     public void setProvider(final Provider provider) {
         this.provider = provider;
     }
@@ -84,17 +71,17 @@ public class ReportRecorder extends Recorder {
 
     private ReportResult record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) 
             throws IOException, InterruptedException {
-        AnnotatedReport report = new AnnotatedReport(getId(), provider.getSymbolName());
+    
+        Report report = scan(run, workspace, listener, provider);
+        report.setName(getName());
         
-        report.add(scan(run, workspace, listener, provider));
-        
-        return publishResult(run, listener, getName(), provider.getSymbolName(), report);
+        return publishReport(run, listener, provider.getSymbolName(), report);
     }
 
-    ReportResult publishResult(final Run<?, ?> run, final TaskListener listener, final String reportName, 
-                               final String loggerName, final AnnotatedReport report) {
+    ReportResult publishReport(final Run<?, ?> run, final TaskListener listener,
+                               final String loggerName, final Report report) {
        
-        ReportPublisher publisher = new ReportPublisher(run, report, reportName,
+        ReportPublisher publisher = new ReportPublisher(run, report,
                 new LogHandler(listener, loggerName, new FilteredLog("ReportsPublisher")));
         
         ReportAction action = publisher.attachAction();

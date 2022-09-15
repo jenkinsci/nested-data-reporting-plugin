@@ -1,15 +1,18 @@
 package io.jenkins.plugins.reporter.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.errorprone.annotations.FormatMethod;
-import edu.hm.hafner.util.PathUtil;
-import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Report implements Serializable {
 
@@ -17,14 +20,18 @@ public class Report implements Serializable {
 
     private static final String DEFAULT_COLOR = "#9E9E9E";
     
-    private List<String> infoMessages;
+    private final List<String> infoMessages;
     
-    private List<String> errorMessages;
+    private final List<String> errorMessages;
 
+    private String originFileName = StringUtils.EMPTY;
+    
     private List<Report> subReports;
     
     private String id;
-
+    
+    private String name;
+    
     private List<Item> items;
     
     private Map<String, String> colors;
@@ -33,13 +40,13 @@ public class Report implements Serializable {
         this("-");
     }
     
-    public Report(String id) {
+    public Report(String name) {
         this.infoMessages = new ArrayList<>();
         this.errorMessages = new ArrayList<>();
         this.subReports = new ArrayList<>();
         this.colors = new HashMap<>();
         this.items = new ArrayList<>();
-        this.id = id;
+        this.name = name;
     }
 
     public String getId() {
@@ -50,6 +57,23 @@ public class Report implements Serializable {
         this.id = id;
     }
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOriginFileName() {
+        return originFileName;
+    }
+    
+    public void setOriginFileName(String originFileName) {
+        this.originFileName = originFileName;
+    }
+    
     public List<Report> getSubReports() {
         return subReports;
     }
@@ -83,9 +107,25 @@ public class Report implements Serializable {
     }
     
     public void add(Report report) {
-        this.subReports.addAll(report.getSubReports());
-        this.infoMessages.addAll(report.getInfoMessages());
-        this.infoMessages.addAll(report.getErrorMessages());
+        
+        if (StringUtils.isEmpty(id)) {
+            setId(report.getId());
+            logInfo("Add first report. Set ID='%s'", report.getId());
+        }
+        
+        if (getId().equals(report.getId())) {
+            this.subReports.add(report);
+            this.infoMessages.addAll(report.getInfoMessages());
+            this.errorMessages.addAll(report.getErrorMessages());
+            addColors(report.getColors());
+            addItems(report.getItems());
+            logInfo("Successfully added report with ID='%s'", report.getId());
+        } else {
+            logError("Skip adding report because ID='%s' is different from parent ID='%s'.", 
+                    report.getId(), getId());
+        }
+        
+        
     }
     
     public List<String> getInfoMessages() {
@@ -96,7 +136,6 @@ public class Report implements Serializable {
         return this.errorMessages;
     }
 
-    @JsonIgnore
     public String getColor(String id) {
         String color = getColors().getOrDefault(id, DEFAULT_COLOR);
 
@@ -111,10 +150,14 @@ public class Report implements Serializable {
         return color;
     }
 
-    @JsonIgnore
     public boolean hasColors() {
         return this.colors != null && this.colors.size() > 0;
     }
+
+    public boolean hasItems() {
+        return this.items != null && this.items.size() > 0;
+    }
+    
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      *
@@ -122,7 +165,6 @@ public class Report implements Serializable {
      *              the items to aggregate the childs for.
      * @return the aggregated result.
      */
-    @JsonIgnore
     public LinkedHashMap<String, Integer> aggregate(List<Item> items) {
         return items
                 .stream()
@@ -131,23 +173,21 @@ public class Report implements Serializable {
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
 
-    @JsonIgnore
     public List<String> getColorIds() {
         if (aggregate().size() == 1) {
-            return findItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
+            return flattItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
         }
 
         return new ArrayList<>(aggregate().keySet());
     }
 
-    @JsonIgnore
-    public List<Item> findItems(List<Item> items)
+    private List<Item> flattItems(List<Item> items)
     {
         List<Item> flatten = new ArrayList<>();
 
         for (Item i: items) {
             if (i.hasItems()) {
-                flatten.addAll(findItems(i.getItems()));
+                flatten.addAll(flattItems(i.getItems()));
             }
 
             flatten.add(i);
@@ -156,12 +196,34 @@ public class Report implements Serializable {
         return flatten;
     }
 
+    private Optional<Item> findItem(String id) {
+        return findItem(id, items);
+    }
+
+    private Optional<Item> findItem(String id, List<Item> items) {
+        if (items != null) {
+            for (Item i: items) {
+                if (i.getId().equals(id)) {
+                    return Optional.of(i);
+                } else {
+                    Optional<Item> sub = findItem(id, i.getItems());
+                    if (sub.isPresent()) {
+                        return sub;
+                    }
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+
     /**
      * Aggregates the results of all items. The values are added together, grouped by key. 
      *
      * @return the aggregated result.
      */
-    @JsonIgnore
+ 
     public LinkedHashMap<String, Integer> aggregate() {
         return aggregate(getItems());
     }
@@ -181,19 +243,43 @@ public class Report implements Serializable {
         this.logError(format, args);
         Collections.addAll(this.errorMessages, ExceptionUtils.getRootCauseStackTrace(exception));
     }
-
-    public Report merge(Report remote) {
-        
-        if (!getId().equals(remote.getId())) {
-            return remote;
+    
+    private void addColors(Map<String, String> colors) {
+        setColors(Stream.concat(getColors().entrySet().stream(), colors.entrySet().stream()).collect(
+                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+    }
+    
+    private void addItems(List<Item> itemsToAdd) {
+        for (Item item : itemsToAdd) {
+            Optional<Item> parent = this.items.stream().filter(i -> i.getId().equals(item.getId())).findAny();
+            
+            if (parent.isPresent()) {
+                if (item.hasItems()) {
+                    merge(item, item.getItems());
+                }
+            } else {
+                System.out.println(String.format("Add item wih ID='%s' to items.", item.getId()));
+                this.items.add(item);
+            }
         }
-        
-        this.infoMessages.addAll(remote.getInfoMessages());
-        this.errorMessages.addAll(remote.getErrorMessages());
-        this.subReports.addAll(remote.getSubReports());
-        setItems(ListUtils.union(getItems(), remote.getItems()));
-        
-        return this;
+    }
+    
+    private void merge(Item parentItem, List<Item> itemsToMerge) {
+        for (Item item : itemsToMerge) {
+            if (item.hasItems()) {
+                merge(item, item.getItems());
+            } else {
+                Optional<Item> found = findItem(parentItem.getId(), items);
+                
+                if (found.isPresent()) {
+                    System.out.println(String.format("Found parent with ID='%s' in items", found.get().getId()));
+                    Item parent = found.get();
+                    parent.addItem(item);
+                } else {
+                    System.out.println(String.format("No item found for ID='%s' in items", parentItem.getId()));
+                }
+            }
+        }
     }
     
 }

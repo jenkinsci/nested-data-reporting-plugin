@@ -2,6 +2,27 @@
   "id": "report-one",
   "items": [
     {
+      "id": "Aktie",
+      "name": "Aktie",
+      "items": [
+        {
+          "id": "Aktie_1",
+          "name": "Aktie 1",
+          "items": [
+            {
+              "id": "Aktie_1_2",
+              "name": "Aktie 1 2",
+              "result": {
+                "incorrect": 100,
+                "manually": 3456,
+                "accurate": 519
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "Renten",
       "name": "Renten",
       "items": [

@@ -4,6 +4,7 @@ import hudson.remoting.VirtualChannel;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.reporter.model.ReportParser;
 import jenkins.MasterToSlaveFileCallable;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,8 +69,11 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
 
     private void aggregateReport(final Path file, final Report aggregatedReport) {
         try {
-            Report report = parser.parse(file.toFile()).toReport();;
+            Report report = parser.parse(file.toFile()).toReport();
+            report.setOriginFileName(file.toString());
             aggregatedReport.logInfo("Successfully parsed file %s", file);
+            aggregatedReport.logInfo("Add report with ID='%s' and filename NAME='%s'.", 
+                    report.getId(), FilenameUtils.getName(file.toString()));
             aggregatedReport.add(report);
         } catch (IOException exception) {
             aggregatedReport.logException(exception, "Parsing of file '%s' failed due to an exception:", file);

@@ -6,6 +6,7 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import io.jenkins.plugins.reporter.model.Provider;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.*;
@@ -19,9 +20,7 @@ public class PublishReportStep extends Step implements Serializable {
 
     private static final long serialVersionUID = 423552861898621744L;
     
-    private String id;
-    
-    private String name;
+    private String name = StringUtils.EMPTY;
     
     private Provider provider;
 
@@ -39,10 +38,6 @@ public class PublishReportStep extends Step implements Serializable {
 
     public String getName() {
         return name;
-    }
-    
-    public String getId() {
-        return String.valueOf(getName().hashCode());
     }
     
     @DataBoundSetter
@@ -88,7 +83,6 @@ public class PublishReportStep extends Step implements Serializable {
         protected ReportResult run() throws Exception {
             ReportRecorder recorder = new ReportRecorder();
             recorder.setName(step.getName());
-            recorder.setId(step.getId());
             recorder.setProvider(step.getProvider());
             
             return recorder.perform(getContext().get(Run.class), getContext().get(FilePath.class), 
