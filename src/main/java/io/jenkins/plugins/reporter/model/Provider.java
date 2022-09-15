@@ -5,17 +5,20 @@ import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
+import hudson.util.FormValidation;
 import io.jenkins.plugins.reporter.FilesScanner;
 import io.jenkins.plugins.reporter.LogHandler;
 import io.jenkins.plugins.util.JenkinsFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-public abstract class Provider extends AbstractDescribableImpl<Provider>  implements Serializable {
+public abstract class Provider extends AbstractDescribableImpl<Provider> implements Serializable {
     
     private static final long serialVersionUID = -1356603376948787474L;
     
@@ -143,6 +146,15 @@ public abstract class Provider extends AbstractDescribableImpl<Provider>  implem
                 }
             }
             return "undefined";
+        }
+
+        @POST
+        public FormValidation doCheckPattern(@QueryParameter("pattern") String pattern) {
+            if (StringUtils.isEmpty(pattern)) {
+                return FormValidation.error("Field 'pattern' is required.");
+            }
+
+            return FormValidation.ok();
         }
     }
 }

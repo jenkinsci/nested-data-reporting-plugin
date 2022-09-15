@@ -15,13 +15,15 @@ public class ReportResult implements Serializable {
 
     private transient Run<?, ?> owner;
 
+    private final Report report;
+    
     private final List<String> errors;
     
     private final List<String> messages;
     
     public ReportResult(final Run<?, ?> owner, final Report report) {
         this.owner = owner;
-        
+        this.report = report;
         messages = new ArrayList<>(report.getInfoMessages());
         errors = new ArrayList<>(report.getErrorMessages());
     }
@@ -38,6 +40,10 @@ public class ReportResult implements Serializable {
      */
     public void setOwner(final Run<?, ?> owner) {
         this.owner = owner;
+    }
+
+    public Report getReport() {
+        return report;
     }
     
     public ImmutableList<String> getErrorMessages() {

@@ -1,25 +1,46 @@
 package io.jenkins.plugins.reporter;
 
 import edu.hm.hafner.util.FilteredLog;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+import io.jenkins.plugins.reporter.model.DisplayType;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.Report;
+import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
+import java.util.*;
 
 public class ReportRecorder extends Recorder {
     
     private String name;
     
     private Provider provider;
+    
+    private String displayType;
 
     /**
      * Creates a new instance of {@link ReportRecorder}.
      */
+    @DataBoundConstructor
     public ReportRecorder() {
         super();
 
@@ -36,6 +57,7 @@ public class ReportRecorder extends Recorder {
         return this;
     }
 
+    @DataBoundSetter
     public void setName(String name) {
         this.name = name;
     }
@@ -44,6 +66,7 @@ public class ReportRecorder extends Recorder {
         return name;
     }
     
+    @DataBoundSetter
     public void setProvider(final Provider provider) {
         this.provider = provider;
     }
@@ -51,9 +74,18 @@ public class ReportRecorder extends Recorder {
     public Provider getProvider() {
         return provider;
     }
-    
+
+    public String getDisplayType() {
+        return displayType;
+    }
+
+    @DataBoundSetter
+    public void setDisplayType(String displayType) {
+        this.displayType = displayType;
+    }
+
     /**
-     * Executes the build step.
+     * Executes the build step.jelly.
      *
      * @param run
      *         the run of the pipeline or freestyle job
@@ -74,8 +106,14 @@ public class ReportRecorder extends Recorder {
     
         Report report = scan(run, workspace, listener, provider);
         report.setName(getName());
+
+        DisplayType dt = Arrays.stream(DisplayType.values())
+                .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
+                .findFirst().orElse(DisplayType.ABSOLUTE);
         
-        return publishReport(run, listener, provider.getSymbolName(), report);
+        report.setDisplayType(dt);
+        
+    return publishReport(run, listener, provider.getSymbolName(), report);
     }
 
     ReportResult publishReport(final Run<?, ?> run, final TaskListener listener,
@@ -95,5 +133,51 @@ public class ReportRecorder extends Recorder {
         ReportScanner reportScanner = new ReportScanner(run, provider, workspace, listener);
         
         return reportScanner.scan();
+    }
+
+    /**
+     * Descriptor for this step.jelly: defines the context and the UI elements.
+     */
+    @Extension
+    @Symbol("publishReport")
+    @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
+    public static class Descriptor extends BuildStepDescriptor<Publisher> {
+
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
+        @NonNull
+        @Override
+        public String getDisplayName() {
+            return Messages.Step_Name();
+        }
+
+        // called by jelly view
+        @POST
+        public FormValidation doCheckName(@QueryParameter("name") String name) {
+            if (StringUtils.isEmpty(name)) {
+                return FormValidation.error("Field 'name' is required.");
+            }
+
+            return FormValidation.ok();
+        }
+
+        // called by jelly view
+        @POST
+        public ListBoxModel doFillDisplayTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                ListBoxModel r = new ListBoxModel();
+                for (DisplayType dt : DisplayType.values()) {
+                    r.add(dt.name().toLowerCase());
+                }
+                return r;
+            }
+
+            return new ListBoxModel();
+        }
     }
 }

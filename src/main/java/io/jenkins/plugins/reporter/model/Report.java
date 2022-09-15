@@ -1,11 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.errorprone.annotations.FormatMethod;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -23,8 +18,8 @@ public class Report implements Serializable {
     private final List<String> infoMessages;
     
     private final List<String> errorMessages;
-
-    private String originFileName = StringUtils.EMPTY;
+    
+    private DisplayType displayType = DisplayType.ABSOLUTE;
     
     private List<Report> subReports;
     
@@ -65,14 +60,6 @@ public class Report implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getOriginFileName() {
-        return originFileName;
-    }
-    
-    public void setOriginFileName(String originFileName) {
-        this.originFileName = originFileName;
-    }
     
     public List<Report> getSubReports() {
         return subReports;
@@ -80,6 +67,14 @@ public class Report implements Serializable {
 
     public void setSubReports(List<Report> subReports) {
         this.subReports = subReports;
+    }
+
+    public DisplayType getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(DisplayType displayType) {
+        this.displayType = displayType;
     }
 
     public List<Item> getItems() {
@@ -124,8 +119,6 @@ public class Report implements Serializable {
             logError("Skip adding report because ID='%s' is different from parent ID='%s'.", 
                     report.getId(), getId());
         }
-        
-        
     }
     
     public List<String> getInfoMessages() {
@@ -196,11 +189,11 @@ public class Report implements Serializable {
         return flatten;
     }
 
-    private Optional<Item> findItem(String id) {
+    public Optional<Item> findItem(String id) {
         return findItem(id, items);
     }
 
-    private Optional<Item> findItem(String id, List<Item> items) {
+    public Optional<Item> findItem(String id, List<Item> items) {
         if (items != null) {
             for (Item i: items) {
                 if (i.getId().equals(id)) {

@@ -2,22 +2,26 @@ package io.jenkins.plugins.reporter;
 
 import hudson.model.Action;
 import hudson.model.Run;
+import io.jenkins.plugins.reporter.model.Item;
 import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.StaplerProxy;
-import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, Serializable {
 
     private static final long serialVersionUID = 7179008520286494522L;
 
+    public final static String REPORT_ID = "report";
+    
     private transient Run<?, ?> owner;
     
     private final String name;
@@ -49,6 +53,7 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     protected Object readResolve() {
         return this;
     }
+    
 
     /**
      * Returns the associated build/run that created the static analysis result.
@@ -57,12 +62,6 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
      */
     public Run<?, ?> getOwner() {
         return owner;
-    }
-
-    
-    @Override
-    public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), name));
     }
 
     @Override
@@ -85,15 +84,19 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     }
 
     @Override
-    public Object getTarget() {
-        return new ReportDetails(getOwner(), getUrlName(), result, name);
+    public ReportDetails getTarget() {
+        Item item = new Item();
+        item.setId(REPORT_ID);
+        item.setName(name);
+        item.setItems(result.getReport().getItems());
+        return new ReportDetails(getOwner(), getUrlName(), result, name, item, Optional.empty());
     }
 
     @Whitelisted
     public ReportResult getResult() {
         return result;
     }
-
+    
     /**
      * Returns the name of the report.
      *
@@ -101,5 +104,10 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
      */
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.singletonList(new JobAction(getOwner().getParent(), name, result.getReport()));
     }
 }

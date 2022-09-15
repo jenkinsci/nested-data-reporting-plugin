@@ -18,8 +18,6 @@ public class Csv extends Provider {
 
     private static final String ID = "csv";
     private String pattern = StringUtils.EMPTY;
-
-    private String name = StringUtils.EMPTY;
     
     @DataBoundConstructor
     public Csv() {
@@ -42,15 +40,6 @@ public class Csv extends Provider {
     @CheckForNull
     public String getPattern() {
         return pattern;
-    }
-
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome">
+    
+    <st:documentation>
+        Renders the navigation footer.
+        <st:attribute name="label" use="required">
+          The label to show.
+        </st:attribute>
+    </st:documentation>
+          
+    <div class="module-previous-next-controls">
+    
+       <a href="../" class="jenkins-button jenkins-button--transparent module-previous-button">
+         
+         <fa:svg-icon name="arrow-left"/>
+         
+         <span>${%Previous}</span>
+         
+         <span>${label}</span>
+       
+       </a>
+    
+    </div>
+               
+</j:jelly>

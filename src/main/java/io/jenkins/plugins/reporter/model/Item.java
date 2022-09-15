@@ -26,9 +26,6 @@ public class Item implements Serializable {
     @JsonProperty(value = "id", required = true)
     private String id;
 
-    /**
-     * @since 2.4.0
-     */
     @JsonProperty(value = "name", required = true)
     private String name;
 
@@ -69,7 +66,25 @@ public class Item implements Serializable {
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
+    
+    @JsonIgnore
+    public int getTotal() {
+        return getResult().values().stream().reduce(0, Integer::sum);
+    }
 
+    @JsonIgnore
+    public String getLabel(Report report, Integer value, double percentage) {
+        if (report.getDisplayType().equals(DisplayType.DUAL)) {
+            return String.format("%s (%.2f%%)", value.toString(), percentage);
+        }
+
+        if (report.getDisplayType().equals(DisplayType.RELATIVE)) {
+            return String.format("%.2f%%", percentage);
+        }
+
+        return value.toString();
+    }
+    
     public void setResult(LinkedHashMap<String, Integer> result) {
         this.result = result;
     }

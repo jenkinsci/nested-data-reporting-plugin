@@ -70,7 +70,6 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
     private void aggregateReport(final Path file, final Report aggregatedReport) {
         try {
             Report report = parser.parse(file.toFile()).toReport();
-            report.setOriginFileName(file.toString());
             aggregatedReport.logInfo("Successfully parsed file %s", file);
             aggregatedReport.logInfo("Add report with ID='%s' and filename NAME='%s'.", 
                     report.getId(), FilenameUtils.getName(file.toString()));
