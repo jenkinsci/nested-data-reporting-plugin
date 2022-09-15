@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:c="/controls" xmlns:f="/lib/form">
+
+  <f:entry title="${%Pattern}" field="pattern"
+              description="${%description.patternRequired('http://ant.apache.org/manual/Types/fileset.html')}">
+         
+      <c:safe-textbox/>
+                
+  </f:entry>
+  
+</j:jelly>

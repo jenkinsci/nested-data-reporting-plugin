@@ -94,13 +94,21 @@
     function redrawTrendCharts () {
 
         const configuration = JSON.stringify(echartsJenkinsApi.readFromLocalStorage('jenkins-echarts-trend-configuration-default'));
+
+        const openBuild = function (build) {
+            view.getUrlForBuild(build, window.location.href, function (buildUrl) {
+                if (buildUrl.responseJSON.startsWith('http')) {
+                    window.location.assign(buildUrl.responseJSON);
+                }
+            });
+        };
         
         /**
          * Creates a build trend chart that shows the result for a couple of builds.
          */
         view.getBuildTrend(configuration, function (lineModel) {
             echartsJenkinsApi.renderConfigurableZoomableTrendChart(`item-trend-chart`,
-                lineModel.responseJSON, trendConfigurationDialogId, null);
+                lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
     }
     

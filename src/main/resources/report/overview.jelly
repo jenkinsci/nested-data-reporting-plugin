@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:c="/charts" xmlns:fa="/font-awesome">
+    
+    <st:documentation>
+        Renders the item pie chart.
+        <st:attribute name="id" use="required">
+          The id of the item.
+        </st:attribute>
+        <st:attribute name="model" use="required">
+          The JSON model for the pie chart.
+        </st:attribute>
+      </st:documentation>
+      
+    <bs:card class="h-100" title="${%Overview}" fontAwesomeIcon="chart-pie">
+        
+        <c:pie-chart id="${id}" model="${model}" height="340"/>
+  
+    </bs:card>
+
+</j:jelly>

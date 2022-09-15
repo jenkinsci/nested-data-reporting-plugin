@@ -1,0 +1,99 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+    
+    <st:documentation>
+        Renders the distribution table.
+        <st:attribute name="model" use="required">
+          The JSON modle for this table.
+        </st:attribute>
+    </st:documentation>
+        
+    <div class="row py-3 flex-nowrap">
+                                                                
+        <div class="col-12">
+            
+            <bs:card class="h-100" bodyClass="pd-20" title="${%Distribution}" fontAwesomeIcon="bars-progress">
+                                    
+                <j:set var="t" value="${model}"/>
+                <j:set var="rows" value="${t.rows}"/>
+                <j:set var="columns" value="${t.columns}"/>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped display item-table" id="${t.id}" isLoaded="true">
+                        <colgroup>
+                            <col class="col-width-5"/>
+                                
+                            <j:forEach var="column" items="${columns}">
+                                <col class="col-width-1 text-end" />
+                            </j:forEach>
+                            
+                            <col class="col-width-5"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>${%Name}</th>
+                                
+                                <j:forEach var="column" items="${columns}">
+                                    <th class="text-end">${column.headerLabel}</th>
+                                </j:forEach>
+                                
+                                <th class="no-sort">${%Distribution}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <j:forEach var="row" items="${rows}">
+                                <tr>
+                                    <td>                                            
+                                        <j:if test="${row.item.result.size() > 1 or row.item.result.size() == 1 and row.item.hasItems()}">
+                                            <a href="${row.id.hashCode()}/"
+                                                data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
+                                                ${row.name}</a>
+                                        </j:if>
+                                        <j:if test="${row.item.result.size() == 1 and !row.item.hasItems()}">
+                                            ${row.name}
+                                        </j:if>
+                                    </td>
+                                    
+                                    <j:forEach var="i" items="${row.item.result}">
+                                        <td class="text-end">${row.label(i.key, i.value)}</td>
+                                    </j:forEach>
+                                                                            
+                                    <td>
+                                        <div>
+                                             <j:forEach var="color" items="${row.colors}">
+                                                <j:set var="id" value="${color.key}"/>
+                                                <j:set var="hex" value="${row.getColor(id)}"/>
+                                                <j:set var="percentage" value="${row.getPercentage(id)}"/>
+                                                
+                                                <j:if test="${row.containsColorItem(id)}">
+                                                    <span class="distribution" style="width: ${percentage}%; background-color: ${hex}"
+                                                          data-bs-toggle="tooltip" data-bs-placement="left" 
+                                                          title="${row.tooltip(id, percentage)}">.</span>
+                                                </j:if>
+                                                                                
+                                            </j:forEach>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </j:forEach>
+                            <tfoot>
+                                <tr>
+                                    <td>${%Total}</td>
+                                    <j:forEach var="i" items="${t.item.result}">
+                                        <td class="text-end">${t.label(i.value)}</td>
+                                    </j:forEach>
+                                   
+                                    <td/>
+                                </tr>
+                            </tfoot>
+                        </tbody>
+                    </table>
+               </div>
+                    
+            </bs:card>
+    
+        </div>
+    
+    </div>
+
+</j:jelly>

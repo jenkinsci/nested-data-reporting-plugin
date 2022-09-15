@@ -1,185 +1,134 @@
 package io.jenkins.plugins.reporter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.EnvVars;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
-import io.jenkins.plugins.reporter.model.*;
+import hudson.tasks.BuildStep;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.reporter.model.DisplayType;
+import io.jenkins.plugins.reporter.model.Provider;
+import io.jenkins.plugins.util.JenkinsFacade;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.factory.Sets;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.steps.*;
+import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.verb.POST;
 
-import java.io.IOException;
+import javax.tools.Tool;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Publishes a report: Stores the created report in an {@link ReportAction}. The result is attached to the {@link Run}
- * by registering a {@link ReportAction}.
- *
- * @author Simon Symhoven.
- */
-@Extension
-public class PublishReportStep extends Builder implements SimpleBuildStep, Serializable {
+import static hudson.security.PermissionScope.JENKINS;
+
+public class PublishReportStep extends Step implements Serializable {
+
+    private static final long serialVersionUID = 423552861898621744L;
     
-    @Deprecated
-    private String jsonString;
+    private String name = StringUtils.EMPTY;
     
-    @Deprecated
-    private String jsonFile;
-    
+    private Provider provider;
+
     private String displayType;
 
-    @Deprecated
-    private String reportFile;
-
-    private String pattern;
-    
+    /**
+     * Creates a new instance of {@link PublishReportStep}.
+     */
     @DataBoundConstructor
     public PublishReportStep() {
         super();
-    }
-    
-    @Deprecated
-    public String getJsonString() {
-        return jsonString;
+
+        // empty constructor required for Stapler
     }
 
-    /**
-     * use {@link #setReportFile(String)} instead.
-     */
+    public String getName() {
+        return name;
+    }
+    
     @DataBoundSetter
-    @Deprecated
-    public void setJsonString(final String jsonString) {
-        this.jsonString = jsonString;
+    public void setName(String name) {
+        this.name = name;
     }
     
-    @Deprecated
-    public String getJsonFile() {
-        return jsonFile;
-    }
-    
-    /**
-     * use {@link #setReportFile(String)} instead.
-     */
     @DataBoundSetter
-    @Deprecated
-    public void setJsonFile(final String jsonFile) {
-        this.jsonFile = jsonFile;
-    }
-    
-    @Deprecated
-    public String getReportFile() {
-        return reportFile;
+    public void setProvider(final Provider provider) {
+        this.provider = provider;
     }
 
-    /**
-     * use {@link #setPattern(String)} instead.
-     */
-    @DataBoundSetter
-    @Deprecated
-    public void setReportFile(final String reportFile) {
-        this.reportFile = reportFile;
-    }
-    
-    public String getDisplayType() {
-        return displayType;
+    public Provider getProvider() {
+        return provider;
     }
     
     @DataBoundSetter
     public void setDisplayType(final String displayType) {
         this.displayType = displayType;
     }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    @DataBoundSetter
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+    
+    public String getDisplayType() {
+        return displayType;
     }
     
     @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) super.getDescriptor();
+    public StepExecution start(final StepContext context) throws Exception {
+        return new Execution(context, this);
     }
-    
-    @Override
-    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, 
-                        @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, 
-                        IOException {
-        
-        listener.getLogger().println("[PublishReportStep] Report data... ");
-        
-        List<Result> results = workspace.act(new FilesScanner(getPattern()));
-        
-        List<Result> resultsWithoutColor = results.stream()
-                .filter(result -> !result.hasColors())
-                .collect(Collectors.toList());
-        
-        for (Result result : resultsWithoutColor) {
-            
-            Optional<Report> prevReport = findPreviousReport(run, result.getId());
 
-            List<String> colorIds = new ArrayList<>(result.getColorIds());
-            ColorPalette palette = new ColorPalette(colorIds);
-            
-            if (prevReport.isPresent()) {
-                Report report = prevReport.get();
-                
-                if (report.getResult().hasColors()) {
-                    result.setColors(report.getResult().getColors());
-                } else {
-                    result.setColors(palette.generatePalette());
-                }
-                
-            } else {
-                result.setColors(palette.generatePalette());
-            }
+    static class Execution extends SynchronousNonBlockingStepExecution<ReportResult> {
+
+        private static final long serialVersionUID = -6468854519922975080L;
+
+        private final PublishReportStep step;
+        
+        protected Execution(@NonNull StepContext context, final PublishReportStep step) {
+            super(context);
+            this.step = step;
         }
-        
-        DisplayType dt = Arrays.stream(DisplayType.values())
-                .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
-                .findFirst().orElse(DisplayType.ABSOLUTE);
-        
-        results.stream()
-                .map(result ->  new Report(result, dt))
-                .forEach(report -> {
-                    run.addAction(new ReportAction(run, report));
-                    listener.getLogger().println(String.format("[PublishReportStep] Add report with id %s to current build.",
-                            report.getResult().getId()));
-                });
-    }
-    
-    public Optional<Report> findPreviousReport(Run<?,?> run, String id) {
-        Run<?, ?> prevBuild = run.getPreviousBuild();
-        
-        if (prevBuild != null) {
-            List<ReportAction> prevReportActions = prevBuild.getActions(ReportAction.class);
-            Optional<ReportAction> prevReportAction = prevReportActions.stream()
-                    .filter(reportAction -> Objects.equals(reportAction.getReport().getResult().getId(), id))
-                    .findFirst();
 
-            return prevReportAction
-                    .map(reportAction -> Optional.of(reportAction.getReport()))
-                    .orElseGet(() -> findPreviousReport(prevBuild, id));
-        } 
-        
-        return Optional.empty();
+        @Override
+        protected ReportResult run() throws Exception {
+            ReportRecorder recorder = new ReportRecorder();
+            recorder.setName(step.getName());
+            recorder.setProvider(step.getProvider());
+            recorder.setDisplayType(step.getDisplayType());
+            
+            return recorder.perform(getContext().get(Run.class), getContext().get(FilePath.class), 
+                    getContext().get(TaskListener.class));
+        }
     }
- 
-    @Extension 
-    @Symbol("publishReport")
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+            
+    /**
+     * Descriptor for this step.jelly: defines the context and the UI labels.
+     */
+    @Extension
+    public static class Descriptor extends StepDescriptor {
+
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        
+        @Override
+        public Set<Class<?>> getRequiredContext() {
+            return Sets.immutable.of(FlowNode.class, Run.class, TaskListener.class).castToSet();
+        }
+
+        @Override
+        public String getFunctionName() {
+            return "publishReport";
+        }
 
         @NonNull
         @Override
@@ -187,9 +136,33 @@ public class PublishReportStep extends Builder implements SimpleBuildStep, Seria
             return Messages.Step_Name();
         }
         
-        @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
+        public DescriptorExtensionList<Provider, Provider.ProviderDescriptor> getProvider() {
+            return Jenkins.get().getDescriptorList(Provider.class);
+        }
+        
+        // called by jelly view
+        @POST
+        public FormValidation doCheckName(@QueryParameter("name") String name) {
+            if (StringUtils.isEmpty(name)) {
+                return FormValidation.error("Field 'name' is required.");
+            }
+            
+            return FormValidation.ok();
+        }
+        
+        // called by jelly view
+        @POST
+        public ListBoxModel doFillDisplayTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                ListBoxModel r = new ListBoxModel();
+                for (DisplayType dt : DisplayType.values()) {
+                    r.add(dt.name().toLowerCase());
+                }
+                return r;
+            }
+
+            return new ListBoxModel();
         }
     }
+    
 }

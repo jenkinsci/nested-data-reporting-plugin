@@ -79,3 +79,7 @@
 tfoot {
     font-weight: bold;
 }
+
+.log-output {
+    font-size: var(--font-size-sm);
+}

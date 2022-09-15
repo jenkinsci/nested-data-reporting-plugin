@@ -1,0 +1,50 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" 
+    xmlns:bs="/bootstrap5" xmlns:report="/report">
+    
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+    
+  <bs:page it="${it}">
+       
+      <link rel="stylesheet" href="${resURL}/plugin/nested-data-reporting/css/custom-style.css"/>
+      
+      <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+      <st:adjunct includes="io.jenkins.plugins.data-tables"/>
+      
+      <div class="row py-3 flex-nowrap">
+            
+          <div class="col-5">
+                <report:overview id="${it.item.id}" model="${it.itemPieChartModel}"/>  
+          </div>
+          
+          <div class="col-7">
+                <report:history/>  
+          </div>
+          
+      </div>
+      
+      <j:if test="${it.item.hasItems()}">
+        
+          <report:distribution model="${it.tableModel}"/>  
+       
+      </j:if>
+     
+      <j:if test="${it.item.id == 'report'}">
+              
+          <report:log-messages errors="${it.errorMessages}" infos="${it.infoMessages}"/>
+         
+      </j:if>
+      
+      <j:if test="${it.previous.isPresent() }">
+            
+          <report:navigation label="${it.previous.get().item.name}"/>
+                    
+      </j:if>
+            
+      <script>var view = <st:bind value="${it}"/></script>
+      <script type="text/javascript" src="${resURL}/plugin/nested-data-reporting/js/item.js"/>
+            
+  </bs:page>
+  
+</j:jelly>
+                   

@@ -1,0 +1,52 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+  <st:documentation>
+    Renders info and error messages.
+    <st:attribute name="infos" use="required">
+      The info messages to show.
+    </st:attribute>
+    <st:attribute name="errors" use="required">
+      The error messages to show.
+    </st:attribute>
+  </st:documentation>
+
+  <j:if test="${size(errors) > 0}">
+    <div class="row py-3">
+      <div class="col">
+        <bs:card title="${%Error Messages}" fontAwesomeIcon="triangle-exclamation">
+
+          <pre>
+            <samp id="errors" class="log-output">
+              <j:forEach var="error" items="${errors}">
+                <div>
+                  ${error}
+                </div>
+              </j:forEach>
+            </samp>
+          </pre>
+
+        </bs:card>
+      </div>
+    </div>
+  </j:if>
+
+  <div class="row py-3">
+    <div class="col">
+
+      <bs:card title="${%Information Messages}" fontAwesomeIcon="circle-info" >
+
+        <pre>
+          <samp id="info" class="log-output">
+            <j:forEach var="info" items="${infos}">
+              <div>
+                ${info}
+              </div>
+            </j:forEach>
+          </samp>
+        </pre>
+      </bs:card>
+
+    </div>
+  </div>
+
+</j:jelly>

@@ -1,104 +1,113 @@
 package io.jenkins.plugins.reporter;
 
+import hudson.model.Action;
 import hudson.model.Run;
 import io.jenkins.plugins.reporter.model.Item;
-import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.util.BuildAction;
-import io.jenkins.plugins.util.JobAction;
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.StaplerProxy;
 
-/**
- * Controls the life cycle of the data report a job. This action persists the results of a data report.
- * 
- * This action also provides access to the report details: these are rendered using a new {@link ItemViewModel} 
- * instance.
- *
- * @author Simon Symhoven
- */
-public class ReportAction extends BuildAction<Report> implements StaplerProxy {
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
-    private final Report report;
+public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, Serializable {
+
+    private static final long serialVersionUID = 7179008520286494522L;
+
     public final static String REPORT_ID = "report";
     
+    private transient Run<?, ?> owner;
+    
+    private final String name;
+    
+    private final ReportResult result;
+    
+    public ReportAction(final Run<?, ?> owner, final ReportResult result, String name) {
+        this.owner = owner;
+        this.result = result;
+        this.name = name;
+    }
+    
+    @Override
+    public void onAttached(Run<?, ?> r) {
+        owner = r;
+        result.setOwner(r);
+    }
+
+    @Override
+    public void onLoad(Run<?, ?> r) {
+        onAttached(r);
+    }
+    
     /**
-     * Creates a new instance of {@link ReportAction}.
+     * Called after de-serialization to retain backward compatibility.
      *
-     * @param owner
-     *         the associated build/run that created the static analysis result
-     * @param report
-     *         the report to add to the action.
+     * @return this
      */
-    protected ReportAction(Run<?, ?> owner, Report report) {
-        this(owner, report, true);
+    protected Object readResolve() {
+        return this;
     }
+    
 
     /**
-     * Creates a new instance of {@link ReportAction}.
+     * Returns the associated build/run that created the static analysis result.
      *
-     * @param owner
-     *         the associated build/run that created the static analysis result.
-     * @param report
-     *         the report to add to the action.
-     * @param canSerialize
-     *         if the action can be serialized.
+     * @return the run
      */
-    public ReportAction(Run<?, ?> owner, Report report, boolean canSerialize) {
-        super(owner, report, canSerialize);
-        this.report = report;
-    }
-
-    /**
-     * Returns the {@link Report} controlled by this action.
-     * 
-     * @return the report.
-     */
-    public Report getReport() {
-        return report;
-    }
-
-    @Override
-    protected ReportXmlStream createXmlStream() {
-        return new ReportXmlStream();
-    }
-
-    @Override
-    protected JobAction<? extends BuildAction<Report>> createProjectAction() {
-        return new ReportJobAction(getOwner().getParent(), getReport());
-    }
-
-    @Override
-    protected String getBuildResultBaseName() {
-        return String.format("nested-data-report-%s.xml", super.getResult().getResult().getId().hashCode());
+    public Run<?, ?> getOwner() {
+        return owner;
     }
 
     @Override
     public String getIconFileName() {
-        return ReportJobAction.ICON;
+        return JobAction.ICON;
     }
 
     @Override
     public String getDisplayName() {
-        return getReport().getResult().getName();
+        return getName();
     }
 
     @Override
     public String getUrlName() {
-        return ReportJobAction.ID + "-" + getReport().getResult().getId().hashCode();
+        try {
+            return "report-" + URLEncoder.encode(getName(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return StringUtils.EMPTY;
+        }
     }
 
-    /**
-     * Returns the detail view for items for all Stapler requests.
-     *
-     * @return the detail view for items
-     */
     @Override
-    public ItemViewModel getTarget() {
+    public ReportDetails getTarget() {
         Item item = new Item();
         item.setId(REPORT_ID);
-        item.setName(Messages.Module_Name());
-        item.setResult(report.getResult().aggregate());
-        item.setItems(report.getResult().getItems());
-        
-        return new ItemViewModel(getOwner(), ReportJobAction.ID, item, item.getName(), null , getReport());
+        item.setName(name);
+        item.setItems(result.getReport().getItems());
+        return new ReportDetails(getOwner(), getUrlName(), result, name, item, Optional.empty());
+    }
+
+    @Whitelisted
+    public ReportResult getResult() {
+        return result;
+    }
+    
+    /**
+     * Returns the name of the report.
+     *
+     * @return the ID
+     */
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.singletonList(new JobAction(getOwner().getParent(), name, result.getReport()));
     }
 }

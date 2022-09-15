@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+          
+    <bs:card class="h-100 flex" title="${%History}" fontAwesomeIcon="arrow-trend-up">
+        
+        <div id="item-trend-chart" class="graph-cursor-pointer card-chart"/>
+        
+    </bs:card>
+  
+</j:jelly>
