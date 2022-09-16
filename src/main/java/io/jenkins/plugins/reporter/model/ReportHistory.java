@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.model;
 
 
 import edu.hm.hafner.echarts.Build;
@@ -6,9 +6,8 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.model.Run;
-import io.jenkins.plugins.reporter.model.History;
-import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.reporter.model.ResultSelector;
+import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

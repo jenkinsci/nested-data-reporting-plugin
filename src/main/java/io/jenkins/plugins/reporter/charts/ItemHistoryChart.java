@@ -2,7 +2,7 @@ package io.jenkins.plugins.reporter.charts;
 
 import edu.hm.hafner.echarts.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Report;
 
@@ -36,8 +36,8 @@ public class ItemHistoryChart {
      *
      * @return the chart model, ready to be serialized to JSON
      */
-    public LinesChartModel create(final Iterable<? extends BuildResult<ReportAction>> results,
-                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportAction> builder,
+    public LinesChartModel create(final Iterable<? extends BuildResult<ReportResult>> results,
+                                  final ChartModelConfiguration configuration, SeriesBuilder<ReportResult> builder,
                                   Report report, @Nullable List<Item> items) {
 
         LinesDataSet dataSet = builder.createDataSet(configuration, results);

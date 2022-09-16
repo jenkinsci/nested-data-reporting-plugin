@@ -1,14 +1,13 @@
 package io.jenkins.plugins.reporter.model;
 
-import java.util.Iterator;
-import java.util.Optional;
-
 import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import hudson.model.Run;
 import io.jenkins.plugins.reporter.ReportAction;
 import io.jenkins.plugins.reporter.ReportResult;
+
+import java.util.Iterator;
+import java.util.Optional;
 
 
 /**
