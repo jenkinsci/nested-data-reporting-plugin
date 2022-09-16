@@ -251,7 +251,7 @@ public class Report implements Serializable {
                     merge(item, item.getItems());
                 }
             } else {
-                System.out.println(String.format("Add item wih ID='%s' to items.", item.getId()));
+                logInfo("Add item wih ID='%s' to items.", item.getId());
                 this.items.add(item);
             }
         }
@@ -265,14 +265,13 @@ public class Report implements Serializable {
                 Optional<Item> found = findItem(parentItem.getId(), items);
                 
                 if (found.isPresent()) {
-                    System.out.println(String.format("Found parent with ID='%s' in items", found.get().getId()));
+                    logInfo("Add item with ID='%s' to parent item with ID='%s'.", item.getId(), found.get().getId());
                     Item parent = found.get();
                     parent.addItem(item);
                 } else {
-                    System.out.println(String.format("No item found for ID='%s' in items", parentItem.getId()));
+                    logError("No parent item found for ID='%s' in items.", parentItem.getId());
                 }
             }
         }
     }
-    
 }

@@ -1,6 +1,8 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.steps;
 
 import hudson.model.Run;
+import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
 import io.jenkins.plugins.reporter.model.Report;
 import io.jenkins.plugins.util.LogHandler;
 

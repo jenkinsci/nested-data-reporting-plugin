@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.util;
 
 import hudson.remoting.VirtualChannel;
 import io.jenkins.plugins.reporter.model.Report;

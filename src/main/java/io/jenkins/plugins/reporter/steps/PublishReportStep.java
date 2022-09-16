@@ -1,7 +1,6 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.steps;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.FilePath;
@@ -9,16 +8,14 @@ import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.BuildStep;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.reporter.Messages;
+import io.jenkins.plugins.reporter.ReportResult;
 import io.jenkins.plugins.reporter.model.DisplayType;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.util.JenkinsFacade;
 import jenkins.model.Jenkins;
-import jenkins.tasks.SimpleBuildStep;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
@@ -26,16 +23,8 @@ import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.verb.POST;
 
-import javax.tools.Tool;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static hudson.security.PermissionScope.JENKINS;
 
 public class PublishReportStep extends Step implements Serializable {
 
