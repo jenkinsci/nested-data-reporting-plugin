@@ -1,3 +1,7 @@
-id,name,incorrect,manually,accurate
-aktie,Aktie,3441,348,5199
-derivat,Derivat,593,9028,1008
+Level 1,Level 2,Level 3,incorrect,manually,accurate
+Aktie,Aktie 1,Aktie 1 1,13,3,59
+Aktie,Aktie 1,Aktie 1 2,31,48,9
+Aktie,Aktie 1,Aktie 1 3,34,8,51
+Derivat,Derivat 1,,1,2,3
+Derivat,Derivat 2,,5,9,1
+Not Found,,,1,3,9

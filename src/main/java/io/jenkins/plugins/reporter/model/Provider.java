@@ -6,6 +6,7 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.reporter.provider.Csv;
 import io.jenkins.plugins.reporter.util.FilesScanner;
 import io.jenkins.plugins.reporter.util.LogHandler;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -21,10 +22,10 @@ import java.io.Serializable;
 public abstract class Provider extends AbstractDescribableImpl<Provider> implements Serializable {
     
     private static final long serialVersionUID = -1356603376948787474L;
-    
-    private String name = StringUtils.EMPTY;
 
     private String pattern = StringUtils.EMPTY;
+    
+    private String id = StringUtils.EMPTY;
 
     private JenkinsFacade jenkins = new JenkinsFacade();
 
@@ -39,15 +40,30 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
         return this;
     }
 
+    /**
+     * Sets the id of this provider.
+     * 
+     * @param id
+     *         the id
+     */
     @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+    public void setId(String id) {
+        this.id = id;
     }
     
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns the actual ID of the tool. If no user defined ID is given, then the default ID is returned.
+     *
+     * @return the ID
+     * @see #setId(String)
+     */
+    public String getActualId() {
+        return StringUtils.defaultIfBlank(getId(), getDescriptor().getId());
+    }
     
     /**
      * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
@@ -109,11 +125,11 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
          * Creates a new instance of {@link ProviderDescriptor} with the given ID.
          *
          * @param defaultId
-         *         the unique ID of the tool
+         *         the unique ID of the provider
          */
         protected ProviderDescriptor(final String defaultId) {
             super();
-
+            
             this.defaultId = defaultId;
         }
 

@@ -21,42 +21,12 @@ public class Xml extends Provider {
 
     private static final String ID = "xml";
     
-    private String pattern = StringUtils.EMPTY;
-    
-    private String name = StringUtils.EMPTY;
-
     @DataBoundConstructor
     public Xml() {
         super();
         // empty constructor required for stapler
     }
     
-    /**
-     * Sets the Ant file-set pattern of files to work with.
-     * scanned.
-     *
-     * @param pattern
-     *         the pattern to use
-     */
-    @DataBoundSetter
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    @CheckForNull
-    public String getPattern() {
-        return pattern;
-    }
-
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @Override
     public ReportParser createParser() {
         return new XmlParser();

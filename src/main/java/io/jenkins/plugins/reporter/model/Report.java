@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Report implements Serializable {
+public class Report extends ReportBase implements Serializable {
 
     private static final long serialVersionUID = 302445084497230108L;
 
@@ -166,6 +166,11 @@ public class Report implements Serializable {
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
 
+    public Optional<Item> findItem(String id) {
+        return findItem(id, items);
+    }
+
+    
     public List<String> getColorIds() {
         if (aggregate().size() == 1) {
             return flattItems(getItems()).stream().map(Item::getId).collect(Collectors.toList());
@@ -173,49 +178,6 @@ public class Report implements Serializable {
 
         return new ArrayList<>(aggregate().keySet());
     }
-
-    private List<Item> flattItems(List<Item> items)
-    {
-        List<Item> flatten = new ArrayList<>();
-
-        for (Item i: items) {
-            if (i.hasItems()) {
-                flatten.addAll(flattItems(i.getItems()));
-            }
-
-            flatten.add(i);
-        }
-
-        return flatten;
-    }
-
-    public Optional<Item> findItem(String id) {
-        return findItem(id, items);
-    }
-
-    public Optional<Item> findItem(String id, List<Item> items) {
-        if (items != null) {
-            for (Item i: items) {
-                if (i.getId().equals(id)) {
-                    return Optional.of(i);
-                } else {
-                    Optional<Item> sub = findItem(id, i.getItems());
-                    if (sub.isPresent()) {
-                        return sub;
-                    }
-                }
-            }
-        }
-
-        return Optional.empty();
-    }
-
-
-    /**
-     * Aggregates the results of all items. The values are added together, grouped by key. 
-     *
-     * @return the aggregated result.
-     */
  
     public LinkedHashMap<String, Integer> aggregate() {
         return aggregate(getItems());
