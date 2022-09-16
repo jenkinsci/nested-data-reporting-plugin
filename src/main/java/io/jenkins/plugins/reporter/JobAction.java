@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter;
 
+import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 import hudson.model.Action;
@@ -8,6 +9,8 @@ import hudson.model.Run;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 import io.jenkins.plugins.reporter.charts.ItemHistoryChart;
 import io.jenkins.plugins.reporter.model.*;
+import io.jenkins.plugins.reporter.util.BuildResultNavigator;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.UnsupportedEncodingException;
@@ -51,12 +54,16 @@ public class JobAction implements AsyncConfigurableTrendChart, Action {
 
     @Override
     public String getUrlName() {
-        // TODO: get the last build with action instead returning the last build. Need rework of createHistory().
         try {
-            return getOwner().getLastBuild().getNumber() + "/report-" + URLEncoder.encode(name, "UTF-8");
+            History history = createBuildHistory();
+            for (BuildResult<ReportResult> buildResult : history) {
+                return buildResult.getBuild().getNumber() + "/report-" + URLEncoder.encode(name, "UTF-8");
+            }
         } catch (UnsupportedEncodingException e) {
             return String.valueOf(getOwner().getLastBuild().getNumber());
         }
+
+        return String.valueOf(getOwner().getLastBuild().getNumber());
     }
     
     /**
