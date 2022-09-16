@@ -31,7 +31,8 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class ReportRecorder extends Recorder {
     

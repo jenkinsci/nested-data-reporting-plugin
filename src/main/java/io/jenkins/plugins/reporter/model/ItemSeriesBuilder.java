@@ -2,11 +2,11 @@ package io.jenkins.plugins.reporter.model;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
 import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
-public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
+public class ItemSeriesBuilder extends SeriesBuilder<ReportResult> {
 
     private final Item item;
 
@@ -30,43 +30,25 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportAction> {
     }
 
     @Override
-    protected Map<String, Integer> computeSeries(ReportAction reportAction) {
+    protected Map<String, Integer> computeSeries(ReportResult reportResult) {
 
         if (item.getId().equals(ReportAction.REPORT_ID)) {
 
             if (item.getResult().size() == 1) {
-                return reportAction.getResult().getReport().getItems().stream()
+                return reportResult.getReport().getItems().stream()
                         .collect(Collectors.toMap(Item::getId, Item::getTotal));
             }
 
-            return reportAction.getResult().getReport().aggregate();
+            return reportResult.getReport().aggregate();
         }
         
-        Item parent = reportAction.getResult().getReport().findItem(item.getId()).orElse(new Item());
+        Item parent = reportResult.getReport().findItem(item.getId()).orElse(new Item());
         List<Item> items = parent.hasItems() ? parent.getItems() : Collections.singletonList(parent);
         
         if (item.getResult().size() == 1) {
             return items.stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
 
-        return reportAction.getResult().getReport().aggregate(items);
-    }
-
-    private List<Item> findItems(String id, List<Item> items)
-    {
-        if (items != null) {
-            for (Item i: items) {
-                if (i.getId().equals(id)) {
-                    return i.hasItems() ? i.getItems() : Collections.singletonList(i);
-                } else {
-                    List<Item> sub = findItems(id, i.getItems());
-                    if (sub.size() > 0) {
-                        return sub;
-                    }
-                }
-            }
-        }
-
-        return Collections.emptyList();
+        return reportResult.getReport().aggregate(items);
     }
 }

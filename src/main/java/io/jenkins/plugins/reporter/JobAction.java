@@ -1,23 +1,20 @@
 package io.jenkins.plugins.reporter;
 
-import edu.hm.hafner.echarts.*;
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.JacksonFacade;
 import hudson.model.Action;
 import hudson.model.Job;
-import hudson.util.RunList;
+import hudson.model.Run;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
-import io.jenkins.plugins.echarts.AsyncConfigurableTrendJobAction;
 import io.jenkins.plugins.reporter.charts.ItemHistoryChart;
-import io.jenkins.plugins.reporter.model.ItemSeriesBuilder;
-import io.jenkins.plugins.reporter.model.Report;
-import io.jenkins.plugins.reporter.model.ReportSeriesBuilder;
+import io.jenkins.plugins.reporter.model.*;
+import io.jenkins.plugins.reporter.util.BuildResultNavigator;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class JobAction implements AsyncConfigurableTrendChart, Action {
 
@@ -57,14 +54,33 @@ public class JobAction implements AsyncConfigurableTrendChart, Action {
 
     @Override
     public String getUrlName() {
-        // TODO: get the last build with action instead returning the last build. Need rework of createHistory().
         try {
-            return getOwner().getLastBuild().getNumber() + "/report-" + URLEncoder.encode(name, "UTF-8");
+            History history = createBuildHistory();
+            for (BuildResult<ReportResult> buildResult : history) {
+                return buildResult.getBuild().getNumber() + "/report-" + URLEncoder.encode(name, "UTF-8");
+            }
         } catch (UnsupportedEncodingException e) {
             return String.valueOf(getOwner().getLastBuild().getNumber());
         }
-    }
 
+        return String.valueOf(getOwner().getLastBuild().getNumber());
+    }
+    
+    /**
+     * Returns the build history for this job.
+     *
+     * @return the history
+     */
+    public History createBuildHistory() {
+        Run<?, ?> lastCompletedBuild = owner.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
+            return new NullReportHistory();
+        }
+        else {
+            return new ReportHistory(lastCompletedBuild, new ByIdResultSelector(report.getId()));
+        }
+    }
+    
     public Report getReport() {
         return report;
     }
@@ -83,27 +99,13 @@ public class JobAction implements AsyncConfigurableTrendChart, Action {
     @JavaScriptMethod
     public String getConfigurableBuildTrendModel(String configuration) {
         ChartModelConfiguration modelConfiguration = ChartModelConfiguration.fromJson(configuration);
-
-        RunList<?> runs = getOwner().getBuilds();
-
-        List<ReportAction> reports = runs.stream()
-                .map(run -> Optional.of(run.getActions(ReportAction.class)))
-                .map(Optional::get)
-                .flatMap(List::stream)
-                .filter(reportAction -> Objects.equals(reportAction.getResult().getReport().getId(), report.getId()))
-                .collect(Collectors.toList());
-
-        List<BuildResult<ReportAction>> history = reports.stream()
-                .map(reportAction -> new BuildResult<>(new Build(reportAction.getOwner().getNumber(),
-                        reportAction.getOwner().getDisplayName(), 0), reportAction))
-                .collect(Collectors.toList());
-
-        return new JacksonFacade().toJson(new ItemHistoryChart().create(history, modelConfiguration, new ReportSeriesBuilder(),
-                report, report.getItems()));
+        
+        return new JacksonFacade().toJson(new ItemHistoryChart().create(createBuildHistory(), modelConfiguration, 
+                new ReportSeriesBuilder(), report, report.getItems()));
     }
 
     @Override
     public boolean isTrendVisible() {
-        return true;
+        return createBuildHistory().hasMultipleResults();
     }
 }

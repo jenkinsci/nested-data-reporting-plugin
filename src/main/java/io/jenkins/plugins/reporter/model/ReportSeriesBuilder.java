@@ -1,7 +1,8 @@
 package io.jenkins.plugins.reporter.model;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
-import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -11,15 +12,15 @@ import java.util.stream.Collectors;
  *
  * @author Simon Symhoven
  */
-public class ReportSeriesBuilder extends SeriesBuilder<ReportAction> {
+public class ReportSeriesBuilder extends SeriesBuilder<ReportResult> {
 
     @Override
-    protected Map<String, Integer> computeSeries(ReportAction reportAction) {
+    protected Map<String, Integer> computeSeries(ReportResult reportResult) {
 
-        Map<String, Integer> result = reportAction.getResult().getReport().aggregate();
+        Map<String, Integer> result = reportResult.getReport().aggregate();
 
         if (result.size() == 1) {
-            return reportAction.getResult().getReport().getItems().stream()
+            return reportResult.getReport().getItems().stream()
                     .collect(Collectors.toMap(Item::getId, Item::getTotal));
         }
 

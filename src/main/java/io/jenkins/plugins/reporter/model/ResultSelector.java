@@ -1,9 +1,9 @@
 package io.jenkins.plugins.reporter.model;
 
-import java.util.Optional;
-
 import hudson.model.Run;
 import io.jenkins.plugins.reporter.ReportAction;
+
+import java.util.Optional;
 
 /**
  * Selects a {@link ReportAction} from all registered actions in a given job.

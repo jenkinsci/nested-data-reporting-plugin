@@ -1,19 +1,13 @@
 package io.jenkins.plugins.reporter;
 
-import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
-import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemHistoryChart;
 import io.jenkins.plugins.reporter.charts.ItemPieChart;
-import io.jenkins.plugins.reporter.model.ByIdResultSelector;
-import io.jenkins.plugins.reporter.model.Item;
-import io.jenkins.plugins.reporter.model.ItemSeriesBuilder;
-import io.jenkins.plugins.reporter.model.ItemTableModel;
+import io.jenkins.plugins.reporter.model.*;
 import io.jenkins.plugins.reporter.util.BuildResultNavigator;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -22,8 +16,6 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ReportDetails implements ModelObject {
 
@@ -165,23 +157,7 @@ public class ReportDetails implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getBuildTrend(final String configuration) {
-        Job<?, ?> job = getOwner().getParent();
-        RunList<?> runs = job.getBuilds();
-
-        List<ReportAction> reports = runs.stream()
-                .filter(run -> run.getNumber() <= getOwner().getNumber())
-                .map(run -> Optional.of(run.getActions(ReportAction.class)))
-                .map(Optional::get)
-                .flatMap(List::stream)
-                .filter(reportAction -> Objects.equals(reportAction.getResult().getReport().getId(), result.getReport().getId()))
-                .collect(Collectors.toList());
-
-        List<BuildResult<ReportAction>> history = reports.stream()
-                .map(reportAction -> new BuildResult<>(new Build(reportAction.getOwner().getNumber(),
-                        reportAction.getOwner().getDisplayName(), 0), reportAction))
-                .collect(Collectors.toList());
-
-        return new JacksonFacade().toJson(new ItemHistoryChart().create(history,
+        return new JacksonFacade().toJson(new ItemHistoryChart().create(createHistory(),
                 ChartModelConfiguration.fromJson(configuration), new ItemSeriesBuilder(item), result.getReport(), item.getItems()));
     }
 
