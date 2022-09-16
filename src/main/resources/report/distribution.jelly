@@ -66,7 +66,7 @@
                                                 <j:set var="percentage" value="${row.getPercentage(id)}"/>
                                                 
                                                 <j:if test="${row.containsColorItem(id)}">
-                                                    <span class="distribution" style="width: ${percentage}%; background-color: ${hex}"
+                                                    <span id="tooltip-${row.id}-${id}" class="distribution" style="width: ${percentage}%; background-color: ${hex}"
                                                           data-bs-toggle="tooltip" data-bs-placement="left" 
                                                           title="${row.tooltip(id, percentage)}">.</span>
                                                 </j:if>
