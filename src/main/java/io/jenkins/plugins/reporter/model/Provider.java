@@ -6,6 +6,7 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.reporter.Messages;
 import io.jenkins.plugins.reporter.provider.Csv;
 import io.jenkins.plugins.reporter.util.FilesScanner;
 import io.jenkins.plugins.reporter.util.LogHandler;
@@ -168,6 +169,15 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
         public FormValidation doCheckPattern(@QueryParameter("pattern") String pattern) {
             if (StringUtils.isEmpty(pattern)) {
                 return FormValidation.error("Field 'pattern' is required.");
+            }
+
+            return FormValidation.ok();
+        }
+
+        @POST
+        public FormValidation doCheckId(@QueryParameter("id") String id) {
+            if (getSymbolName().equals("csv") && StringUtils.isEmpty(id)) {
+                return FormValidation.error(Messages.Provider_Error());
             }
 
             return FormValidation.ok();

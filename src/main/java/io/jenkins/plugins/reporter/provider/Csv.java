@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
+import io.jenkins.plugins.reporter.Messages;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.ReportDto;
@@ -33,7 +34,11 @@ public class Csv extends Provider {
     
     @Override
     public ReportParser createParser() {
-        return new CsvParser();
+        if (getActualId().equals(getDescriptor().getId())) {
+            throw new IllegalArgumentException(Messages.Provider_Error());
+        }
+        
+        return new CsvParser(getActualId());
     }
 
     /** Descriptor for this provider. */
@@ -49,9 +54,21 @@ public class Csv extends Provider {
     public static class CsvParser extends ReportParser {
 
         private static final long serialVersionUID = -8689695008930386640L;
+        
+        private final String id;
+        
+        public CsvParser(String id) {
+            super();
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
 
         @Override
         public ReportDto parse(File file) throws IOException {
+            
             CsvMapper mapper = new CsvMapper();
 
             MappingIterator<List<String>> it = mapper
@@ -60,6 +77,7 @@ public class Csv extends Provider {
                     .readValues(file);
 
             ReportDto report = new ReportDto();
+            report.setId(getId());
             report.setItems(new ArrayList<>());
 
             List<String> header = it.next();
@@ -70,7 +88,7 @@ public class Csv extends Provider {
 
             for (List<String> row : rows) {
 
-                Item last = new Item();
+                Item last = null;
                 LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
 
                 for (String value : row) {
