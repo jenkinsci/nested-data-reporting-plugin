@@ -45,7 +45,7 @@
                                 <tr>
                                     <td>                                            
                                         <j:if test="${row.item.result.size() > 1 or row.item.result.size() == 1 and row.item.hasItems()}">
-                                            <a href="${row.id.hashCode()}/"
+                                            <a href="${row.id}/"
                                                 data-bs-toggle="tooltip" data-bs-placement="left" title="${row.name}">
                                                 ${row.name}</a>
                                         </j:if>

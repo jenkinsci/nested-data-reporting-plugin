@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.util;
 
 import com.google.errorprone.annotations.FormatMethod;
 import hudson.model.TaskListener;

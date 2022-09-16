@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reporter;
+package io.jenkins.plugins.reporter.steps;
 
 import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -13,6 +13,10 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import io.jenkins.plugins.reporter.Messages;
+import io.jenkins.plugins.reporter.ReportAction;
+import io.jenkins.plugins.reporter.ReportResult;
+import io.jenkins.plugins.reporter.ReportScanner;
 import io.jenkins.plugins.reporter.model.DisplayType;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.Report;

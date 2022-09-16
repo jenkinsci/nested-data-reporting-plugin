@@ -6,6 +6,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.reporter.model.ColorPalette;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.Report;
+import io.jenkins.plugins.reporter.util.LogHandler;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ReportScanner {
 
                 if (previous.hasColors()) {
                     report.logInfo("Previous report has colors. Add it to this report.");
-                    report.setColors(report.getColors());
+                    report.setColors(previous.getColors());
                 } else {
                     report.logInfo("Previous report has no colors. Will generate color palette.");
                     report.setColors(new ColorPalette(report.getColorIds()).generatePalette());

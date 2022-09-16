@@ -10,17 +10,19 @@ import hudson.model.Run;
 import hudson.util.RunList;
 import io.jenkins.plugins.reporter.charts.ItemHistoryChart;
 import io.jenkins.plugins.reporter.charts.ItemPieChart;
+import io.jenkins.plugins.reporter.model.ByIdResultSelector;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ItemSeriesBuilder;
 import io.jenkins.plugins.reporter.model.ItemTableModel;
+import io.jenkins.plugins.reporter.util.BuildResultNavigator;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ReportDetails implements ModelObject {
@@ -72,6 +74,10 @@ public class ReportDetails implements ModelObject {
         errorMessages.addAll(result.getErrorMessages().castToList());
     }
 
+    ReportResult getResult() {
+        return result;
+    }
+    
     /**
      * Returns the error messages of the static analysis run.
      *
@@ -191,9 +197,20 @@ public class ReportDetails implements ModelObject {
      */
     @JavaScriptMethod
     public String getUrlForBuild(final String build, final String detailsUrl) {
+        ReportHistory history = createHistory();
+        for (BuildResult<ReportResult> buildResult : history) {
+            if (buildResult.getBuild().getDisplayName().equals(build)) {
+                return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getUrl(),
+                        buildResult.getBuild().getNumber()).orElse(StringUtils.EMPTY);
+            }
+        }
         return StringUtils.EMPTY;
     }
-    
+
+    private ReportHistory createHistory() {
+        return new ReportHistory(owner, new ByIdResultSelector(result.getReport().getId()));
+    }
+
     /**
      * Returns a new sub page for the selected link.
      *
@@ -211,7 +228,7 @@ public class ReportDetails implements ModelObject {
         try {
             Item subItem = item.getItems()
                     .stream()
-                    .filter(i -> i.getId().hashCode() == Integer.parseInt(link))
+                    .filter(i -> Objects.equals(i.getId(), link))
                     .findFirst()
                     .orElseThrow(NoSuchElementException::new);
 

@@ -24,6 +24,8 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     
     private transient Run<?, ?> owner;
     
+    private final String id;
+    
     private final String name;
     
     private final ReportResult result;
@@ -31,6 +33,7 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     public ReportAction(final Run<?, ?> owner, final ReportResult result, String name) {
         this.owner = owner;
         this.result = result;
+        this.id = result.getReport().getId();
         this.name = name;
     }
     
@@ -54,7 +57,6 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
         return this;
     }
     
-
     /**
      * Returns the associated build/run that created the static analysis result.
      *
@@ -64,6 +66,17 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
         return owner;
     }
 
+    /**
+     * Returns the ID of this action.
+     *
+     * @return the ID
+     */
+    @Whitelisted
+    public String getId() {
+        return id;
+    }
+
+    
     @Override
     public String getIconFileName() {
         return JobAction.ICON;
