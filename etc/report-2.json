@@ -1,0 +1,19 @@
+{ 
+  "id": "report-two",
+  "items": [
+    {
+      "id": "Aktie",
+      "name": "Aktie",
+      "result": {
+        "incorrect": 3441,
+        "manually": 348,
+        "accurate": 5199
+      }
+    }
+  ],
+  "colors": {
+    "incorrect": "#EF9A9A",
+    "manually": "#FFF59D",
+    "accurate": "#A5D6A7"
+  }
+}

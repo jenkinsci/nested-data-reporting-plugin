@@ -2,13 +2,13 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" 
     xmlns:t="/lib/hudson" xmlns:c="/controls" xmlns:f="/lib/form">
  
-        <f:entry name="name" title="${%Name}" field="name">
+        <f:entry name="name" title="${%Name}" field="name" description="${%description.name}">
             
             <f:textbox/>
             
         </f:entry>
         
-        <f:entry field="displayType" title="${%Display Type}">
+        <f:entry name="displayType" field="displayType" title="${%Display Type}" description="${%description.displayType}">
         
             <f:select/>
                 
