@@ -1,14 +1,14 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:c="/controls" xmlns:f="/lib/form">
     
-    <f:entry name="id" title="${%Id}" field="id">
+    <f:entry name="id" title="${%Id}" field="id" description="${%id.description}">
                 
         <f:textbox/>
         
     </f:entry>
     
     <f:entry title="${%Pattern}" field="pattern"
-              description="${%description.patternRequired('http://ant.apache.org/manual/Types/fileset.html')}">
+              description="${%pattern.description('http://ant.apache.org/manual/Types/fileset.html')}">
          
         <c:safe-textbox/>
                 

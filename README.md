@@ -38,7 +38,6 @@ An example json file looks like this:
 ```
 {
   "id": "my-json-report"
-  "name": "My JSON report"
   "items": [
     {
       "id": "stocks",
@@ -106,12 +105,11 @@ To check your json you can use the [json schema](src/main/resources/report.json)
 
 > ⚠️ **Color Mapping**:
 > 
-> You can provide a color mapping. Then, please make sure, that the attribute `colors needs exactly the same 
+> You can provide a color mapping. Then, please make sure, that the attribute `colors` needs exactly the same 
 > attributes as the result of the items and assigns a color to each attribute, which is used for the graphical representation. 
 > Otherwise a default color `#E9E9E9` is used for the missing property! 
-> 
-> If no `colors` object is provided, 
-> a color palette will be calculated. You can use own HEX values or the following predefined colors are supported:
+>
+> You can use own HEX values or the following predefined colors are supported:
 > * YELLOW
 > * LIME 
 > * GREEN
@@ -124,6 +122,8 @@ To check your json you can use the [json schema](src/main/resources/report.json)
 > * BROWN
 > * GRAY
 > * WHITE
+> 
+> If no `colors` object is provided, a color palette will be calculated.
 
 If your items only have one result, the visualization is different from the default one, 
 because the representation then makes no sense. Instead of the attributes of the result object, 
@@ -132,7 +132,6 @@ the keys of the individual items are used as the basis for distribution. For exa
 ```
 {
   "id": "my-second-json-report"
-  "name": "My second JSON report"
   "items": [
     {
       "id": "Aktie",
@@ -221,8 +220,6 @@ Then your dashboard looks like this:
 * XML
 * CSV
 
-For examples of report files, please have look into [etc](/etc) folder.
-
 ### Visualization
 
 At job level, a trend chart is generated showing the development 
@@ -242,21 +239,37 @@ available in the json model. On the lowest level only the pie chart and the hist
 
 ### Pipeline Step
 
+For examples of report files and pipelines, please have look into [etc](/etc) folder.
+
 ```
-publishReport pattern: "**/result-*.json", displayType: "absolute"
+publishReport name: "JSON Report", displayType: "dual", provider: json(pattern: "etc/report-1-part-*.json")
+publishReport name: "XML Report", displayType: "dual", provider: xml(pattern: "etc/*.xml")
+publishReport name: "YAML Report", displayType: "dual", provider: yaml(pattern: "etc/*.yaml")
+publishReport name: "CSV Report", displayType: "dual", provider: csv(id: "csv-one", pattern: "etc/*.csv")
 ```
 
 ### Parameter: 
 
-##### pattern: 
+#### name:
+Choose a name for the report. The name is shown in the UI.
 
-This is an ant include pattern for the files should be parsed and scanned (see Patterns in the Apache Ant Manual). 
+#### displayType (optional, default = `absolute`):
+This can be used to change the display of the displayed metrics within the distribution table.
+'absolute' shows the absolute values from the underlying files. 'relative', shows percentage values
+and 'dual' shows the absolute value and additionally the relative frequency within the category.
+
+#### provider:
+Choose a provider that should find and parse the files based on the given pattern.
+If all files found have the same ID and can be structurally merged, they are merged into one report.
+The id of the first report file found will be used as master id. All following reports of the pattern must match it, otherwise 
+they are ignored.
+
+##### id (only required for CSV provider):
+Specify the id of the report to tag the result and to find reports of past builds. Just required for CSV provider.
+
+##### pattern:
+This is an ant include pattern for the files should be parsed and scanned (see Patterns in the Apache Ant Manual).
 Multiple includes can be specified by separating each pattern with a comma.
-At the moment only yaml/yml or json files are supported.
-
-##### displayType (optional, default = `absolute`):
-This can be used to determine the representation of the values within the table.
-Choose between `absolute`, `relative` or `dual`.
 
 ## Issues
 

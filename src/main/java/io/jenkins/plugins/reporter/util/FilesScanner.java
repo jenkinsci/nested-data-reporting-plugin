@@ -71,9 +71,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report>  {
         try {
             Report report = parser.parse(file.toFile()).toReport();
             aggregatedReport.logInfo("Successfully parsed file %s", file);
-            aggregatedReport.logInfo("Add report with ID='%s' and filename NAME='%s'.", 
-                    report.getId(), FilenameUtils.getName(file.toString()));
             aggregatedReport.add(report);
+            
         } catch (IOException exception) {
             aggregatedReport.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
         }
