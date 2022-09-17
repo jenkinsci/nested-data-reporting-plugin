@@ -220,8 +220,6 @@ Then your dashboard looks like this:
 * XML
 * CSV
 
-For examples of report files, please have look into [etc](/etc) folder.
-
 ### Visualization
 
 At job level, a trend chart is generated showing the development 
@@ -240,6 +238,8 @@ available in the json model. On the lowest level only the pie chart and the hist
 ## Getting started
 
 ### Pipeline Step
+
+For examples of report files and pipelines, please have look into [etc](/etc) folder.
 
 ```
 publishReport name: "JSON Report", displayType: "dual", provider: json(pattern: "etc/report-1-part-*.json")
@@ -261,14 +261,15 @@ and 'dual' shows the absolute value and additionally the relative frequency with
 #### provider:
 Choose a provider that should find and parse the files based on the given pattern.
 If all files found have the same ID and can be structurally merged, they are merged into one report.
+The id of the first report file found will be used as master id. All following reports of the pattern must match it, otherwise 
+they are ignored.
 
 ##### id (only required for CSV provider):
-Specify the id of the report to tag the result and to find reports of past builds.
+Specify the id of the report to tag the result and to find reports of past builds. Just required for CSV provider.
 
 ##### pattern:
 This is an ant include pattern for the files should be parsed and scanned (see Patterns in the Apache Ant Manual).
 Multiple includes can be specified by separating each pattern with a comma.
-At the moment only yaml/yml or json files are supported.
 
 ## Issues
 

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.google.errorprone.annotations.FormatMethod;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -105,10 +106,12 @@ public class Report extends ReportBase implements Serializable {
         
         if (StringUtils.isEmpty(id)) {
             setId(report.getId());
-            logInfo("Add first report. Set ID='%s'", report.getId());
+            logInfo("First added report. Set ID='%s'", report.getId());
         }
         
         if (getId().equals(report.getId())) {
+            logInfo("Add report with ID='%s'.", report.getId());
+            
             this.subReports.add(report);
             this.infoMessages.addAll(report.getInfoMessages());
             this.errorMessages.addAll(report.getErrorMessages());
@@ -116,7 +119,7 @@ public class Report extends ReportBase implements Serializable {
             addItems(report.getItems());
             logInfo("Successfully added report with ID='%s'", report.getId());
         } else {
-            logError("Skip adding report because ID='%s' is different from parent ID='%s'.", 
+            logInfo("Skip adding report with ID='%s' because it does not match parent ID='%s'.", 
                     report.getId(), getId());
         }
     }
