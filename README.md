@@ -29,7 +29,14 @@
 
 ## Introduction
 
-This plugin reports data from a nested data file as pie-charts, trend-charts and data tables. 
+This plugin visualizes user-specific content from various file formats, such as json, yaml, xml or csv.
+The UI displays information in various graphs and tables, like pie-charts, history charts and data tables.
+
+## Usage
+
+User-specific files such as Json files are the starting point, containing the content to be displayed.
+You need to provide an `id` and a list of `items`. Each item in this list can have a further list of `items`.
+However, an item on the lowest level must then contain a `result`. This `result` can be any combination of key, value pairs.
 If an item has `items`, the `result` will be computed automatically for this parent item. 
 Please make sure you use a unique identifier for the `id`!
 

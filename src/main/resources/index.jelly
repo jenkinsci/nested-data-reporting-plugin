@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <div>
-    This plugin reports data from nested json as pie-charts, trend-charts and data tables.
+    This plugin visualizes user-specific content from various file formats, such as json, yaml, xml or csv. 
+    The UI displays information in various graphs and tables, like pie-charts, history charts and data tables.
 </div>
