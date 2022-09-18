@@ -4,10 +4,8 @@ import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.model.AbstractProject;
-import hudson.model.Item;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.Launcher;
+import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
@@ -89,6 +87,24 @@ public class ReportRecorder extends Recorder {
         this.displayType = displayType;
     }
 
+    @Override
+    public Descriptor getDescriptor() {
+        return (Descriptor) super.getDescriptor();
+    }
+
+    @Override
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
+            throws InterruptedException, IOException {
+        FilePath workspace = build.getWorkspace();
+        if (workspace == null) {
+            throw new IOException("No workspace found for " + build);
+        }
+
+        perform(build, workspace, listener);
+
+        return true;
+    }
+    
     /**
      * Executes the build step.jelly.
      *
@@ -139,6 +155,7 @@ public class ReportRecorder extends Recorder {
         
         return reportScanner.scan();
     }
+    
 
     /**
      * Descriptor for this step.jelly: defines the context and the UI elements.
