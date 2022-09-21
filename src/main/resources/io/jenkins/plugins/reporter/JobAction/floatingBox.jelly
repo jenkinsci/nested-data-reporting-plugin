@@ -1,7 +1,21 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
     
-    <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
-    <c:trend-chart it="${from}" title="${from.displayName}" enableLinks="true" configurationId="warnings"/>
-    
+        <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+        <st:adjunct includes="io.jenkins.plugins.echarts"/>
+        
+        <j:set var="id" value="${from.report.id}"/>
+        
+        <c:trend-setup suffix="${id}"/>
+        <c:trend-chart it="${from}" title="${from.displayName}" enableLinks="true" configurationId="${id}"/>
+        
+        <script>var view = <st:bind value="${from}"/></script>
+        <script>
+         
+            view.getTrendId(function (id) {
+                echartsJenkinsApi.configureTrend(id.responseJSON)
+            });
+            
+        </script>
+          
 </j:jelly>

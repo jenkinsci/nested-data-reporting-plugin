@@ -85,6 +85,10 @@ public class JobAction implements AsyncConfigurableTrendChart, Action {
         return report;
     }
     
+    @JavaScriptMethod
+    public String getTrendId() {
+        return report.getId();
+    }
 
     /**
      * Returns the job this action belongs to.
