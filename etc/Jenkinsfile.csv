@@ -1,0 +1,12 @@
+pipeline {
+	agent any
+	
+	stages {
+		stage('Publish Data') {
+			steps {
+				checkout scm
+				publishReport name: "CSV", displayType: "dual", provider: csv(pattern: "etc/csv.csv")
+			} 
+		}
+	}
+}
