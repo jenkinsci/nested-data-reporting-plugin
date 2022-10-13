@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter;
 
+import com.sun.xml.bind.v2.runtime.output.Encoded;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
@@ -15,6 +16,9 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 
 public class ReportDetails implements ModelObject {
@@ -202,17 +206,18 @@ public class ReportDetails implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
+            String decodedLink = URLDecoder.decode(link, "UTF-8");
             Item subItem = item.getItems()
                     .stream()
-                    .filter(i -> Objects.equals(i.getId(), link))
+                    .filter(i -> Objects.equals(i.getId(), decodedLink))
                     .findFirst()
                     .orElseThrow(NoSuchElementException::new);
 
             String url = getUrl() + "/" + link;
-            return new ReportDetails(owner, url, result, Messages.Module_Description(subItem.getName()), subItem,
+            return new ReportDetails(owner, URLEncoder.encode(url, "UTF-8"), result, Messages.Module_Description(subItem.getName()), subItem,
                     Optional.of(this));
         }
-        catch (NoSuchElementException ignored) {
+        catch (NoSuchElementException | UnsupportedEncodingException ignored) {
             try {
                 response.sendRedirect2("../");
             }
