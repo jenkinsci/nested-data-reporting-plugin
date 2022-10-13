@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jline.internal.Nullable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,15 @@ public class Item implements Serializable {
 
     public String getId() {
         return id;
+    }
+    
+    @JsonIgnore
+    public String getEncodedId() {
+        try {
+            return URLEncoder.encode(getId(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return StringUtils.EMPTY;
+        }
     }
 
     public void setId(String id) {

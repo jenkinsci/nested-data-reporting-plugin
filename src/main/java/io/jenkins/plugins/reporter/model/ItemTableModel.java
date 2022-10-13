@@ -3,6 +3,8 @@ package io.jenkins.plugins.reporter.model;
 import io.jenkins.plugins.datatables.TableColumn;
 import org.apache.commons.text.CaseUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +103,7 @@ public class ItemTableModel {
         }
 
         public String getId() {
-            return item.getId();
+            return item.getEncodedId();
         }
 
         public String getName() {
