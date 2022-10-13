@@ -14,7 +14,7 @@
       <div class="row py-3 flex-nowrap">
             
           <div class="col-5">
-                <report:overview id="${it.item.id}" model="${it.itemPieChartModel}"/>  
+                <report:overview model="${it.itemPieChartModel}"/>  
           </div>
           
           <div class="col-7">
