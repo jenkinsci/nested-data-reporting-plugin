@@ -5,7 +5,7 @@ pipeline {
 		stage('Publish Data') {
 			steps {
 				checkout scm
-				publishReport name: "CSV", displayType: "dual", provider: csv(pattern: "etc/csv.csv")
+				publishReport name: "CSV", displayType: "dual", provider: csv(id: "awesome-csv-report", pattern: "etc/csv.csv")
 			} 
 		}
 	}
