@@ -3,9 +3,7 @@
     
     <st:documentation>
         Renders the item pie chart.
-        <st:attribute name="id" use="required">
-          The id of the item.
-        </st:attribute>
+        
         <st:attribute name="model" use="required">
           The JSON model for the pie chart.
         </st:attribute>
@@ -13,7 +11,7 @@
       
     <bs:card class="h-100" title="${%Overview}" fontAwesomeIcon="chart-pie">
         
-        <c:pie-chart id="${id}" model="${model}" height="340"/>
+        <c:pie-chart id="overview-pie" model="${model}" height="340"/>
   
     </bs:card>
 
