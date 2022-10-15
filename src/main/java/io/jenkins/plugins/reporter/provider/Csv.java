@@ -70,15 +70,12 @@ public class Csv extends Provider {
         public ReportDto parse(File file) throws IOException {
             
             CsvMapper mapper = new CsvMapper();
-
             CsvSchema  schema = mapper.schemaFor(String[].class).withColumnSeparator(',');
-
             MappingIterator<List<String>> it = mapper
                     .readerForListOf(String.class)
                     .with(com.fasterxml.jackson.dataformat.csv.CsvParser.Feature.WRAP_AS_ARRAY)
                     .with(schema)
                     .readValues(file);
-
 
             ReportDto report = new ReportDto();
             report.setId(getId());
@@ -88,21 +85,20 @@ public class Csv extends Provider {
             List<List<String>> rows = it.readAll();
 
             int rowCount = rows.size();
+            int headerColumnCount = header.size();
             int colIdxValueStart = 0;
 
+            /** Parse all data rows */
             for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
-
                 String parentId = "report";
                 List<String> row = rows.get(rowIdx);
                 Item last = null;
                 LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
-                int colCount = row.size();
 
-                if (colIdxValueStart == 0) {
-
-                    for (int colIdx = 0; colIdx < colCount; colIdx++) {
+                /** Parse first data line to get data and value field */
+                if ((colIdxValueStart == 0) && (row.size() >= header.size())) {
+                    for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
                         String value = row.get(colIdx);
-
                         if (isNumber(value) || StringUtils.isEmpty(value)) {
                             colIdxValueStart = colIdx;
                             break;
@@ -110,22 +106,17 @@ public class Csv extends Provider {
                     }
                 }
 
-                if (colIdxValueStart > 0){
-
-                    parentId = "report";
-
-                    for (int colIdx = 0; colIdx < colCount; colIdx++) {
+                /** Parse line if first data line is OK and line has more element than header */
+                if ((colIdxValueStart > 0) && (row.size() >= headerColumnCount)) {
+                    for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
                         String id = header.get(colIdx);
                         String value = row.get(colIdx);
-                        if ((colIdx  >= colIdxValueStart)) {
-                            int val = 0;
 
-                            if (isNumber(value)) {
-                                val = Integer.parseInt(value);
-                            }
-                            result.put(id, val);
-                        } else {
+                        /** Check value fields */
+                        if ((colIdx < colIdxValueStart)) {
+                            String valueId = "=?!__" + colIdx + value;
 
+                            /** Skip text fields not ok */
                             if ((StringUtils.isEmpty(value)) || (isNumber(value))) {
                                 //logInfo("Invalid Data row = '%i' col = '%i'", rowIdx + 2, colIdx + 1);
                                 continue;
@@ -133,43 +124,47 @@ public class Csv extends Provider {
 
                             Optional<Item> parent = report.findItem(parentId, report.getItems());
                             Item item = new Item();
-                            item.setId(value);
+                            item.setId(valueId);
                             item.setName(value);
 
                             if (parent.isPresent()) {
-
                                 Item p = parent.get();
-
                                 if (!p.hasItems()) {
                                     p.setItems(new ArrayList<>());
                                 }
 
-                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
+                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(valueId))) {
                                     p.addItem(item);
                                 }
-
                             } else {
-
-                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
+                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(valueId))) {
                                     report.getItems().add(item);
                                 }
-
                             }
-
-                            parentId = value;
+                            parentId = valueId;
                             last = item;
+                        } else {
+                            int val = 0;
+                            if (isNumber(value)) {
+                                val = Integer.parseInt(value);
+                            }
+                            result.put(id, val);
                         }
                     }
                 } else {
-                    //logInfo("No text field found in first data row -  row = '%i'", rowIdx + 2);
-                    break;
+                    /** Skip file if first data line has no value field */
+                    if (colIdxValueStart == 0) {
+                        //logInfo("No text field found in first data row -  row = '%i'", rowIdx + 2);
+                        break;
+                    } else {
+                        //logInfo("Csv line '%i' has fewer element than title", rowIdx + 2);
+                    }
                 }
                 if (last != null) {
                     //logInfo("Empty line found row = '%i'", rowIdx + 2);
                     last.setResult(result);
                 }
             }
-            
             return report;
         }
 
