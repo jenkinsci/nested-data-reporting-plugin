@@ -71,77 +71,103 @@ public class Csv extends Provider {
             
             CsvMapper mapper = new CsvMapper();
 
+            CsvSchema  schema = mapper.schemaFor(String[].class).withColumnSeparator(',');
+
             MappingIterator<List<String>> it = mapper
                     .readerForListOf(String.class)
                     .with(com.fasterxml.jackson.dataformat.csv.CsvParser.Feature.WRAP_AS_ARRAY)
+                    .with(schema)
                     .readValues(file);
+
 
             ReportDto report = new ReportDto();
             report.setId(getId());
             report.setItems(new ArrayList<>());
 
             List<String> header = it.next();
-
             List<List<String>> rows = it.readAll();
 
-            String parentId = "report";
+            int rowCount = rows.size();
+            int colIdxValueStart = 0;
 
-            for (List<String> row : rows) {
+            for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
 
+                String parentId = "report";
+                List<String> row = rows.get(rowIdx);
                 Item last = null;
                 LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+                int colCount = row.size();
 
-                for (String value : row) {
+                if (colIdxValueStart == 0) {
 
-                    if (isNumber(value)) {
+                    for (int colIdx = 0; colIdx < colCount; colIdx++) {
+                        String value = row.get(colIdx);
 
-                        parentId = "report";
-
-                        String id = header.get(row.indexOf(value));
-                        int val = Integer.parseInt(value);
-
-                        result.put(id, val);
-
-                    } else {
-
-                        if (StringUtils.isEmpty(value)) {
-                            continue;
+                        if (isNumber(value) || StringUtils.isEmpty(value)) {
+                            colIdxValueStart = colIdx;
+                            break;
                         }
-
-                        Optional<Item> parent = report.findItem(parentId, report.getItems());
-                        Item item = new Item();
-                        item.setId(value);
-                        item.setName(value);
-
-                        if (parent.isPresent()) {
-
-                            Item p = parent.get();
-
-                            if (!p.hasItems()) {
-                                p.setItems(new ArrayList<>());
-                            }
-
-                            if (p.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
-                                p.addItem(item);
-                            }
-
-                        } else {
-
-                            if (report.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
-                                report.getItems().add(item);
-                            }
-
-                        }
-
-                        parentId = value;
-                        last = item;
-
                     }
-
                 }
 
-                last.setResult(result);
+                if (colIdxValueStart > 0){
 
+                    parentId = "report";
+
+                    for (int colIdx = 0; colIdx < colCount; colIdx++) {
+                        String id = header.get(colIdx);
+                        String value = row.get(colIdx);
+                        if ((colIdx  >= colIdxValueStart)) {
+                            int val = 0;
+
+                            if (isNumber(value)) {
+                                val = Integer.parseInt(value);
+                            }
+                            result.put(id, val);
+                        } else {
+
+                            if ((StringUtils.isEmpty(value)) || (isNumber(value))) {
+                                //logInfo("Invalid Data row = '%i' col = '%i'", rowIdx + 2, colIdx + 1);
+                                continue;
+                            }
+
+                            Optional<Item> parent = report.findItem(parentId, report.getItems());
+                            Item item = new Item();
+                            item.setId(value);
+                            item.setName(value);
+
+                            if (parent.isPresent()) {
+
+                                Item p = parent.get();
+
+                                if (!p.hasItems()) {
+                                    p.setItems(new ArrayList<>());
+                                }
+
+                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
+                                    p.addItem(item);
+                                }
+
+                            } else {
+
+                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(value))) {
+                                    report.getItems().add(item);
+                                }
+
+                            }
+
+                            parentId = value;
+                            last = item;
+                        }
+                    }
+                } else {
+                    //logInfo("No text field found in first data row -  row = '%i'", rowIdx + 2);
+                    break;
+                }
+                if (last != null) {
+                    //logInfo("Empty line found row = '%i'", rowIdx + 2);
+                    last.setResult(result);
+                }
             }
             
             return report;
