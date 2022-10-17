@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import hudson.Extension;
 import io.jenkins.plugins.reporter.Messages;
 import io.jenkins.plugins.reporter.model.Item;
@@ -12,6 +12,7 @@ import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.ReportDto;
 import io.jenkins.plugins.reporter.model.ReportParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -38,7 +39,7 @@ public class Csv extends Provider {
             throw new IllegalArgumentException(Messages.Provider_Error());
         }
         
-        return new CsvParser(getActualId());
+        return new CsvCustomParser(getActualId());
     }
 
     /** Descriptor for this provider. */
@@ -51,15 +52,18 @@ public class Csv extends Provider {
         }
     }
 
-    public static class CsvParser extends ReportParser {
+    public static class CsvCustomParser extends ReportParser {
 
         private static final long serialVersionUID = -8689695008930386640L;
         
         private final String id;
         
-        public CsvParser(String id) {
+        private List<String> parserMessages;
+
+        public CsvCustomParser(String id) {
             super();
             this.id = id;
+            this.parserMessages = new ArrayList<String>();
         }
 
         public String getId() {
@@ -68,12 +72,16 @@ public class Csv extends Provider {
 
         @Override
         public ReportDto parse(File file) throws IOException {
-            
-            CsvMapper mapper = new CsvMapper();
-            CsvSchema  schema = mapper.schemaFor(String[].class).withColumnSeparator(',');
-            MappingIterator<List<String>> it = mapper
-                    .readerForListOf(String.class)
-                    .with(com.fasterxml.jackson.dataformat.csv.CsvParser.Feature.WRAP_AS_ARRAY)
+
+            final CsvMapper mapper = new CsvMapper();
+            final CsvSchema schema = mapper.schemaFor(String[].class).withColumnSeparator(',');
+
+            mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
+            mapper.enable(CsvParser.Feature.SKIP_EMPTY_LINES);
+            mapper.enable(CsvParser.Feature.ALLOW_TRAILING_COMMA);
+            mapper.enable(CsvParser.Feature.INSERT_NULLS_FOR_MISSING_COLUMNS);
+            mapper.enable(CsvParser.Feature.TRIM_SPACES);
+            final MappingIterator<List<String>> it = mapper.readerForListOf(String.class)
                     .with(schema)
                     .readValues(file);
 
@@ -81,100 +89,124 @@ public class Csv extends Provider {
             report.setId(getId());
             report.setItems(new ArrayList<>());
 
-            List<String> header = it.next();
-            List<List<String>> rows = it.readAll();
+            final List<String> header = it.next();
+            final List<List<String>> rows = it.readAll();
 
-            int rowCount = rows.size();
-            int headerColumnCount = header.size();
+            int rowCount = 0;
+            final int headerColumnCount = header.size();
             int colIdxValueStart = 0;
 
+            if (headerColumnCount >= 2) {
+                rowCount = rows.size();
+            } else {
+                parserMessages.add(String.format("skipped file - First line has %d elements", headerColumnCount + 1));
+            }
             /** Parse all data rows */
             for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
                 String parentId = "report";
                 List<String> row = rows.get(rowIdx);
                 Item last = null;
+                boolean lastItemAdded = false;
                 LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+                boolean emptyFieldFound = false;
+                int rowSize = row.size();
 
-                /** Parse first data line to get data and value field */
-                if ((colIdxValueStart == 0) && (row.size() >= header.size())) {
-                    for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
+                /** Parse untill first data line is found to get data and value field */
+                if (colIdxValueStart == 0) {
+                    /** Col 0 is assumed to be string */
+                    for (int colIdx = rowSize - 1; colIdx > 1; colIdx--) {
                         String value = row.get(colIdx);
-                        if (isNumber(value) || StringUtils.isEmpty(value)) {
+
+                        if (NumberUtils.isCreatable(value) == true) {
                             colIdxValueStart = colIdx;
+                        } else {
+                            if (colIdxValueStart > 0) {
+                                parserMessages.add(String.format("Found data - fields number = %d  - numeric fields = %d", colIdxValueStart, rowSize - colIdxValueStart));
+                            }
                             break;
                         }
                     }
                 }
 
+                String  valueId = "";
                 /** Parse line if first data line is OK and line has more element than header */
-                if ((colIdxValueStart > 0) && (row.size() >= headerColumnCount)) {
+                if ((colIdxValueStart > 0) && (rowSize >= headerColumnCount)){
+                    /** Check line and header size matching */
                     for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
                         String id = header.get(colIdx);
                         String value = row.get(colIdx);
 
                         /** Check value fields */
                         if ((colIdx < colIdxValueStart)) {
-                            String valueId = "=?!__" + colIdx + value;
-
-                            /** Skip text fields not ok */
-                            if ((StringUtils.isEmpty(value)) || (isNumber(value))) {
-                                //logInfo("Invalid Data row = '%i' col = '%i'", rowIdx + 2, colIdx + 1);
-                                continue;
+                            /** Test if text item is a value or empty */
+                            if ((NumberUtils.isCreatable(value)) || (StringUtils.isBlank(value))) {
+                                /** Empty field found - message */
+                                if (colIdx == 0) {
+                                    parserMessages.add(String.format("skipped line %d - First column item empty - col = %d ", rowIdx + 2, colIdx + 1));
+                                    break ;
+                                } else {
+                                    emptyFieldFound = true;
+                                    /** Continue next column parsing */
+                                    continue;
+                                }
+                            } else {
+                                /** Check if field values are present after empty cells */
+                                 if (emptyFieldFound == true) {
+                                     parserMessages.add(String.format("skipped line %d Empty field in col = %d ", rowIdx + 2, colIdx + 1));
+                                     break;
+                                 }
                             }
-
+                            valueId += value;
                             Optional<Item> parent = report.findItem(parentId, report.getItems());
                             Item item = new Item();
+                            lastItemAdded = false;
                             item.setId(valueId);
                             item.setName(value);
-
+                            String finalValueId = valueId;
                             if (parent.isPresent()) {
                                 Item p = parent.get();
                                 if (!p.hasItems()) {
                                     p.setItems(new ArrayList<>());
                                 }
-
-                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(valueId))) {
+                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
                                     p.addItem(item);
+                                    lastItemAdded = true;
                                 }
                             } else {
-                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(valueId))) {
+                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
                                     report.getItems().add(item);
+                                    lastItemAdded = true;
                                 }
                             }
                             parentId = valueId;
                             last = item;
                         } else {
-                            int val = 0;
-                            if (isNumber(value)) {
-                                val = Integer.parseInt(value);
+                            Number val = 0;
+                            if (NumberUtils.isCreatable(value)) {
+                                val = NumberUtils.createNumber(value);
                             }
-                            result.put(id, val);
+                            result.put(id, val.intValue());
                         }
                     }
                 } else {
                     /** Skip file if first data line has no value field */
                     if (colIdxValueStart == 0) {
-                        //logInfo("No text field found in first data row -  row = '%i'", rowIdx + 2);
-                        break;
+                        parserMessages.add(String.format("skipped line %d - First data row not found", rowIdx + 2));
+                        continue;
                     } else {
-                        //logInfo("Csv line '%i' has fewer element than title", rowIdx + 2);
+                        parserMessages.add(String.format("skipped line %d - line has fewer element than title", rowIdx + 2));
+                        continue;
                     }
                 }
-                if (last != null) {
-                    //logInfo("Empty line found row = '%i'", rowIdx + 2);
+                /** If last item was created, it will be added to report */
+                if (lastItemAdded == true) {
                     last.setResult(result);
+                } else {
+                    parserMessages.add(String.format("ignored line %d - Same fields already exists", rowIdx + 2));
                 }
             }
+            //report.setParserLog(parserMessages);
             return report;
-        }
-
-        private boolean isNumber(String value) {
-            try {
-                Integer.parseInt(value);
-                return true;
-            } catch (NumberFormatException exception) {
-                return false;
-            }
         }
     }
 }
