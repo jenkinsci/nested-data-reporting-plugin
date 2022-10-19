@@ -10,7 +10,7 @@ pipeline {
 				publishReport name: "XML Report", displayType: "dual", provider: xml(pattern: "etc/*.xml")
 				publishReport name: "YAML Report", displayType: "dual", provider: yaml(pattern: "etc/*.yaml")
 				publishReport name: "CSV Report Test", displayType: "dual", provider: csv(id: "csv-one", pattern: "etc/report.csv")
-                publishReport name: "CSV Report Test Robustness", displayType: "dual", provider: csv(id: "csv-one", pattern: "etc/report_robust.csv")
+				publishReport name: "CSV Report Test Robustness", displayType: "dual", provider: csv(id: "csv-one", pattern: "etc/report_robust.csv")
 			} 
 		}
 	}
