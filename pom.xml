@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>nested-data-reporting</artifactId>
-    <version>5.1.1</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
     <name>Nested Data Reporting</name>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
