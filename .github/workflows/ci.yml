@@ -12,17 +12,18 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
+        jdk: [11, 17]
 
     runs-on: ${{ matrix.platform }}
-    name: on ${{ matrix.platform }}
+    name: on ${{ matrix.platform }} with JDK ${{ matrix.jdk }}
 
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: ${{ matrix.jdk }}
       - name: Cache local Maven repository
         uses: actions/cache@v3.0.11
         with:
@@ -33,4 +34,4 @@ jobs:
       - name: Build with Maven
         env:
           BROWSER: chrome-container
-        run: mvn -V -ntp clean verify --file pom.xml '-Djenkins.test.timeout=5000' '-Dgpg.skip'
+        run: mvn -V --color always -ntp clean verify --file pom.xml '-Djenkins.test.timeout=5000' '-Dgpg.skip'
