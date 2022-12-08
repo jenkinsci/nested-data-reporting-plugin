@@ -13,5 +13,12 @@
         <c:safe-textbox/>
                 
     </f:entry>
+    
+    <f:entry title="${%Delimiter}" field="delimiter"
+                  description="${%delimiter.description}">
+             
+            <f:textbox/>
+                    
+        </f:entry>
   
 </j:jelly>

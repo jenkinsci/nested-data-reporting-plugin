@@ -27,7 +27,9 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
     private String pattern = StringUtils.EMPTY;
     
     private String id = StringUtils.EMPTY;
-
+    
+    private char delimiter = ',';
+    
     private JenkinsFacade jenkins = new JenkinsFacade();
 
     /**
@@ -81,6 +83,22 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
     @CheckForNull
     public String getPattern() {
         return pattern;
+    }
+
+    /**
+     * Sets the delimiter to use to read the csv file.
+     *
+     * @param delimiter
+     *         the encoding, default ","
+     */
+    @DataBoundSetter
+    public void setDelimiter(final char delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    @CheckForNull
+    public char getDelimiter() {
+        return delimiter;
     }
 
     /**
@@ -177,6 +195,15 @@ public abstract class Provider extends AbstractDescribableImpl<Provider> impleme
         @POST
         public FormValidation doCheckId(@QueryParameter("id") String id) {
             if (getSymbolName().equals("csv") && StringUtils.isEmpty(id)) {
+                return FormValidation.error(Messages.Provider_Error());
+            }
+
+            return FormValidation.ok();
+        }
+
+        @POST
+        public FormValidation doCheckDelimiter(@QueryParameter("delimiter") String delimiter) {
+            if (getSymbolName().equals("csv") && StringUtils.isEmpty(delimiter)) {
                 return FormValidation.error(Messages.Provider_Error());
             }
 
