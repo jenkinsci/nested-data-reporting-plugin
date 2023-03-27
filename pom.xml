@@ -51,7 +51,7 @@
         <jquery3-api.version>3.6.3-1</jquery3-api.version>
         <data-tables-api.version>1.13.3-3</data-tables-api.version>
         <bootstrap5-api.version>5.2.2-1</bootstrap5-api.version>
-        <prism-api.version>1.29.0-2</prism-api.version>
+        <prism-api.version>1.29.0-4</prism-api.version>
         <everit-json-schema.version>1.14.2</everit-json-schema.version>
         <jackson-dataformat.version>2.14.2</jackson-dataformat.version>
     </properties>
