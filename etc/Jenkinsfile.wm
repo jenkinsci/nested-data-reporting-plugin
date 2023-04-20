@@ -1,0 +1,12 @@
+pipeline {
+	agent any
+	
+	stages {
+		stage('Publish Data') {
+			steps {
+				checkout scm
+				publishReport name: "WM Test", displayType: "dual", provider: json(pattern: "etc/wm.json")
+			} 
+		}
+	}
+}

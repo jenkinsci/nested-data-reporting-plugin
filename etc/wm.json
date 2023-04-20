@@ -1,0 +1,322 @@
+{
+  "id": "compare-report",
+  "items": [
+    {
+      "id": "Renten",
+      "name": "Renten",
+      "items": [
+        {
+          "id": "SONST",
+          "name": "SONST",
+          "result": {
+            "incorrect": 416,
+            "manually": 4268,
+            "accurate": 52424
+          }
+        },
+        {
+          "id": "STDR",
+          "name": "STDR",
+          "result": {
+            "incorrect": 424,
+            "manually": 19262,
+            "accurate": 444330
+          }
+        },
+        {
+          "id": "ANZS",
+          "name": "ANZS",
+          "result": {
+            "incorrect": 922,
+            "manually": 6694,
+            "accurate": 74027
+          }
+        },
+        {
+          "id": "AAD",
+          "name": "AAD",
+          "result": {
+            "incorrect": 863,
+            "manually": 9149,
+            "accurate": 41567
+          }
+        },
+        {
+          "id": "MMI",
+          "name": "MMI",
+          "result": {
+            "incorrect": 15,
+            "manually": 1651,
+            "accurate": 15990
+          }
+        },
+        {
+          "id": "WDLA",
+          "name": "WDLA",
+          "result": {
+            "incorrect": 500,
+            "manually": 6261,
+            "accurate": 55933
+          }
+        },
+        {
+          "id": "ABS",
+          "name": "ABS",
+          "result": {
+            "incorrect": 437,
+            "manually": 10014,
+            "accurate": 144901
+          }
+        }
+      ]
+    },
+    {
+      "id": "Aktie",
+      "name": "Aktie",
+      "items": [
+        {
+          "id": "AoR",
+          "name": "AoR",
+          "result": {
+            "incorrect": 429,
+            "manually": 21510,
+            "accurate": 1254576
+          }
+        },
+        {
+          "id": "GS",
+          "name": "GS",
+          "result": {
+            "incorrect": 121,
+            "manually": 912,
+            "accurate": 24390
+          }
+        },
+        {
+          "id": "DR",
+          "name": "DR",
+          "result": {
+            "incorrect": 8,
+            "manually": 1689,
+            "accurate": 157035
+          }
+        },
+        {
+          "id": "FoR",
+          "name": "FoR",
+          "result": {
+            "incorrect": 90,
+            "manually": 2261,
+            "accurate": 140331
+          }
+        },
+        {
+          "id": "PEq",
+          "name": "PEq",
+          "result": {
+            "incorrect": 30,
+            "manually": 1319,
+            "accurate": 44451
+          }
+        },
+        {
+          "id": "HyA",
+          "name": "HyA",
+          "result": {
+            "incorrect": 12,
+            "manually": 2187,
+            "accurate": 63449
+          }
+        },
+        {
+          "id": "UTS",
+          "name": "UTS",
+          "result": {
+            "incorrect": 6,
+            "manually": 776,
+            "accurate": 25460
+          }
+        },
+        {
+          "id": "FmR",
+          "name": "FmR",
+          "result": {
+            "incorrect": 6,
+            "manually": 751,
+            "accurate": 37296
+          }
+        }
+      ]
+    },
+    {
+      "id": "Zertifikat",
+      "name": "Zertifikat",
+      "items": [
+        {
+          "id": "ZmLZoZins",
+          "name": "ZmLZoZins",
+          "result": {
+            "incorrect": 265,
+            "manually": 12660,
+            "accurate": 85321
+          }
+        },
+        {
+          "id": "ZOE",
+          "name": "ZOE",
+          "result": {
+            "incorrect": 165,
+            "manually": 14239,
+            "accurate": 76837
+          }
+        },
+        {
+          "id": "ZmLZmZins",
+          "name": "ZmLZmZins",
+          "result": {
+            "incorrect": 488,
+            "manually": 7297,
+            "accurate": 30667
+          }
+        }
+      ]
+    },
+    {
+      "id": "Optionsschein",
+      "name": "Optionsschein",
+      "items": [
+        {
+          "id": "WTSoLZ",
+          "name": "WTSoLZ",
+          "result": {
+            "incorrect": 35,
+            "manually": 8515,
+            "accurate": 40826
+          }
+        },
+        {
+          "id": "WTSmLZ",
+          "name": "WTSmLZ",
+          "result": {
+            "incorrect": 45,
+            "manually": 3572,
+            "accurate": 31919
+          }
+        }
+      ]
+    },
+    {
+      "id": "Fonds",
+      "name": "Fonds",
+      "items": [
+        {
+          "id": "OffeneInvFds",
+          "name": "OffeneInvFds",
+          "result": {
+            "incorrect": 298,
+            "manually": 14768,
+            "accurate": 445920
+          }
+        },
+        {
+          "id": "BeteiligungsFds",
+          "name": "BeteiligungsFds",
+          "result": {
+            "incorrect": 66,
+            "manually": 608,
+            "accurate": 11822
+          }
+        },
+        {
+          "id": "GeschlosseneInvFds",
+          "name": "GeschlosseneInvFds",
+          "result": {
+            "incorrect": 25,
+            "manually": 632,
+            "accurate": 24743
+          }
+        }
+      ]
+    },
+    {
+      "id": "Derivate",
+      "name": "Derivate",
+      "items": [
+        {
+          "id": "DEVKONTRAKTE",
+          "name": "DEVKONTRAKTE",
+          "result": {
+            "incorrect": 4,
+            "manually": 797,
+            "accurate": 7565
+          }
+        },
+        {
+          "id": "IDX",
+          "name": "IDX",
+          "result": {
+            "incorrect": 3650,
+            "manually": 509,
+            "accurate": 41880
+          }
+        },
+        {
+          "id": "TPR",
+          "name": "TPR",
+          "result": {
+            "incorrect": 0,
+            "manually": 8786,
+            "accurate": 68250
+          }
+        },
+        {
+          "id": "COM",
+          "name": "COM",
+          "result": {
+            "incorrect": 3,
+            "manually": 58,
+            "accurate": 2585
+          }
+        },
+        {
+          "id": "WHG",
+          "name": "WHG",
+          "result": {
+            "incorrect": 4,
+            "manually": 95,
+            "accurate": 2109
+          }
+        },
+        {
+          "id": "SBW",
+          "name": "SBW",
+          "result": {
+            "incorrect": 0,
+            "manually": 94,
+            "accurate": 1165
+          }
+        }
+      ]
+    },
+    {
+      "id": "Rechte",
+      "name": "Rechte",
+      "items": [
+        {
+          "id": "NR",
+          "name": "NR",
+          "result": {
+            "incorrect": 2,
+            "manually": 467,
+            "accurate": 14977
+          }
+        }
+      ]
+    }
+  ],
+  "colors": {
+    "incorrect": "#EF9A9A",
+    "manually": "#FFF59D",
+    "accurate": "#A5D6A7"
+  }
+}
