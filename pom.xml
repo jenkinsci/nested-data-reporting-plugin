@@ -50,7 +50,7 @@
         <font-awesome-api.version>6.3.0-2</font-awesome-api.version>
         <jquery3-api.version>3.6.4-1</jquery3-api.version>
         <data-tables-api.version>1.13.3-3</data-tables-api.version>
-        <bootstrap5-api.version>5.2.2-2</bootstrap5-api.version>
+        <bootstrap5-api.version>5.2.2-3</bootstrap5-api.version>
         <prism-api.version>1.29.0-4</prism-api.version>
         <everit-json-schema.version>1.14.2</everit-json-schema.version>
         <jackson-dataformat.version>2.14.2</jackson-dataformat.version>
