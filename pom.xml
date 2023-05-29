@@ -46,7 +46,7 @@
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>3.2.1</plugin-util-api.version>
-        <echarts-api.version>5.4.0-3</echarts-api.version>
+        <echarts-api.version>5.4.0-4</echarts-api.version>
         <font-awesome-api.version>6.3.0-2</font-awesome-api.version>
         <jquery3-api.version>3.7.0-1</jquery3-api.version>
         <data-tables-api.version>1.13.3-4</data-tables-api.version>
@@ -54,6 +54,7 @@
         <prism-api.version>1.29.0-6</prism-api.version>
         <everit-json-schema.version>1.14.2</everit-json-schema.version>
         <jackson-dataformat.version>2.15.1</jackson-dataformat.version>
+        <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
 
     <dependencyManagement>
@@ -113,6 +114,11 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson-dataformat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.collections</groupId>
+            <artifactId>eclipse-collections</artifactId>
+            <version>${eclipse-collections.version}</version>
         </dependency>
         
         <!-- Workflow dependencies -->
