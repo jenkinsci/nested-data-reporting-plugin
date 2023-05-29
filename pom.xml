@@ -54,6 +54,7 @@
         <prism-api.version>1.29.0-6</prism-api.version>
         <everit-json-schema.version>1.14.2</everit-json-schema.version>
         <jackson-dataformat.version>2.15.1</jackson-dataformat.version>
+        <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
 
     <dependencyManagement>
@@ -113,6 +114,11 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson-dataformat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.collections</groupId>
+            <artifactId>eclipse-collections</artifactId>
+            <version>${eclipse-collections.version}</version>
         </dependency>
         
         <!-- Workflow dependencies -->
