@@ -9,7 +9,7 @@ on:
     branches:
       - master
       - main
- schedule:
+  schedule:
     - cron: "32 3 * * 0"
     
 jobs:
