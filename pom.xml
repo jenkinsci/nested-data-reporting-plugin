@@ -52,7 +52,7 @@
         <data-tables-api.version>1.13.6-5</data-tables-api.version>
         <bootstrap5-api.version>5.3.2-1</bootstrap5-api.version>
         <prism-api.version>1.29.0-8</prism-api.version>
-        <everit-json-schema.version>1.14.2</everit-json-schema.version>
+        <everit-json-schema.version>1.14.3</everit-json-schema.version>
         <jackson-dataformat.version>2.15.2</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
