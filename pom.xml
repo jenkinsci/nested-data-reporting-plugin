@@ -40,8 +40,7 @@
     <properties>
         <revision>5.2.4</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.baseline>2.426</jenkins.baseline>
-        <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+        <jenkins.version>2.426.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>3.6.0</plugin-util-api.version>
@@ -60,7 +59,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-${jenkins.baseline}.x</artifactId>
+                <artifactId>bom-2.426.x</artifactId>
                 <version>2543.vfb_1a_5fb_9496d</version>
                 <type>pom</type>
                 <scope>import</scope>
