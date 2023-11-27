@@ -40,9 +40,8 @@
     <properties>
         <revision>5.2.4</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.baseline>2.387</jenkins.baseline>
-        <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-        <java.level>11</java.level>
+        <jenkins.baseline>2.426</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>3.6.0</plugin-util-api.version>
