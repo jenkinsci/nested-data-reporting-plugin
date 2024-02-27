@@ -47,7 +47,7 @@
         <echarts-api.version>5.4.3-2</echarts-api.version>
         <font-awesome-api.version>6.5.1-2</font-awesome-api.version>
         <jquery3-api.version>3.7.1-1</jquery3-api.version>
-        <data-tables-api.version>1.13.8-2</data-tables-api.version>
+        <data-tables-api.version>1.13.8-4</data-tables-api.version>
         <bootstrap5-api.version>5.3.2-3</bootstrap5-api.version>
         <prism-api.version>1.29.0-13</prism-api.version>
         <everit-json-schema.version>1.14.4</everit-json-schema.version>
@@ -59,7 +59,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.426.x</artifactId>
+                <artifactId>bom-2.440.x</artifactId>
                 <version>2779.v391653d9c5da_</version>
                 <type>pom</type>
                 <scope>import</scope>
