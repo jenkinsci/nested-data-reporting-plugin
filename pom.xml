@@ -111,11 +111,6 @@
             <version>${prism-api.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.erosb</groupId>
-            <artifactId>everit-json-schema</artifactId>
-            <version>${everit-json-schema.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson-dataformat.version}</version>
