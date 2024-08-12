@@ -40,7 +40,7 @@
     <properties>
         <revision>5.2.4</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.440.1</jenkins.version>
+        <jenkins.version>2.462.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
         <plugin-util-api.version>4.1.0</plugin-util-api.version>
