@@ -49,7 +49,7 @@
         <jquery3-api.version>3.7.1-2</jquery3-api.version>
         <data-tables-api.version>2.1.6-1</data-tables-api.version>
         <bootstrap5-api.version>5.3.3-1</bootstrap5-api.version>
-        <prism-api.version>1.29.0-15</prism-api.version>
+        <prism-api.version>1.29.0-17</prism-api.version>
         <jackson-dataformat.version>2.18.0</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
