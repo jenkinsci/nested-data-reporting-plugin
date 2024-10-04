@@ -43,7 +43,7 @@
         <jenkins.version>2.462.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
-        <plugin-util-api.version>4.1.0</plugin-util-api.version>
+        <plugin-util-api.version>5.1.0</plugin-util-api.version>
         <echarts-api.version>5.5.1-1</echarts-api.version>
         <font-awesome-api.version>6.6.0-2</font-awesome-api.version>
         <jquery3-api.version>3.7.1-2</jquery3-api.version>
