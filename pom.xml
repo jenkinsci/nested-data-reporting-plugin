@@ -40,7 +40,7 @@
     <properties>
         <revision>5.2.4</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.479</jenkins.version>
+        <jenkins.version>2.462.3</jenkins.version>
         <jackson-dataformat.version>2.18.0</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
@@ -49,7 +49,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.479.x</artifactId>
+                <artifactId>bom-2.462.x</artifactId>
                 <version>3482.vc10d4f6da_28a_</version>
                 <type>pom</type>
                 <scope>import</scope>
