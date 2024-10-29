@@ -41,7 +41,7 @@
         <revision>5.2.4</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.462.3</jenkins.version>
-        <jackson-dataformat.version>2.18.0</jackson-dataformat.version>
+        <jackson-dataformat.version>2.18.1</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
 
