@@ -1,7 +1,6 @@
 package io.jenkins.plugins.reporter.model;
 
 import com.google.errorprone.annotations.FormatMethod;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

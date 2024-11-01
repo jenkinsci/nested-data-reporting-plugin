@@ -1,6 +1,5 @@
 package io.jenkins.plugins.reporter;
 
-import com.sun.xml.bind.v2.runtime.output.Encoded;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
@@ -11,8 +10,8 @@ import io.jenkins.plugins.reporter.charts.ItemPieChart;
 import io.jenkins.plugins.reporter.model.*;
 import io.jenkins.plugins.reporter.util.BuildResultNavigator;
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import java.io.IOException;
@@ -204,7 +203,7 @@ public class ReportDetails implements ModelObject {
      * @return the new sub page
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+    public Object getDynamic(final String link, final StaplerRequest2 request, final StaplerResponse2 response) {
         try {
             String decodedLink = URLDecoder.decode(link, "UTF-8");
             Item subItem = item.getItems()
