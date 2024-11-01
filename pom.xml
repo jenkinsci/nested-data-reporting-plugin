@@ -112,9 +112,9 @@
             <artifactId>prism-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml..dataformat</groupId>
-            <artifactId>-dataformat-csv</artifactId>
-            <version>${-dataformat.version}</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson-dataformat.version}</version>
         </dependency>
         <!-- Project Library Dependencies -->
         <dependency>
