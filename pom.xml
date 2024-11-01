@@ -14,7 +14,7 @@
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-        <jackson.version>2.18.1</jackson.version>
+        <jackson-dataformat.version>2.18.1</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
     
@@ -112,9 +112,9 @@
             <artifactId>prism-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-csv</artifactId>
-            <version>${jackson-dataformat.version}</version>
+            <groupId>com.fasterxml..dataformat</groupId>
+            <artifactId>-dataformat-csv</artifactId>
+            <version>${-dataformat.version}</version>
         </dependency>
         <!-- Project Library Dependencies -->
         <dependency>
