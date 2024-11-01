@@ -17,14 +17,6 @@
         <jackson-dataformat.version>2.18.1</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
-    <properties>
-        <changelist>5.2.4-SNAPSHOT</changelist>
-        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.479</jenkins.baseline>
-        <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    </properties>
-
     
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>nested-data-reporting-plugin</artifactId>
