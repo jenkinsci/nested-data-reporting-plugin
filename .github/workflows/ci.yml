@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
-         with:
+        with:
           distribution: 'temurin'
           java-version: '${{ matrix.jdk }}'
           check-latest: true
