@@ -2,15 +2,12 @@ package io.jenkins.plugins.reporter.provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.ReportDto;
 import io.jenkins.plugins.reporter.model.ReportParser;
-import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
 import java.io.IOException;

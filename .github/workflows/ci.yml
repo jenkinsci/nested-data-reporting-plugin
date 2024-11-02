@@ -22,18 +22,15 @@ jobs:
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: ${{ matrix.jdk }}
+          distribution: 'temurin'
+          java-version: '${{ matrix.jdk }}'
           check-latest: true
           cache: 'maven'
-      - name: Cache dependencies
-        uses: actions/cache@v4
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          maven-version: 3.9.9
       - name: Build with Maven
         env:
           BROWSER: chrome-container
-        run: mvn -V --color always -ntp clean verify --file pom.xml '-Djenkins.test.timeout=5000' '-Dgpg.skip'
+        run: mvn -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip'
