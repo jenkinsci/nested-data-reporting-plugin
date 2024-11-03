@@ -13,8 +13,6 @@
         <revision>5.3.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/nested-data-reporting-plugin</gitHubRepo>
-        <changelist>5.3.0-SNAPSHOT</changelist>
-        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
@@ -186,11 +184,6 @@
                 <configuration>
                     <compatibleSinceVersion>0.3</compatibleSinceVersion>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.jenkins.tools.incrementals</groupId>
-                <artifactId>incrementals-maven-plugin</artifactId>
-                <version>1.8</version> <!-- Use the appropriate version -->
             </plugin>
         </plugins>
     </build>
