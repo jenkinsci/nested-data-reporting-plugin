@@ -10,7 +10,7 @@
     </parent>
     
     <properties>
-        <changelist>5.2.4-SNAPSHOT</changelist>
+        <changelist>5.3.0-SNAPSHOT</changelist>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
