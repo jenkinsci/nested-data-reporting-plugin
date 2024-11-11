@@ -2,22 +2,22 @@
 
 version: 2
 updates:
-  - package-ecosystem: "maven"
-    directory: "/"
+  - package-ecosystem: maven
+    directory: /
     schedule:
-      interval: "daily"
+      interval: daily
     open-pull-requests-limit: 10
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     commit-message:
       prefix: ""
     schedule:
-      interval: "daily"
+      interval: daily
 
-  - package-ecosystem: "npm"
+  - package-ecosystem: npm
     directory: "/"
     commit-message:
       prefix: ""
     schedule:
-      interval: "daily"
+      interval: daily

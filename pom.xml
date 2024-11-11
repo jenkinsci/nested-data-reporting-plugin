@@ -10,8 +10,7 @@
     </parent>
     
     <properties>
-        <revision>5.3.0</revision>
-        <changelist>-SNAPSHOT</changelist>
+        <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/nested-data-reporting-plugin</gitHubRepo>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
@@ -22,7 +21,7 @@
     
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>nested-data-reporting</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>${changelist}</version>
     <packaging>hpi</packaging>
     <name>Nested Data Reporting</name>
     <description>Jenkins plugin to report data from nested as pie-charts, trend-charts and data tables.</description>
