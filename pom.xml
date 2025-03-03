@@ -15,7 +15,7 @@
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-        <jackson-dataformat.version>2.18.2</jackson-dataformat.version>
+        <jackson-dataformat.version>2.18.3</jackson-dataformat.version>
         <eclipse-collections.version>11.1.0</eclipse-collections.version>
     </properties>
     
