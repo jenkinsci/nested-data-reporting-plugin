@@ -2,8 +2,7 @@ package io.jenkins.plugins.reporter;
 
 import hudson.model.Run;
 import io.jenkins.plugins.reporter.model.Report;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
+import java.util.Collections;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,11 +45,11 @@ public class ReportResult implements Serializable {
         return report;
     }
     
-    public ImmutableList<String> getErrorMessages() {
-        return Lists.immutable.withAll(errors);
+    public List<String> getErrorMessages() {
+        return Collections.unmodifiableList(errors);
     }
     
-    public ImmutableList<String> getInfoMessages() {
-        return Lists.immutable.withAll(messages);
+    public List<String> getInfoMessages() {
+        return Collections.unmodifiableList(messages);
     }
 }

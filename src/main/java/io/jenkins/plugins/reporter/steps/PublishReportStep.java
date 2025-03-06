@@ -17,7 +17,6 @@ import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.util.JenkinsFacade;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.AncestorInPath;
@@ -114,7 +113,7 @@ public class PublishReportStep extends Step implements Serializable {
         
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return Sets.immutable.of(FlowNode.class, Run.class, TaskListener.class).castToSet();
+            return Set.of(FlowNode.class, Run.class, TaskListener.class);
         }
 
         @Override

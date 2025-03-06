@@ -65,8 +65,8 @@ public class ReportDetails implements ModelObject {
         this.item = item;
         this.displayName = displayName;
 
-        infoMessages.addAll(result.getInfoMessages().castToList());
-        errorMessages.addAll(result.getErrorMessages().castToList());
+        infoMessages.addAll(result.getInfoMessages());
+        errorMessages.addAll(result.getErrorMessages());
     }
 
     ReportResult getResult() {
