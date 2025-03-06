@@ -1,6 +1,5 @@
 package io.jenkins.plugins.reporter.steps;
 
-import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
@@ -114,7 +113,7 @@ public class PublishReportStep extends Step implements Serializable {
         
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return ImmutableSet.of(FlowNode.class, Run.class, TaskListener.class);
+            return Set.of(FlowNode.class, Run.class, TaskListener.class);
         }
 
         @Override
