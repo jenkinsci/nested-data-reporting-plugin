@@ -1,6 +1,3 @@
-
-
-<br />
 <p align="center">
   <a href="#">
     <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
@@ -12,13 +9,14 @@
     A Jenkins plugin to visualize nested data in pie charts, trend charts, and data tables.
   </p>
 </p>
+
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jenkinsci/nested-data-reporting-plugin)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
 ![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/)
 ![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting)
 ![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/nested-data-reporting)
+
 ---
 
 ## Table of Contents
