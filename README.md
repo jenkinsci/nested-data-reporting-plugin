@@ -1,11 +1,4 @@
-![GitHub](https://img.shields.io/github/license/jenkinsci/nested-data-reporting-plugin)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jenkinsci/nested-data-reporting-plugin)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
-![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
-[![Build Status](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/)
-![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting)
-![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/nested-data-reporting)
+
 
 <br />
 <p align="center">
@@ -17,16 +10,15 @@
 
   <p align="center">
     A Jenkins plugin to visualize nested data in pie charts, trend charts, and data tables.
-    <br />
-    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the Docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Report Bug</a>
-    ·
-    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Request Feature</a>
   </p>
 </p>
-
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jenkinsci/nested-data-reporting-plugin)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/nested-data-reporting-plugin)
+![Open GitHub issues](https://img.shields.io/github/issues/jenkinsci/nested-data-reporting-plugin)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jenkinsci/nested-data-reporting-plugin/GitHub%20CI)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/nested-data-reporting-plugin/job/master/)
+![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting)
+![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/nested-data-reporting)
 ---
 
 ## Table of Contents
