@@ -10,15 +10,15 @@
 <br />
 <p align="center">
   <a href="#">
-   <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
+    <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
   </a>
 
   <h1 align="center">Nested Data Reporting Plugin</h1>
 
   <p align="center">
-    Jenkins plugin to report data from nested data as pie-charts, trend-charts and data tables.
+    A Jenkins plugin to visualize nested data in pie charts, trend charts, and data tables.
     <br />
-    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/blob/master/README.md"><strong>Explore the Docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/jenkinsci/nested-data-reporting-plugin/issues/new/choose">Report Bug</a>
@@ -27,273 +27,200 @@
   </p>
 </p>
 
+---
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Key Features](#key-features)
+3. [Usage](#usage)
+   - [Input Files](#input-files)
+   - [Visualization](#visualization)
+4. [Color Management](#color-management)
+5. [Display Examples](#display-examples)
+6. [Configuration](#configuration)
+   - [Pipeline Parameters](#pipeline-parameters)
+7. [Examples](#examples)
+8. [Contributing](#contributing)
+9. [Issues and Support](#issues-and-support)
+10. [License](#license)
+11. [Acknowledgments](#acknowledgments)
+
+---
+
 ## Introduction
 
-This plugin visualizes user-specific content from various file formats, such as json, yaml, xml or csv.
-The UI displays information in various graphs and tables, like pie-charts, history charts and data tables.
+The **Nested Data Reporting Plugin** for Jenkins allows you to visualize complex, nested data from various file formats (JSON, YAML, XML, CSV) in an intuitive and interactive way. The plugin generates pie charts, trend charts, and data tables to help you analyze and monitor your data over time.
+
+Whether you're tracking metrics, analyzing trends, or monitoring performance, this plugin provides a powerful way to display and interact with your data directly within Jenkins.
+
+---
+
+## Key Features
+
+- **Visualize Nested Data**: Display hierarchical data structures in pie charts, trend charts, and tables.
+- **Multiple File Formats**: Supports JSON, YAML, XML, and CSV files.
+- **Dynamic UI**: Interactive charts and tables that update based on your data.
+- **Customizable Colors**: Define custom colors for your data points or use predefined color schemes.
+- **Trend Analysis**: Track data trends over multiple builds with history charts.
+- **Pipeline Integration**: Easily integrate data reporting into your Jenkins pipelines.
+
+---
 
 ## Usage
 
-User-specific files such as Json files are the starting point, containing the content to be displayed.
-You need to provide an `id` and a list of `items`. Each item in this list can have a further list of `items`.
-However, an item on the lowest level must then contain a `result`. This `result` can be any combination of key, value pairs.
-If an item has `items`, the `result` will be computed automatically for this parent item. 
-Please make sure you use a unique identifier for the `id`!
+### Input Files
 
-An example json file looks like this: 
+The plugin supports the following file formats for data input:
 
-```
+#### JSON
+- Use a hierarchical structure with `id`, `name`, and `items` for nested data.
+- Each item can have a `result` object containing key-value pairs for metrics.
+- Example:
+  ```json
+  {
+    "id": "report-id",
+    "items": [
+      {
+        "id": "category-1",
+        "name": "Category 1",
+        "result": { "metric1": 10, "metric2": 20 }
+      },
+      {
+        "id": "category-2",
+        "name": "Category 2",
+        "items": [
+          {
+            "id": "sub-category-1",
+            "name": "Sub Category 1",
+            "result": { "metric1": 5, "metric2": 15 }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+  To check your json you can use the [json schema](src/main/resources/report.json) to validate it.
+
+#### CSV
+- Use a flat structure with columns representing metrics.
+- The first row should contain headers (column names).
+- Example:
+
+  ```csv
+  id,name,metric1,metric2
+  category-1,Category 1,10,20
+  category-2,Category 2,5,15
+  ```
+
+#### YAML and XML
+- Similar hierarchical structures as JSON are supported.
+
+---
+
+## Color Management
+
+The plugin allows you to customize the colors used in the visualizations. You can define colors for specific metrics or categories to make your reports more visually appealing and easier to interpret.
+
+### Customizing Colors
+
+To customize colors, add a `colors` object to your JSON, YAML, or XML file. The `colors` object should map metric keys or category names to specific colors. Colors can be defined using **HEX values** or **predefined color names**.
+
+> **Note**: Color customization is **not supported for CSV files**. Only JSON, YAML, and XML files allow color customization.
+
+#### Example in JSON:
+```json
 {
-  "id": "my-json-report"
+  "id": "report-id",
   "items": [
     {
-      "id": "stocks",
-      "name": "Stocks",
-      "items": [
-        {
-          "id": "alphabet",
-          "name": "Google",
-          "result": {
-            "incorrect": 1,
-            "manually": 1,
-            "accurate": 4
-          }
-        },
-        {
-          "id": "microsoft",
-          "name": "Microsoft",
-          "result": {
-            "incorrect": 2,
-            "manually": 1,
-            "accurate": 5
-          }
-        }
-      ]
-    },
-    {
-      "id": "derivates",
-      "name": "Derivates",
-      "result": {
-        "incorrect": 2,
-        "manually": 3,
-        "accurate": 10
-      }
-    },
-    {
-      "id": "fonds",
-      "name": "Fonds",
-      "result": {
-        "incorrect": 6,
-        "manually": 7,
-        "accurate": 20
-      }
-    },
-    {
-      "id": "warrants",
-      "name": "Warrants",
-      "result": {
-        "incorrect": 6,
-        "manually": 4,
-        "accurate": 15
-      }
+      "id": "category-1",
+      "name": "Category 1",
+      "result": { "metric1": 10, "metric2": 20 }
     }
   ],
   "colors": {
-    "incorrect": "#EF9A9A",
-    "manually": "#FFF59D",
-    "accurate": "#A5D6A7"
+    "metric1": "#FF5733",  // HEX value
+    "metric2": "BLUE"      // Predefined color name
   }
 }
-```
+  ```
 
+### Predefined Color Names
+
+The following color names are supported:  
+**YELLOW**, **LIME**, **GREEN**, **BLUE**, **TEAL**, **ORANGE**, **INDIGO**, **PURPLE**, **RED**, **BROWN**, **GRAY**, **WHITE**.
+
+If no `colors` object is provided, the plugin will automatically generate a color palette.
+
+---
+
+## Visualization
+
+The plugin dynamically generates:
+
+- **Pie Charts**: Show the distribution of data.
+- **Trend Charts**: Display data trends over time.
+- **Data Tables**: Provide detailed breakdowns of your data.
+
+You can interact with the charts and tables to drill down into specific data points.
+
+---
+
+## Configuration
+
+### Pipeline Parameters
+
+- **`name`**: The name of the report displayed in the UI.
+- **`displayType`**: (Optional) Choose how metrics are displayed:
+  - `absolute`: Show absolute values.
+  - `relative`: Show percentage values.
+  - `dual`: Show both absolute and relative values.
+- **`provider`**: Specify the file format and pattern for the data files.
+  - **`id`**: (Required for CSV) A unique identifier for the report.
+  - **`pattern`**: An Ant-style pattern to locate the data files.
+
+
+## Examples
+
+Check out the [examples folder](/etc) for sample data files and pipeline scripts.
 ![ui](etc/ui-3.8.0.png)
-
-To check your json you can use the [json schema](src/main/resources/report.json) to validate it.
-
-> ⚠️ **Color Mapping**:
-> 
-> You can provide a color mapping. Then, please make sure, that the attribute `colors` needs exactly the same 
-> attributes as the result of the items and assigns a color to each attribute, which is used for the graphical representation. 
-> Otherwise a default color `#E9E9E9` is used for the missing property! 
->
-> You can use own HEX values or the following predefined colors are supported:
-> * YELLOW
-> * LIME 
-> * GREEN
-> * BLUE
-> * TEAL
-> * ORANGE
-> * INDIGO
-> * PURPLE
-> * RED
-> * BROWN
-> * GRAY
-> * WHITE
-> 
-> If no `colors` object is provided, a color palette will be calculated.
-
-If your items only have one result, the visualization is different from the default one, 
-because the representation then makes no sense. Instead of the attributes of the result object, 
-the keys of the individual items are used as the basis for distribution. For example:
-
-```
-{
-  "id": "my-second-json-report"
-  "items": [
-    {
-      "id": "Aktie",
-      "name": "Aktie",
-      "items": [
-        {
-          "id": "Aktie_1",
-          "name": "Aktie 1",
-          "result": {
-            "incorrect": 3541
-          }
-        },
-        {
-          "id": "Aktie_2",
-          "name": "Aktie 2",
-          "result": {
-            "incorrect": 4488
-          }
-        },
-        {
-          "id": "Aktie_3",
-          "name": "Aktie 3",
-          "result": {
-            "incorrect": 2973
-          }
-        }
-      ]
-    },
-    {
-      "id": "Not_Found",
-      "name": "Not_Found",
-      "result": {
-        "incorrect": 8701
-      }
-    },  
-    {
-      "id": "Renten",
-      "name": "Renten",
-      "items": [
-        {
-          "id": "Rente_1",
-          "name": "Rente1",
-          "result": {
-            "incorrect": 5762
-          }
-        },
-        {
-          "id": "Rente_2",
-          "name": "Rente2",
-          "result": {
-            "incorrect": 2271
-          }
-        }
-      ]
-    },
-    {
-      "id": "Derivat",
-      "name": "Derivat",
-      "result": {
-        "incorrect": 2271
-      }
-    }
-  ],
-  "colors": {
-    "Aktie": "GREEN",
-    "Aktie_1": "YELLOW",
-    "Aktie_2": "RED",
-    "Aktie_3": "PURPLE",
-    "Not_Found": "BROWN",
-    "Renten": "ORANGE",
-    "Rente_1": "TEAL",
-    "Rente_2": "BLUE",
-    "Derivat": "INDIGO"
-  }
-}
-```
-
-Then your dashboard looks like this:
 ![ui](etc/ui-3.8.0-oc.png)
 
-
-### Supported file formats
-
-* JSON
-* YAML/YML
-* XML
-* CSV
-
-### Visualization
-
-At job level, a trend chart is generated showing the development 
-of the items included in the json over all builds.
-
-Since version **2.4.0**, the view is dynamically built and always contains a pie chart, a history and a table.
-
-The pie chart and the hsitory show the aggregated results of the underlying items.
-
-The table then shows the individual underlying items and visualizes the distribution of the properties in the table.
-
-By clicking on a corresponding row, the view is filtered according to the selection. 
-However, the structure remains the same. This can be continued until no more subitems are 
-available in the json model. On the lowest level only the pie chart and the history will be displayed.
-
-## Getting started
-
-### Pipeline Step
-
-For examples of report files and pipelines, please have look into [etc](/etc) folder.
-
-```
-publishReport name: "JSON Report", displayType: "dual", provider: json(pattern: "etc/report-1-part-*.json")
-publishReport name: "XML Report", displayType: "dual", provider: xml(pattern: "etc/*.xml")
-publishReport name: "YAML Report", displayType: "dual", provider: yaml(pattern: "etc/*.yaml")
-publishReport name: "CSV Report", displayType: "dual", provider: csv(id: "csv-one", pattern: "etc/*.csv")
-```
-
-### Parameter: 
-
-#### name:
-Choose a name for the report. The name is shown in the UI.
-
-#### displayType (optional, default = `absolute`):
-This can be used to change the display of the displayed metrics within the distribution table.
-'absolute' shows the absolute values from the underlying files. 'relative', shows percentage values
-and 'dual' shows the absolute value and additionally the relative frequency within the category.
-
-#### provider:
-Choose a provider that should find and parse the files based on the given pattern.
-If all files found have the same ID and can be structurally merged, they are merged into one report.
-The id of the first report file found will be used as master id. All following reports of the pattern must match it, otherwise 
-they are ignored.
-
-##### id (only required for CSV provider):
-Specify the id of the report to tag the result and to find reports of past builds. Just required for CSV provider.
-
-##### pattern:
-This is an ant include pattern for the files should be parsed and scanned (see Patterns in the Apache Ant Manual).
-Multiple includes can be specified by separating each pattern with a comma.
-
-## Issues
-
-Report issues and enhancements in the [GitHub Issue Tracker](https://github.com/jenkinsci/nested-data-reporting-plugin/issues)
+---
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn,
-inspire, and create. Any contributions you make are **greatly appreciated**.
+We welcome contributions from the community! If you'd like to contribute, please follow these steps:
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
 
-## LICENSE
+---
 
-Licensed under MIT, see [LICENSE](LICENSE)
+## Issues and Support
+
+If you encounter any issues or have feature requests, please [open an issue](https://github.com/jenkinsci/nested-data-reporting-plugin/issues) on GitHub.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- Thanks to the Jenkins community for their support and contributions.
+- Special thanks to all contributors who have helped improve this plugin.
+
+
+
+
+
+
 
