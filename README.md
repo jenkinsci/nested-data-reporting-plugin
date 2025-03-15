@@ -1,5 +1,3 @@
-![Logo](src/main/webapp/icons/data-reporting-icon.svg)
-
 # Nested Data Reporting Plugin
 
 A Jenkins plugin to visualize nested data in pie charts, trend charts, and data tables.
@@ -10,25 +8,12 @@ A Jenkins plugin to visualize nested data in pie charts, trend charts, and data 
 ![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/nested-data-reporting)
 ![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/nested-data-reporting)
 
----
-
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Key Features](#key-features)
-3. [Usage](#usage)
-   - [Input Files](#input-files)
-   - [Visualization](#visualization)
-4. [Color Management](#color-management)
-5. [Display Examples](#display-examples)
-6. [Configuration](#configuration)
-   - [Pipeline Parameters](#pipeline-parameters)
-7. [Examples](#examples)
-8. [Contributing](#contributing)
-9. [Issues and Support](#issues-and-support)
-10. [License](#license)
-11. [Acknowledgments](#acknowledgments)
-
+<br />
+<p align="center">
+  <a href="#">
+   <img src="src/main/webapp/icons/data-reporting-icon.svg" alt="Logo" width="100" height="100">
+  </a>
+</p>
 ---
 
 ## Introduction
@@ -88,6 +73,7 @@ The plugin supports the following file formats for data input:
 #### CSV
 - Use a flat structure with columns representing metrics.
 - The first row should contain headers (column names).
+- Supports many columns delimiter (','  ';' '|' tab)
 - Example:
 
   ```csv
@@ -109,7 +95,7 @@ The plugin allows you to customize the colors used in the visualizations. You ca
 
 To customize colors, add a `colors` object to your JSON, YAML, or XML file. The `colors` object should map metric keys or category names to specific colors. Colors can be defined using **HEX values** or **predefined color names**.
 
-> **Note**: Color customization is **not supported for CSV files**. Only JSON, YAML, and XML files allow color customization.
+> **Note**: Color customization is **not supported for CSV files** due to the format does not allow color attribute definition. For now, colors are attributed aleatory.
 
 #### Example in JSON:
 ```json
