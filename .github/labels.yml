@@ -31,3 +31,6 @@
 - name: github_actions
   desccription: Pull requests that update Github Actions code
   color: 909090
+- name: automerge
+  desccription: Automergable (mainly dependabot)
+  color: C5DEF5
