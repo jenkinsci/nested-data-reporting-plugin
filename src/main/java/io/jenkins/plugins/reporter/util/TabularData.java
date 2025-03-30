@@ -39,7 +39,6 @@ public class TabularData implements Serializable {
     
     /**
      * Process tabular data to create a ReportDto
-     * @param reportId Report identifier
      * @param parserMessages List to store parser messages
      * @return ReportDto containing the processed data
      */
