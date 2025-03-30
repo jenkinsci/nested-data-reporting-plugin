@@ -34,7 +34,11 @@ public class TabularData implements Serializable {
 
     /** Returns the list of data rows */
     public List<List<String>> getRows() {
-        return rows;
+        List<List<String>> rowsCopy = new ArrayList<>();
+        for (List<String> row : rows) {
+            rowsCopy.add(new ArrayList<>(row));
+        }
+        return rowsCopy;
     }
     
     /**
