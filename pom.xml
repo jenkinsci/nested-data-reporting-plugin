@@ -117,6 +117,16 @@
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson-dataformat.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.0</version>
+        </dependency>
 
         <!-- Workflow dependencies -->
         <dependency>
