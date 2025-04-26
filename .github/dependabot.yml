@@ -26,3 +26,9 @@ updates:
       interval: daily      
     labels:
     - "automerge"
+
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: daily
