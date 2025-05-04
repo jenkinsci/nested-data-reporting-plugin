@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>5.9</version>
+        <version>5.13</version>
         <relativePath />
     </parent>
     
@@ -68,7 +68,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>4488.v7fe26526366e</version>
+                <version>4669.v0e99c712a_30e</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -113,9 +113,8 @@
             <artifactId>prism-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-csv</artifactId>
-            <version>${jackson-dataformat.version}</version>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>jackson2-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
