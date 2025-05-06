@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>5.13</version>
+        <version>5.14</version>
         <relativePath />
     </parent>
 
@@ -14,7 +14,7 @@
         <changelist>1.0.0-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/nested-data-reporting-plugin</gitHubRepo>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.492</jenkins.baseline>
+        <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
         <scmTag>HEAD</scmTag>
     </properties>
@@ -70,7 +70,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>4669.v0e99c712a_30e</version>
+                <version>4710.v016f0a_07e34d</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
