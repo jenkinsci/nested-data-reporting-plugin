@@ -166,7 +166,8 @@ public abstract class AbstractReportParserBase extends ReportParser {
                 } else { // No parent found, this is a top-level item in the current context (under "report")
                     Optional<Item> existingRootItem = reportDto.getItems().stream().filter(it -> it.getId().equals(currentItem.getId())).findFirst();
                     if (!existingRootItem.isPresent()) {
-                        reportDto.addItem(currentItem);
+                        if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); // Defensive check
+                        reportDto.getItems().add(currentItem);
                         lastItemWasNewlyCreated = true;
                         lastItem = currentItem;
                     } else {
@@ -206,7 +207,8 @@ public abstract class AbstractReportParserBase extends ReportParser {
             valueItem.setId(StringUtils.abbreviate(generatedId.replaceAll("[^a-zA-Z0-9_.-]", "_"), 100));
             valueItem.setName("Data Row " + (rowIndexForLog + 1)); // User-friendly name
             valueItem.setResult(resultValuesMap);
-            reportDto.addItem(valueItem);
+            if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); // Defensive check
+            reportDto.getItems().add(valueItem);
             messagesCollector.add(String.format("Info [%s]: Data row index %d created as a direct data item '%s' as no distinct hierarchy path was formed (or colIdxValueStart was 0).", 
                 parserName, rowIndexForLog, valueItem.getName()));
         } else if (lastItem == null && resultValuesMap.isEmpty() && header.size() > 0) {

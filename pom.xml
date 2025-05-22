@@ -129,6 +129,13 @@
             <version>5.4.1</version>
         </dependency>
 
+        <!-- JSR 305 for annotations -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <!-- Workflow dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
