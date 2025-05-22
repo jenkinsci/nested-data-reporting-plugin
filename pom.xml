@@ -117,6 +117,18 @@
             <artifactId>jackson2-api</artifactId>
         </dependency>
 
+        <!-- Apache POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
         <!-- Workflow dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>

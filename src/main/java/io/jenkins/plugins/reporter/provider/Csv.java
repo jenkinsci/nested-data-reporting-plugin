@@ -11,8 +11,9 @@ import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.ReportDto;
 import io.jenkins.plugins.reporter.model.ReportParser;
+import io.jenkins.plugins.reporter.parser.AbstractReportParserBase;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+// import org.apache.commons.lang3.math.NumberUtils; // Already commented out or removed
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -55,13 +56,13 @@ public class Csv extends Provider {
         }
     }
 
-    public static class CsvCustomParser extends ReportParser {
+    public static class CsvCustomParser extends AbstractReportParserBase { // Changed superclass
 
-        private static final long serialVersionUID = -8689695008930386640L;
+        private static final long serialVersionUID = -8689695008930386640L; // Keep existing UID for now
 
         private final String id;
 
-        private List<String> parserMessages;
+        private List<String> parserMessages; // This will be used by AbstractReportParserBase methods
 
         public CsvCustomParser(String id) {
             super();
@@ -77,15 +78,19 @@ public class Csv extends Provider {
         private char detectDelimiter(File file) throws IOException {
             // List of possible delimiters
             char[] delimiters = { ',', ';', '\t', '|' };
+            String[] delimiterNames = { "Comma", "Semicolon", "Tab", "Pipe" };
             int[] delimiterCounts = new int[delimiters.length];
         
             // Read the lines of the file to detect the delimiter
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                int linesToCheck = 5; // Number of lines to check
+                int linesToCheck = 10; // Number of lines to check
                 int linesChecked = 0;
         
                 String line;
                 while ((line = reader.readLine()) != null && linesChecked < linesToCheck) {
+                    if (StringUtils.isBlank(line)) { // Skip blank lines
+                        continue;
+                    }
                     for (int i = 0; i < delimiters.length; i++) {
                         delimiterCounts[i] += StringUtils.countMatches(line, delimiters[i]);
                     }
@@ -93,14 +98,38 @@ public class Csv extends Provider {
                 }
             }
         
-            // Return the most frequent delimiter
+            // Determine the most frequent delimiter
             int maxCount = 0;
-            char detectedDelimiter = 0;
+            int detectedDelimiterIndex = -1;
             for (int i = 0; i < delimiters.length; i++) {
                 if (delimiterCounts[i] > maxCount) {
                     maxCount = delimiterCounts[i];
-                    detectedDelimiter = delimiters[i];
+                    detectedDelimiterIndex = i;
                 }
+            }
+            
+            char detectedDelimiter = (detectedDelimiterIndex != -1) ? delimiters[detectedDelimiterIndex] : ','; // Default to comma if none found
+
+            if (detectedDelimiterIndex != -1) {
+                // Check for ambiguity
+                for (int i = 0; i < delimiters.length; i++) {
+                    if (i == detectedDelimiterIndex) continue;
+                    // Ambiguous if another delimiter's count is > 0, and difference is less than 20% of max count,
+                    // and both counts are above a threshold (e.g., 5)
+                    if (delimiterCounts[i] > 5 && maxCount > 5 && 
+                        (maxCount - delimiterCounts[i]) < (maxCount * 0.2)) {
+                        this.parserMessages.add(String.format(
+                            "Warning [CSV]: Ambiguous delimiter. %s count (%d) is very similar to %s count (%d). Using '%c'.",
+                            delimiterNames[detectedDelimiterIndex], maxCount,
+                            delimiterNames[i], delimiterCounts[i],
+                            detectedDelimiter));
+                        break; // Log once for the first ambiguity found
+                    }
+                }
+                 this.parserMessages.add(String.format("Info [CSV]: Detected delimiter: '%c' (Name: %s, Count: %d)", 
+                    detectedDelimiter, delimiterNames[detectedDelimiterIndex], maxCount));
+            } else {
+                 this.parserMessages.add("Warning [CSV]: No clear delimiter found. Defaulting to comma ','. Parsing might be inaccurate.");
             }
         
             return detectedDelimiter;
@@ -109,150 +138,130 @@ public class Csv extends Provider {
 
         @Override
         public ReportDto parse(File file) throws IOException {
+            this.parserMessages.clear(); // Clear messages for each new parse operation
             // Get delimiter
             char delimiter = detectDelimiter(file);
 
             final CsvMapper mapper = new CsvMapper();
-            final CsvSchema schema = mapper.schemaFor(String[].class).withColumnSeparator(delimiter);
+            final CsvSchema schema = mapper.schemaFor(String[].class).withColumnSeparator(delimiter).withoutQuoteChar(); // Try without quote char initially
 
             mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
-            mapper.enable(CsvParser.Feature.SKIP_EMPTY_LINES);
+            // mapper.enable(CsvParser.Feature.SKIP_EMPTY_LINES); // We will handle empty line skipping manually for logging
+            mapper.disable(CsvParser.Feature.SKIP_EMPTY_LINES);
             mapper.enable(CsvParser.Feature.ALLOW_TRAILING_COMMA);
             mapper.enable(CsvParser.Feature.INSERT_NULLS_FOR_MISSING_COLUMNS);
             mapper.enable(CsvParser.Feature.TRIM_SPACES);
-
-            final MappingIterator<List<String>> it = mapper.readerForListOf(String.class)
-                    .with(schema)
-                    .readValues(file);
-
+            
             ReportDto report = new ReportDto();
             report.setId(getId());
             report.setItems(new ArrayList<>());
 
-            final List<String> header = it.next();
-            final List<List<String>> rows = it.readAll();
+            List<String> header = null;
+            final int MAX_LINES_TO_SCAN_FOR_HEADER = 20;
+            int linesScannedForHeader = 0;
+            
+            MappingIterator<List<String>> it = null;
+            try {
+                it = mapper.readerForListOf(String.class)
+                    .with(schema)
+                    .readValues(file);
+            } catch (Exception e) {
+                 this.parserMessages.add("Error [CSV]: Failed to initialize CSV reader: " + e.getMessage());
+                 report.setParserLog(this.parserMessages);
+                 return report;
+            }
 
-            int rowCount = 0;
-            final int headerColumnCount = header.size();
-            int colIdxValueStart = 0;
 
-            if (headerColumnCount >= 2) {
-                rowCount = rows.size();
-            } else {
-                parserMessages.add(String.format("skipped file - First line has %d elements", headerColumnCount + 1));
+            while (it.hasNext() && linesScannedForHeader < MAX_LINES_TO_SCAN_FOR_HEADER) {
+                List<String> currentRow;
+                long currentLineNumber = 0;
+                try {
+                    currentLineNumber = it.getCurrentLocation() != null ? it.getCurrentLocation().getLineNr() : -1;
+                    currentRow = it.next();
+                } catch (Exception e) {
+                    this.parserMessages.add(String.format("Error [CSV]: Could not read line %d: %s", currentLineNumber, e.getMessage()));
+                    linesScannedForHeader++; // Count this as a scanned line
+                    continue; 
+                }
+
+                linesScannedForHeader++;
+                if (currentRow == null || currentRow.stream().allMatch(s -> s == null || s.isEmpty())) {
+                    this.parserMessages.add(String.format("Info [CSV]: Skipped empty or null line at file line number: %d while searching for header.", currentLineNumber));
+                    continue;
+                }
+                header = currentRow;
+                this.parserMessages.add(String.format("Info [CSV]: Using file line %d as header: %s", currentLineNumber, header.toString()));
+                break;
+            }
+
+            if (header == null) {
+                this.parserMessages.add("Error [CSV]: No valid header row found after scanning " + linesScannedForHeader + " lines. Cannot parse file.");
+                report.setParserLog(this.parserMessages);
+                return report;
+            }
+
+            if (header.size() < 2) {
+                this.parserMessages.add(String.format("Error [CSV]: Insufficient columns in header (found %d, requires at least 2). Header: %s", header.size(), header.toString()));
+                report.setParserLog(this.parserMessages);
+                return report;
+            }
+            
+            final List<List<String>> rows = new ArrayList<>();
+            long linesReadForData = 0; 
+            while(it.hasNext()) { // Collect all data rows first
+                linesReadForData++;
+                try {
+                    List<String> r = it.next();
+                    if (r != null) {
+                         rows.add(r);
+                    } else { 
+                        this.parserMessages.add(String.format("Info [CSV]: Encountered a null row object at data line %d, skipping.", linesReadForData));
+                    }
+                } catch (Exception e) {
+                    this.parserMessages.add(String.format("Error [CSV]: Failed to read data row at data line %d: %s. Skipping row.", linesReadForData, e.getMessage()));
+                }
+            }
+
+            List<String> firstActualDataRow = null;
+            for (List<String> r : rows) {
+                // Check if row has any non-blank content, considering nulls from INSERT_NULLS_FOR_MISSING_COLUMNS
+                if (r.stream().anyMatch(s -> s != null && !s.isEmpty())) { 
+                    firstActualDataRow = r;
+                    break;
+                }
+            }
+            
+            if (firstActualDataRow == null) { // All data rows are empty or no data rows at all
+                 if (rows.isEmpty()) {
+                    this.parserMessages.add("Info [CSV]: No data rows found after header.");
+                 } else {
+                    this.parserMessages.add("Info [CSV]: All data rows after header are empty or contain only blank fields. No structure to detect or items to parse.");
+                 }
+                 report.setParserLog(this.parserMessages);
+                 return report;
+            }
+            
+            int colIdxValueStart = detectColumnStructure(header, firstActualDataRow, this.parserMessages, "CSV");
+            if (colIdxValueStart == -1) { 
+                // Error logged by detectColumnStructure
+                report.setParserLog(this.parserMessages); 
+                return report; 
             }
 
             /** Parse all data rows */
-            for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
-                String parentId = "report";
+            for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
                 List<String> row = rows.get(rowIdx);
-                Item last = null;
-                boolean lastItemAdded = false;
-                LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
-                boolean emptyFieldFound = false;
-                int rowSize = row.size();
-
-                /** Parse untill first data line is found to get data and value field */
-                if (colIdxValueStart == 0) {
-                    /** Col 0 is assumed to be string */
-                    for (int colIdx = rowSize - 1; colIdx > 1; colIdx--) {
-                        String value = row.get(colIdx);
-
-                        if (NumberUtils.isCreatable(value)) {
-                            colIdxValueStart = colIdx;
-                        } else {
-                            if (colIdxValueStart > 0) {
-                                parserMessages
-                                        .add(String.format("Found data - fields number = %d  - numeric fields = %d",
-                                                colIdxValueStart, rowSize - colIdxValueStart));
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                String valueId = "";
-                /** Parse line if first data line is OK and line has more element than header */
-                if ((colIdxValueStart > 0) && (rowSize >= headerColumnCount)) {
-                    /** Check line and header size matching */
-                    for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
-                        String id = header.get(colIdx);
-                        String value = row.get(colIdx);
-
-                        /** Check value fields */
-                        if ((colIdx < colIdxValueStart)) {
-                            /** Test if text item is a value or empty */
-                            if ((NumberUtils.isCreatable(value)) || (StringUtils.isBlank(value))) {
-                                /** Empty field found - message */
-                                if (colIdx == 0) {
-                                    parserMessages
-                                            .add(String.format("skipped line %d - First column item empty - col = %d ",
-                                                    rowIdx + 2, colIdx + 1));
-                                    break;
-                                } else {
-                                    emptyFieldFound = true;
-                                    /** Continue next column parsing */
-                                    continue;
-                                }
-                            } else {
-                                /** Check if field values are present after empty cells */
-                                if (emptyFieldFound) {
-                                    parserMessages.add(String.format("skipped line %d Empty field in col = %d ",
-                                            rowIdx + 2, colIdx + 1));
-                                    break;
-                                }
-                            }
-                            valueId += value;
-                            Optional<Item> parent = report.findItem(parentId, report.getItems());
-                            Item item = new Item();
-                            lastItemAdded = false;
-                            item.setId(valueId);
-                            item.setName(value);
-                            String finalValueId = valueId;
-                            if (parent.isPresent()) {
-                                Item p = parent.get();
-                                if (!p.hasItems()) {
-                                    p.setItems(new ArrayList<>());
-                                }
-                                if (p.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
-                                    p.addItem(item);
-                                    lastItemAdded = true;
-                                }
-                            } else {
-                                if (report.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
-                                    report.getItems().add(item);
-                                    lastItemAdded = true;
-                                }
-                            }
-                            parentId = valueId;
-                            last = item;
-                        } else {
-                            Number val = 0;
-                            if (NumberUtils.isCreatable(value)) {
-                                val = NumberUtils.createNumber(value);
-                            }
-                            result.put(id, val.intValue());
-                        }
-                    }
-                } else {
-                    /** Skip file if first data line has no value field */
-                    if (colIdxValueStart == 0) {
-                        parserMessages.add(String.format("skipped line %d - First data row not found", rowIdx + 2));
-                        continue;
-                    } else {
-                        parserMessages
-                                .add(String.format("skipped line %d - line has fewer element than title", rowIdx + 2));
-                        continue;
-                    }
-                }
-                /** If last item was created, it will be added to report */
-                if (lastItemAdded) {
-                    last.setResult(result);
-                } else {
-                    parserMessages.add(String.format("ignored line %d - Same fields already exists", rowIdx + 2));
-                }
+                // Pass rowIdx as rowIndexForLog, it's 0-based index into the 'rows' list
+                parseRowToItems(report, row, header, colIdxValueStart, this.id, this.parserMessages, "CSV", rowIdx);
             }
-            // report.setParserLog(parserMessages);
+            
+            // Final check if items were added, especially if all rows were skipped by parseRowToItems
+            if (report.getItems().isEmpty() && !rows.isEmpty() && 
+                !rows.stream().allMatch(r -> r.stream().allMatch(s -> s==null || s.isEmpty())) ) { // if not all rows were completely blank initially
+                 this.parserMessages.add("Warning [CSV]: No items were successfully parsed from data rows. Check data integrity and column structure detection logs.");
+            }
+
+            report.setParserLog(this.parserMessages);
             return report;
         }
     }
