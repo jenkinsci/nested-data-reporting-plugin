@@ -43,19 +43,19 @@ public class ExcelReportParser extends BaseExcelParser {
             if (workbook.getNumberOfSheets() == 0) {
                 this.parserMessages.add("Excel file has no sheets: " + file.getName());
                 LOGGER.warning("Excel file has no sheets: " + file.getName());
-                reportDto.setParserLog(this.parserMessages);
+                reportDto.setParserLogMessages(this.parserMessages);
                 return reportDto;
             }
 
             Sheet firstSheet = workbook.getSheetAt(0);
             ReportDto sheetReport = parseSheet(firstSheet, firstSheet.getSheetName(), this.config, this.id);
-            sheetReport.setParserLog(this.parserMessages); 
+            sheetReport.setParserLogMessages(this.parserMessages); 
             return sheetReport;
 
         } catch (Exception e) {
             this.parserMessages.add("Error parsing Excel file " + file.getName() + ": " + e.getMessage());
             LOGGER.severe("Error parsing Excel file " + file.getName() + ": " + e.getMessage());
-            reportDto.setParserLog(this.parserMessages);
+            reportDto.setParserLogMessages(this.parserMessages);
             return reportDto; 
         }
     }

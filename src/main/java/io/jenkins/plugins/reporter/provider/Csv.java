@@ -167,7 +167,7 @@ public class Csv extends Provider {
                     .readValues(file);
             } catch (Exception e) {
                  this.parserMessages.add("Error [CSV]: Failed to initialize CSV reader: " + e.getMessage());
-                 report.setParserLog(this.parserMessages);
+                 report.setParserLogMessages(this.parserMessages);
                  return report;
             }
 
@@ -196,13 +196,13 @@ public class Csv extends Provider {
 
             if (header == null) {
                 this.parserMessages.add("Error [CSV]: No valid header row found after scanning " + linesScannedForHeader + " lines. Cannot parse file.");
-                report.setParserLog(this.parserMessages);
+                report.setParserLogMessages(this.parserMessages);
                 return report;
             }
 
             if (header.size() < 2) {
                 this.parserMessages.add(String.format("Error [CSV]: Insufficient columns in header (found %d, requires at least 2). Header: %s", header.size(), header.toString()));
-                report.setParserLog(this.parserMessages);
+                report.setParserLogMessages(this.parserMessages);
                 return report;
             }
             
@@ -237,14 +237,14 @@ public class Csv extends Provider {
                  } else {
                     this.parserMessages.add("Info [CSV]: All data rows after header are empty or contain only blank fields. No structure to detect or items to parse.");
                  }
-                 report.setParserLog(this.parserMessages);
+                 report.setParserLogMessages(this.parserMessages);
                  return report;
             }
             
             int colIdxValueStart = detectColumnStructure(header, firstActualDataRow, this.parserMessages, "CSV");
             if (colIdxValueStart == -1) { 
                 // Error logged by detectColumnStructure
-                report.setParserLog(this.parserMessages); 
+                report.setParserLogMessages(this.parserMessages); 
                 return report; 
             }
 
@@ -261,7 +261,7 @@ public class Csv extends Provider {
                  this.parserMessages.add("Warning [CSV]: No items were successfully parsed from data rows. Check data integrity and column structure detection logs.");
             }
 
-            report.setParserLog(this.parserMessages);
+            report.setParserLogMessages(this.parserMessages);
             return report;
         }
     }

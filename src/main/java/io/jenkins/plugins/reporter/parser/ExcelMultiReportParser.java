@@ -45,7 +45,7 @@ public class ExcelMultiReportParser extends BaseExcelParser { // Changed
             if (workbook.getNumberOfSheets() == 0) {
                 this.parserMessages.add("Excel file has no sheets: " + file.getName());
                 LOGGER.warning("Excel file has no sheets: " + file.getName());
-                aggregatedReport.setParserLog(this.parserMessages);
+                aggregatedReport.setParserLogMessages(this.parserMessages);
                 return aggregatedReport;
             }
 
@@ -55,18 +55,19 @@ public class ExcelMultiReportParser extends BaseExcelParser { // Changed
                 
                 if (sheetReport != null && sheetReport.getItems() != null) {
                     for (Item item : sheetReport.getItems()) {
-                        aggregatedReport.addItem(item);
+                        if (aggregatedReport.getItems() == null) aggregatedReport.setItems(new java.util.ArrayList<>()); // Defensive
+                        aggregatedReport.getItems().add(item);
                     }
                 }
             }
 
-            aggregatedReport.setParserLog(this.parserMessages);
+            aggregatedReport.setParserLogMessages(this.parserMessages);
             return aggregatedReport;
 
         } catch (Exception e) {
             this.parserMessages.add("Error parsing Excel file " + file.getName() + ": " + e.getMessage());
             LOGGER.severe("Error parsing Excel file " + file.getName() + ": " + e.getMessage());
-            aggregatedReport.setParserLog(this.parserMessages);
+            aggregatedReport.setParserLogMessages(this.parserMessages);
             return aggregatedReport;
         }
     }
