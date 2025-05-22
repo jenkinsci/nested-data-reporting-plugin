@@ -2,7 +2,8 @@ package io.jenkins.plugins.reporter.parser;
 
 import io.jenkins.plugins.reporter.model.ExcelParserConfig;
 import io.jenkins.plugins.reporter.model.ReportDto;
-import io.jenkins.plugins.reporter.model.ReportParser;
+// import io.jenkins.plugins.reporter.model.ReportParser; // No longer directly needed, comes from AbstractReportParserBase
+import io.jenkins.plugins.reporter.parser.AbstractReportParserBase; // Added
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,10 +20,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-public abstract class BaseExcelParser extends ReportParser {
+public abstract class BaseExcelParser extends AbstractReportParserBase { // Changed superclass
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; // Keep existing or update if major structural change
+    // protected static final Logger LOGGER = Logger.getLogger(BaseExcelParser.class.getName()); // Use PARSER_LOGGER from base class
+    // No, PARSER_LOGGER in AbstractReportParserBase is for that class. Keep this one for BaseExcelParser specific logs.
     protected static final Logger LOGGER = Logger.getLogger(BaseExcelParser.class.getName());
+
 
     protected final ExcelParserConfig config;
 

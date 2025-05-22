@@ -4,8 +4,8 @@ import io.jenkins.plugins.reporter.model.ExcelParserConfig;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ReportDto;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+// import org.apache.commons.lang3.StringUtils; // No longer directly used here
+// import org.apache.commons.lang3.math.NumberUtils; // No longer directly used here
 import org.apache.poi.ss.usermodel.WorkbookFactory; // Ensure this is present
 
 import java.io.File;
@@ -113,175 +113,25 @@ public class ExcelMultiReportParser extends BaseExcelParser { // Changed
         }
         int firstDataRowIndex = firstDataRowIndexOpt.get();
         
-        int colIdxValueStart = -1; 
-        boolean structureDetected = false;
-
-        // Structure Detection Logic (same as in ExcelReportParser)
-        for (int tempRowIdx = firstDataRowIndex; tempRowIdx <= sheet.getLastRowNum(); tempRowIdx++) {
-            Row r = sheet.getRow(tempRowIdx);
-            if (isRowEmpty(r)) continue;
-            List<String> rv = getRowValues(r);
-            if (rv.isEmpty()) continue;
-
-            int determinedColIdxValueStart = 0; 
-            if (!rv.isEmpty()) {
-                for (int cIdx = currentSheetHeader.size() - 1; cIdx >= 0; cIdx--) { // Use currentSheetHeader.size()
-                    String cellVal = (cIdx < rv.size()) ? rv.get(cIdx) : "";
-                    if (NumberUtils.isCreatable(cellVal)) {
-                        determinedColIdxValueStart = cIdx;
-                    } else {
-                        if (determinedColIdxValueStart > 0 && cIdx < determinedColIdxValueStart) { 
-                            break; 
-                        }
-                    }
-                }
-                if (determinedColIdxValueStart == 0 && !rv.isEmpty()) {
-                    if (NumberUtils.isCreatable(rv.get(0))) {
-                         if(currentSheetHeader.size() == 1) { // Use currentSheetHeader.size()
-                            this.parserMessages.add(String.format(
-                                "Warning: Sheet '%s', row %d: Data seems to be a single numeric column ('%s'). Item names will be generic.",
-                                sheetName, tempRowIdx + 1, currentSheetHeader.get(0))); // Use currentSheetHeader
-                         }
-                    } else { 
-                        if (currentSheetHeader.size() > 1) { // Use currentSheetHeader.size()
-                            determinedColIdxValueStart = currentSheetHeader.size() - 1; 
-                            this.parserMessages.add(String.format(
-                                "Warning: No numeric columns auto-detected in sheet '%s' at row %d based on content. " +
-                                "Assuming last column ('%s') is value, and others are hierarchy.",
-                                sheetName, tempRowIdx + 1, currentSheetHeader.get(determinedColIdxValueStart))); // Use currentSheetHeader
-                        } else { 
-                            this.parserMessages.add(String.format("Warning: Sheet '%s', row %d: Single text column ('%s') found. No numeric data columns detected.", sheetName, tempRowIdx + 1, currentSheetHeader.get(0))); // Use currentSheetHeader
-                        }
-                    }
-                }
-            }
-            
-            colIdxValueStart = determinedColIdxValueStart;
-
-            if (colIdxValueStart < currentSheetHeader.size() && colIdxValueStart >=0) { // Use currentSheetHeader.size()
-                 this.parserMessages.add(String.format("Detected structure in sheet '%s': Hierarchy columns: 0 to %d, Value columns: %d to %d.",
-                    sheetName, Math.max(0, colIdxValueStart -1), colIdxValueStart, currentSheetHeader.size() - 1)); // Use currentSheetHeader.size()
-                 structureDetected = true;
-            } else if (currentSheetHeader.size() > 0) { 
-                 this.parserMessages.add(String.format("Error: Could not reliably determine data structure (colIdxValueStart %d vs header size %d) in sheet '%s'.", colIdxValueStart, currentSheetHeader.size(), sheetName)); // Use currentSheetHeader.size()
-                 return report; 
-            } else { // Header is empty, already handled by prior checks
-                 return report;
-            }
-            break; 
+        Row actualFirstDataRow = sheet.getRow(firstDataRowIndex);
+        List<String> firstDataRowValues = null;
+        if (actualFirstDataRow != null && !isRowEmpty(actualFirstDataRow)) {
+            firstDataRowValues = getRowValues(actualFirstDataRow);
         }
 
-        if (!structureDetected) {
-            this.parserMessages.add(String.format("Warning: Could not detect data structure in sheet '%s'. No processable data rows found or structure ambiguous.", sheetName));
-            return report; 
+        int colIdxValueStart = detectColumnStructure(currentSheetHeader, firstDataRowValues, this.parserMessages, "ExcelMulti");
+        if (colIdxValueStart == -1) {
+            // Error already logged by detectColumnStructure
+            return report;
         }
 
-        // Data Processing Loop (same as in ExcelReportParser, using currentSheetHeader)
+        // Data Processing Loop
         for (int i = firstDataRowIndex; i <= sheet.getLastRowNum(); i++) {
             Row currentRow = sheet.getRow(i);
-            if (isRowEmpty(currentRow)) {
-                 this.parserMessages.add(String.format("Skipped empty row %d in sheet '%s'", i + 1, sheetName));
-                 continue;
-            }
+            // parseRowToItems will handle empty rows and log them.
             List<String> rowValues = getRowValues(currentRow);
-            if (rowValues.size() < colIdxValueStart && colIdxValueStart > 0) { 
-                 this.parserMessages.add(String.format("Skipped row %d in sheet '%s' - Row has %d cells, but hierarchy part expects at least %d.", i + 1, sheetName, rowValues.size(), colIdxValueStart));
-                 continue;
-            }
-
-            String parentId = "report"; // Base parent ID for items from this sheet within the larger report
-            Item lastItem = null;
-            boolean lastItemAddedToHierarchy = false; // Tracks if the 'lastItem' was newly added or pre-existing
-            LinkedHashMap<String, Integer> resultValues = new LinkedHashMap<>();
-            boolean emptyCellInHierarchyPart = false;
-            String currentItemCombinedId = reportId + "::"; // Start with reportId to ensure cross-sheet ID uniqueness
-
-            for (int colIdx = 0; colIdx < currentSheetHeader.size(); colIdx++) { // Iterate up to actual header size
-                String headerName = currentSheetHeader.get(colIdx); // Use currentSheetHeader
-                String cellValue = (colIdx < rowValues.size()) ? rowValues.get(colIdx) : "";
-
-                if (colIdx < colIdxValueStart) { // Hierarchy column
-                    // ... (Item creation logic as in ExcelReportParser, ensuring IDs are unique using currentItemCombinedId)
-                    // Prepend currentItemCombinedId with something unique per hierarchy level if needed, or ensure cellValue makes it unique.
-                    // currentItemCombinedId is built progressively.
-                    String originalCellValue = cellValue;
-                    if (StringUtils.isBlank(cellValue)) {
-                        if (colIdx == 0) {
-                            this.parserMessages.add(String.format("Skipped row %d in sheet '%s' - First hierarchy column (header '%s') is empty.", i + 1, sheetName, headerName));
-                            emptyCellInHierarchyPart = true;
-                            break; 
-                        }
-                        this.parserMessages.add(String.format("Info: Row %d, Col %d (Header '%s') in sheet '%s' is part of hierarchy and is blank. Using placeholder ID part.", i + 1, colIdx + 1, headerName, sheetName));
-                        cellValue = "blank_hier_" + colIdx; // Placeholder for ID generation
-                    } else if (NumberUtils.isCreatable(cellValue)) {
-                         this.parserMessages.add(String.format("Info: Row %d, Col %d (Header '%s') in sheet '%s' is part of hierarchy but is numeric-like ('%s'). Using as string.", i + 1, colIdx + 1, headerName, sheetName, cellValue));
-                    }
-                    
-                    if (emptyCellInHierarchyPart && StringUtils.isNotBlank(originalCellValue)) { // Check originalCellValue here
-                        this.parserMessages.add(String.format("Skipped row %d in sheet '%s' - Non-empty value ('%s') found after a blank cell in the hierarchy part.", i + 1, sheetName, originalCellValue));
-                        emptyCellInHierarchyPart = true; 
-                        break;
-                    }
-                    
-                    currentItemCombinedId += cellValue.replaceAll("[^a-zA-Z0-9_-]", "_") + "_";
-                    String itemId = StringUtils.removeEnd(currentItemCombinedId, "_");
-                    if (StringUtils.isBlank(itemId)) itemId = reportId + "::unnamed_item_" + colIdx;
-
-
-                    Optional<Item> parentOpt = report.findItem(parentId, report.getItems());
-                    Item currentItem = new Item();
-                    // Item ID must be globally unique if items are added to a common list in aggregatedReport
-                    // The currentItemCombinedId already includes reportId (which is sheet specific)
-                    currentItem.setId(StringUtils.abbreviate(itemId, 250)); // Abbreviate long IDs
-                    currentItem.setName(StringUtils.isBlank(originalCellValue) ? "(blank)" : originalCellValue); // Use original value for name
-                    lastItemAddedToHierarchy = false;
-
-                    if (parentOpt.isPresent()) {
-                        Item p = parentOpt.get();
-                        if (p.getItems() == null) p.setItems(new ArrayList<>());
-                        Optional<Item> existingItem = p.getItems().stream().filter(it -> it.getId().equals(currentItem.getId())).findFirst();
-                        if (!existingItem.isPresent()) {
-                            p.addItem(currentItem);
-                            lastItemAddedToHierarchy = true;
-                        }
-                        lastItem = existingItem.orElse(currentItem);
-                    } else {
-                         Optional<Item> existingRootItem = report.getItems().stream().filter(it -> it.getId().equals(currentItem.getId())).findFirst();
-                         if (!existingRootItem.isPresent()) {
-                            report.addItem(currentItem);
-                            lastItemAddedToHierarchy = true;
-                         }
-                         lastItem = existingRootItem.orElse(currentItem);
-                    }
-                    parentId = currentItem.getId(); // Next parent is the ID of current item.
-                } else { // Value column
-                    Number numValue = 0;
-                    if (NumberUtils.isCreatable(cellValue)) {
-                        numValue = NumberUtils.createNumber(cellValue);
-                    } else if (StringUtils.isNotBlank(cellValue)) {
-                         this.parserMessages.add(String.format("Warning: Non-numeric value '%s' in data column '%s' at row %d, col %d, sheet '%s'. Using 0.", cellValue, headerName, i + 1, colIdx + 1, sheetName));
-                    }
-                    resultValues.put(headerName, numValue.intValue());
-                }
-            }
-
-            if (emptyCellInHierarchyPart) continue;
-
-            if (lastItem != null) {
-                if (lastItem.getResult() == null || lastItemAddedToHierarchy) {
-                    lastItem.setResult(resultValues);
-                } else {
-                     this.parserMessages.add(String.format("Info: Item '%s' (row %d, sheet '%s') already had results. New values for this hierarchy were: %s. Not overwriting.", lastItem.getId(), i + 1, sheetName, resultValues.toString()));
-                }
-            } else if (!resultValues.isEmpty()) {
-                Item valueItem = new Item();
-                String generatedId = reportId + "::Row_" + (i + 1); // Ensure reportId (sheet specific) is part of ID
-                valueItem.setId(StringUtils.abbreviate(generatedId.replaceAll("[^a-zA-Z0-9_.-]", "_"), 100));
-                valueItem.setName("Data Row " + (i + 1) + " (Sheet: " + sheetName + ")");
-                valueItem.setResult(resultValues);
-                report.addItem(valueItem);
-                this.parserMessages.add(String.format("Info: Row %d in sheet '%s' created as a direct data item '%s' as no distinct hierarchy path was formed.", i + 1, sheetName, valueItem.getName()));
-            }
+            // reportId here is already sheet-specific (e.g., this.id + "::" + cleanSheetName)
+            parseRowToItems(report, rowValues, currentSheetHeader, colIdxValueStart, reportId, this.parserMessages, "ExcelMulti", i);
         }
         return report;
     }
