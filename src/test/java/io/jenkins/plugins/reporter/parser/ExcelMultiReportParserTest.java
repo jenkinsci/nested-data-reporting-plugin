@@ -145,7 +145,7 @@ class ExcelMultiReportParserTest {
         Item itemA001 = result.findItem("testMultiConsistent::Data_Alpha::Alpha001", result.getItems()).orElse(null);
         assertNotNull(itemA001, "Item Alpha001 from sheet 'Data Alpha' not found.");
         assertEquals("Alpha001", itemA001.getName());
-        Item itemA001Time = itemA001.findItem("testMultiConsistent::Data_Alpha::Alpha001_Time", itemA001.getItems()).orElse(null);
+        Item itemA001Time = result.findItem("testMultiConsistent::Data_Alpha::Alpha001_Time", itemA001.getItems()).orElse(null);
         assertNotNull(itemA001Time, "Sub-item Time for Alpha001 not found.");
         assertEquals("Time", itemA001Time.getName());
         assertEquals(100, itemA001Time.getResult().get("Result"));
@@ -153,7 +153,7 @@ class ExcelMultiReportParserTest {
         Item itemB001 = result.findItem("testMultiConsistent::Data_Beta::Beta001", result.getItems()).orElse(null);
         assertNotNull(itemB001, "Item Beta001 from sheet 'Data Beta' not found.");
         assertEquals("Beta001", itemB001.getName());
-        Item itemB001Time = itemB001.findItem("testMultiConsistent::Data_Beta::Beta001_Time", itemB001.getItems()).orElse(null);
+        Item itemB001Time = result.findItem("testMultiConsistent::Data_Beta::Beta001_Time", itemB001.getItems()).orElse(null);
         assertNotNull(itemB001Time, "Sub-item Time for Beta001 not found.");
         assertEquals("Time", itemB001Time.getName());
         assertEquals(110, itemB001Time.getResult().get("Result"));
@@ -212,7 +212,7 @@ class ExcelMultiReportParserTest {
         Item itemA = result.findItem("testSingleWithMulti::Sheet1::A", result.getItems()).orElse(null);
         assertNotNull(itemA, "Item A not found.");
         
-        Item itemAX = itemA.findItem("testSingleWithMulti::Sheet1::A_X", itemA.getItems()).orElse(null);
+        Item itemAX = result.findItem("testSingleWithMulti::Sheet1::A_X", itemA.getItems()).orElse(null);
         assertNotNull(itemAX, "Item AX not found in A.");
         assertEquals("X", itemAX.getName());
         assertEquals(10, itemAX.getResult().get("Value1"));

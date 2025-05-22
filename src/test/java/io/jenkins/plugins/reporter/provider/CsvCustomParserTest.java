@@ -80,7 +80,7 @@ class CsvCustomParserTest {
         // Hierarchy: Product -> Version. Value: Count
         Item appA = result.findItem("AppA", result.getItems()).orElse(null);
         assertNotNull(appA, "Item 'AppA' not found. Found: " + result.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
-        Item appAV1 = appA.findItem("AppA1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
+        Item appAV1 = result.findItem("AppA1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
         assertNotNull(appAV1, "Item 'AppA1.0' not found in AppA. Found: " + appA.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
         assertEquals("1.0", appAV1.getName());
         assertEquals(150, appAV1.getResult().get("Count"));
@@ -146,7 +146,7 @@ class CsvCustomParserTest {
         assertEquals(2, result.getItems().size()); 
         Item itemText1 = result.findItem("text1", result.getItems()).orElse(null);
         assertNotNull(itemText1);
-        Item itemText1_text2 = itemText1.findItem("text1text2", itemText1.getItems()).orElse(null);
+        Item itemText1_text2 = result.findItem("text1text2", itemText1.getItems()).orElse(null);
         assertNotNull(itemText1_text2);
         assertEquals("text2", itemText1_text2.getName());
         assertEquals(0, itemText1_text2.getResult().get("ColC"));
@@ -187,20 +187,20 @@ class CsvCustomParserTest {
         Item alpha = result.findItem("Alpha", result.getItems()).orElse(null);
         assertNotNull(alpha, "Item 'Alpha' not found.");
         assertEquals(1, alpha.getItems().size(), "Alpha should have one sub-component: Auth");
-        Item auth = alpha.findItem("AlphaAuth", alpha.getItems()).orElse(null);
+        Item auth = result.findItem("AlphaAuth", alpha.getItems()).orElse(null);
         assertNotNull(auth, "Item 'AlphaAuth' not found.");
         assertEquals(2, auth.getItems().size(), "Auth should have two metrics: LoginTime, LogoutTime");
         
-        Item loginTime = auth.findItem("AlphaAuthLoginTime", auth.getItems()).orElse(null);
+        Item loginTime = result.findItem("AlphaAuthLoginTime", auth.getItems()).orElse(null);
         assertNotNull(loginTime, "Item 'AlphaAuthLoginTime' not found.");
         assertEquals("LoginTime", loginTime.getName());
         assertEquals(120, loginTime.getResult().get("Value"));
         
         Item beta = result.findItem("Beta", result.getItems()).orElse(null);
         assertNotNull(beta, "Item 'Beta' not found.");
-        Item db = beta.findItem("BetaDB", beta.getItems()).orElse(null);
+        Item db = result.findItem("BetaDB", beta.getItems()).orElse(null);
         assertNotNull(db, "Item 'BetaDB' not found.");
-        Item queryTime = db.findItem("BetaDBQueryTime", db.getItems()).orElse(null);
+        Item queryTime = result.findItem("BetaDBQueryTime", db.getItems()).orElse(null);
         assertNotNull(queryTime, "Item 'BetaDBQueryTime' not found.");
         assertEquals(80, queryTime.getResult().get("Value"));
     }

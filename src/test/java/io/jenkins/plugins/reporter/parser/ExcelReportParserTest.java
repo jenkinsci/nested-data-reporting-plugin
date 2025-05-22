@@ -60,14 +60,14 @@ class ExcelReportParserTest {
         assertEquals("A", itemA.getName());
         assertEquals(2, itemA.getItems().size(), "Item A should have 2 sub-items (X, Y)");
 
-        Item itemAX = itemA.findItem("testReport1::A_X", itemA.getItems()).orElse(null);
+        Item itemAX = result.findItem("testReport1::A_X", itemA.getItems()).orElse(null);
         assertNotNull(itemAX, "Item AX not found in A. Available sub-items: " + itemA.getItems().stream().map(Item::getId).collect(java.util.stream.Collectors.toList()));
         assertEquals("X", itemAX.getName());
         assertNotNull(itemAX.getResult(), "Item AX should have results.");
         assertEquals(10, itemAX.getResult().get("Value1"));
         assertEquals(20, itemAX.getResult().get("Value2"));
         
-        Item itemAY = itemA.findItem("testReport1::A_Y", itemA.getItems()).orElse(null);
+        Item itemAY = result.findItem("testReport1::A_Y", itemA.getItems()).orElse(null);
         assertNotNull(itemAY, "Item AY not found in A.");
         assertEquals("Y", itemAY.getName());
         assertNotNull(itemAY.getResult(), "Item AY should have results.");
@@ -79,7 +79,7 @@ class ExcelReportParserTest {
         assertEquals("B", itemB.getName());
         assertEquals(1, itemB.getItems().size(), "Item B should have 1 sub-item (Z)");
         
-        Item itemBZ = itemB.findItem("testReport1::B_Z", itemB.getItems()).orElse(null);
+        Item itemBZ = result.findItem("testReport1::B_Z", itemB.getItems()).orElse(null);
         assertNotNull(itemBZ, "Item BZ not found in B.");
         assertEquals("Z", itemBZ.getName());
         assertNotNull(itemBZ.getResult(), "Item BZ should have results.");
