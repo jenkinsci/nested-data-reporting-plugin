@@ -40,7 +40,7 @@ public class Item implements Serializable {
     @Nullable
     @JsonProperty(value = "items", required = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Item> items;
+    List<Item> items = new ArrayList<>();
 
     public String getId() {
         return id;

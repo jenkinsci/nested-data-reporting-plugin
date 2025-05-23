@@ -164,11 +164,11 @@ class ExcelReportParserTest {
         assertEquals(6, dataItem.getResult().get("3")); // Header "3" -> value 6
 
         assertTrue(result.getParserLogMessages().stream()
-                         .anyMatch(m -> m.contains("Detected structure in sheet")), 
+                         .anyMatch(m -> m.contains("Detected data structure")), 
                    "Structure detection message should be present. Messages: " + result.getParserLogMessages());
         assertTrue(result.getParserLogMessages().stream()
-                         .anyMatch(m -> m.contains("Info: Row 2 (Data Row 1) in sheet 'Sheet1' has all columns treated as values.")),
-                    "Should log info about all columns treated as values. Messages: " + result.getParserLogMessages());
+                         .anyMatch(m -> m.contains("Info [Excel]: Data row index 0 (named 'Data Row 1') was processed as a generic item")), 
+                   "Log message for generic data row processing not found or incorrect. Messages: " + result.getParserLogMessages());
     }
 
     @Test

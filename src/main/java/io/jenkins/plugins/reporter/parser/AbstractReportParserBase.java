@@ -193,13 +193,17 @@ public abstract class AbstractReportParserBase extends ReportParser {
             messagesCollector.add(String.format("Debug [%s]: In parseRowToItems - creating direct data item. Row: %d, BaseID: %s, ColIdxValueStart: %d, Results: %s", 
                 parserName, rowIndexForLog, baseItemIdPrefix, colIdxValueStart, resultValuesMap.toString()));
             Item valueItem = new Item();
-            String generatedId = (StringUtils.isNotBlank(baseItemIdPrefix) ? baseItemIdPrefix + "::" : "") + "DataRow_" + rowIndexForLog;
-            valueItem.setId(StringUtils.abbreviate(generatedId.replaceAll("[^a-zA-Z0-9_.-]", "_"), 100));
+            // Use rowIndexForLog (0-based) for the ID part to ensure uniqueness if multiple generic rows exist
+            String itemIdSuffix = "datarow_" + rowIndexForLog; 
+            String generatedId = (StringUtils.isNotBlank(baseItemIdPrefix) ? baseItemIdPrefix + CONFIG_ID_SEPARATOR : "") + itemIdSuffix;
+            valueItem.setId(StringUtils.abbreviate(generatedId.replaceAll("[^a-zA-Z0-9_.-]", "_"), 250)); // Increased ID length a bit
+
+            // Name is 1-based for user display
             valueItem.setName("Data Row " + (rowIndexForLog + 1)); 
             valueItem.setResult(resultValuesMap);
             if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); 
             reportDto.getItems().add(valueItem);
-            messagesCollector.add(String.format("Info [%s]: Data row index %d created as a direct data item '%s' as no distinct hierarchy path was formed (or colIdxValueStart was 0).", 
+            messagesCollector.add(String.format("Info [%s]: Data row index %d (named '%s') was processed as a generic item with values, as no distinct hierarchy path was formed or all columns were value columns.", 
                 parserName, rowIndexForLog, valueItem.getName()));
         } else if (lastItem == null && resultValuesMap.isEmpty() && header.size() > 0) {
             messagesCollector.add(String.format("Debug [%s]: In parseRowToItems - row yielded no hierarchy item and no results. Row: %d, BaseID: %s, ColIdxValueStart: %d",
