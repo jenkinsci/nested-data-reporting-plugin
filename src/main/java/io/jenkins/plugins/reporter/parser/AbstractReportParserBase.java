@@ -17,6 +17,7 @@ public abstract class AbstractReportParserBase extends ReportParser {
 
     private static final long serialVersionUID = 5738290018231028471L; // New UID
     protected static final Logger PARSER_LOGGER = Logger.getLogger(AbstractReportParserBase.class.getName());
+    public static final String CONFIG_ID_SEPARATOR = "::";
 
     /**
      * Detects the column structure (hierarchy vs. value columns) of a report.
