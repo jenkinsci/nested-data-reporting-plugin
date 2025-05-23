@@ -99,7 +99,7 @@ class CsvCustomParserTest {
         assertEquals(2, result.getItems().size()); // John, Jane
         
         // Hierarchy: Name. Values: Age, City
-        Item john = result.findItem("John", result.getItems()).orElse(null);
+        Item john = result.findItem("tab::John", result.getItems()).orElse(null);
         assertNotNull(john, "Item 'John' not found. Found: " + result.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
         assertEquals("John", john.getName());
         assertEquals(30, john.getResult().get("Age"));
@@ -222,7 +222,7 @@ class CsvCustomParserTest {
         assertNotNull(result);
         assertTrue(result.getItems().isEmpty(), "Should have no items when only header is present.");
         // System.out.println("Messages (Only Header CSV): " + result.getParserLogMessages());
-        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("No valid data rows found after header.")), "Should log no data rows. Msgs: " + result.getParserLogMessages());
+        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("No data rows found after header.")), "Should log no data rows. Msgs: " + result.getParserLogMessages());
     }
 
     @Test

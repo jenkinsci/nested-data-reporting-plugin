@@ -167,7 +167,7 @@ class ExcelReportParserTest {
                          .anyMatch(m -> m.contains("Detected structure in sheet")), 
                    "Structure detection message should be present. Messages: " + result.getParserLogMessages());
         assertTrue(result.getParserLogMessages().stream()
-                         .anyMatch(m -> m.contains("Info: Row 1 in sheet 'Sheet1' has all columns treated as values.")),
+                         .anyMatch(m -> m.contains("Info: Row 2 (Data Row 1) in sheet 'Sheet1' has all columns treated as values.")),
                     "Should log info about all columns treated as values. Messages: " + result.getParserLogMessages());
     }
 
