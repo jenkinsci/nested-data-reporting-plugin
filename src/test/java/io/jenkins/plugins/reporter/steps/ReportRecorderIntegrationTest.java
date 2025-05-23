@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 // import java.util.Collections; // Not used, can be removed
 import java.util.List;
+import java.util.LinkedHashMap; // Added import
 // import java.util.Map; // Not directly used as a variable type, but its methods are. Keep for clarity or remove if strict.
 import java.util.regex.Pattern; // Added import
 
@@ -63,7 +64,11 @@ public class ReportRecorderIntegrationTest {
             Item item = new Item();
             item.setId(itemId);
             item.setName("Item " + itemId);
-            item.addResult(itemId + "_data", 10); // Make sure Item.addResult is valid
+            
+            LinkedHashMap<String, Integer> resultMap = new LinkedHashMap<>();
+            resultMap.put(itemId + "_data", 10); // Add the desired result
+            item.setResult(resultMap);          // Set the map on the item
+            
             items.add(item);
         }
         report.setItems(items);
