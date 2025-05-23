@@ -48,31 +48,25 @@ public class ReportRecorderIntegrationTest {
         workspace = new FilePath(temporaryFolder.newFolder("workspace"));
 
         // Mock behavior for Provider
-        when(mockProvider.getName()).thenReturn("TestProvider");
-        when(mockProvider.getSymbolName()).thenReturn("testProvider");
+        // when(mockProvider.getName()).thenReturn("TestProvider"); // Old line - Removed
+        when(mockProvider.getSymbolName()).thenReturn("testProvider"); // Correct line, kept
         
         // Basic mock for Run
         when(mockRun.getRootDir()).thenReturn(temporaryFolder.newFolder("runRootDir"));
     }
 
-    private Report createDummyReportData(String reportId, List<String> itemIds) {
-        Report report = new Report(reportId);
-        // report.setId(reportId); // Report constructor now takes id, setId is not needed if id is final or set by constructor. Let's assume it's set.
+    private Report createDummyReportData(String reportIdName, List<String> itemIds) {
+        Report report = new Report(reportIdName); // Sets the report's name
+        report.setId(reportIdName); // Also use as ID for simplicity in test
+        List<Item> items = new java.util.ArrayList<>();
         for (String itemId : itemIds) {
             Item item = new Item();
             item.setId(itemId);
             item.setName("Item " + itemId);
-            // Add some dummy result data to each item so getColorIds() works
-            // Item class does not have addResult, let's assume it has a way to store data that makes it considered "having data"
-            // For the purpose of getColorIds, it just needs to be an item in the report.
-            // The actual getColorIds() in Report.java iterates over items and collects their IDs if they have results.
-            // Let's assume Item.getResults() would be non-empty or a similar check.
-            // For simplicity, let's say adding an item implies it's relevant for color ID generation
-            // based on the logic in ColorPalette.java which just needs a list of strings (ids).
-            // The crucial part for the test is that Report.getColorIds() returns the itemIds.
-            // Report.addItem already adds it to a list, and Report.getColorIds uses that list.
-            report.addItem(item);
+            item.addResult(itemId + "_data", 10); // Make sure Item.addResult is valid
+            items.add(item);
         }
+        report.setItems(items);
         return report;
     }
 
@@ -87,29 +81,10 @@ public class ReportRecorderIntegrationTest {
         recorder.setColorPalette(testThemeName);
 
         List<String> itemIds = Arrays.asList("itemA", "itemB", "itemC");
-        Report dummyProviderReportTemplate = createDummyReportData("test-report", itemIds); // Renamed to avoid confusion
+        Report dummyProviderReport = createDummyReportData("test-report", itemIds); 
         
-        // Mock the provider's scan method which is called by ReportScanner internally
-        // ReportScanner.scan() calls provider.scan(run, workspace, logger) in the actual code.
-        // The subtask description uses mockProvider.read, which is not what ReportScanner uses.
-        // Let's adjust to mock provider.scan as that's the method ReportScanner will invoke.
-        // However, ReportScanner takes the provider and calls provider.scan(run, workspace, logger)
-        // The test is trying to mock the data *returned by* the provider, not the provider.read method itself.
-        // The provider.scan method is what creates the initial Report object.
-        // The test description used `mockProvider.read` which is not part of the `Provider` interface,
-        // the `Provider` interface has `scan(Run<?, ?> run, FilePath workspace, LogHandler logger)`
-        // Let's assume the intent was to mock the behavior of `provider.scan(...)`
-        
-        // ReportScanner calls: Report report = provider.scan(run, workspace, logger);
-        // So we need to mock provider.scan(...)
         when(mockProvider.scan(any(Run.class), any(FilePath.class), any(io.jenkins.plugins.reporter.util.LogHandler.class)))
-            .thenAnswer(invocation -> {
-                // Simulate provider scanning and creating a report
-                Report newReport = new Report(dummyProviderReportTemplate.getId());
-                dummyProviderReportTemplate.getItems().forEach(newReport::addItem);
-                newReport.setName(dummyProviderReportTemplate.getName());
-                return newReport; // provider.scan returns a new report object
-            });
+           .thenReturn(dummyProviderReport);
             
         recorder.setProvider(mockProvider);
 
@@ -146,15 +121,10 @@ public class ReportRecorderIntegrationTest {
         // ColorPalette constructor defaults to RANDOM if themeName is null or empty.
 
         List<String> itemIds = Arrays.asList("itemX", "itemY");
-        Report dummyProviderReportTemplate = createDummyReportData("default-theme-report", itemIds);
+        Report dummyProviderReport = createDummyReportData("default-theme-report", itemIds);
 
         when(mockProvider.scan(any(Run.class), any(FilePath.class), any(io.jenkins.plugins.reporter.util.LogHandler.class)))
-            .thenAnswer(invocation -> {
-                Report newReport = new Report(dummyProviderReportTemplate.getId());
-                dummyProviderReportTemplate.getItems().forEach(newReport::addItem);
-                newReport.setName(dummyProviderReportTemplate.getName());
-                return newReport;
-            });
+            .thenReturn(dummyProviderReport);
         recorder.setProvider(mockProvider);
 
         ReportScanner scanner = new ReportScanner(mockRun, mockProvider, workspace, mockTaskListener, recorder.getColorPalette());

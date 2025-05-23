@@ -38,7 +38,7 @@ public class ColorPalette {
         EXCEL_RED_VIOLET_II // Added
     }
 
-    static final Map<Theme, String[]> THEMES; // Changed from private to package-private
+    public static final Map<Theme, String[]> THEMES; // Changed from package-private to public
 
     static {
         Map<Theme, String[]> map = new HashMap<>();
