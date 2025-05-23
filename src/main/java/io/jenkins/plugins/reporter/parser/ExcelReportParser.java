@@ -4,8 +4,8 @@ import io.jenkins.plugins.reporter.model.ExcelParserConfig;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ReportDto;
 import org.apache.poi.ss.usermodel.*;
-// import org.apache.commons.lang3.StringUtils; // No longer directly used here as logic moved to base
-// import org.apache.commons.lang3.math.NumberUtils; // No longer directly used here
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -160,10 +160,15 @@ public class ExcelReportParser extends BaseExcelParser {
         if (colIdxValueStart == 0) { // Simplified condition for "no hierarchy columns"
             LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
             for (int j = 0; j < rowValues.size() && j < header.size(); j++) {
-                Optional<Integer> value = super.parseNumericValue(rowValues.get(j));
-                value.ifPresent(val -> result.put(header.get(j), val));
-                if (!value.isPresent() && !config.isSkipNonNumericValues()) {
-                    // Handle non-numeric if needed, or log
+                String rawValue = rowValues.get(j);
+                if (NumberUtils.isCreatable(rawValue)) {
+                    Number num = NumberUtils.createNumber(rawValue);
+                    result.put(header.get(j), num.intValue());
+                } else {
+                    if (!this.config.isSkipNonNumericValues() && StringUtils.isNotBlank(rawValue)) {
+                        this.parserMessages.add(String.format("Warning [Excel]: Non-numeric value '%s' in data column '%s' at row %d (0-indexed sheet row). Value not added to integer results map.",
+                            rawValue, header.get(j), row.getRowNum()));
+                    }
                 }
             }
 
@@ -241,8 +246,16 @@ public class ExcelReportParser extends BaseExcelParser {
             if (hierarchyValues.isEmpty()) {
                  LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
                  for (int j = colIdxValueStart; j < rowValues.size() && j < header.size(); j++) {
-                     Optional<Integer> value = super.parseNumericValue(rowValues.get(j));
-                     value.ifPresent(val -> result.put(header.get(j), val));
+                     String rawValue = rowValues.get(j);
+                     if (NumberUtils.isCreatable(rawValue)) {
+                         Number num = NumberUtils.createNumber(rawValue);
+                         result.put(header.get(j), num.intValue());
+                     } else {
+                         if (!this.config.isSkipNonNumericValues() && StringUtils.isNotBlank(rawValue)) {
+                             this.parserMessages.add(String.format("Warning [Excel]: Non-numeric value '%s' in data column '%s' at row %d (0-indexed sheet row). Value not added to integer results map.",
+                                 rawValue, header.get(j), row.getRowNum()));
+                         }
+                     }
                  }
 
                  if (!result.isEmpty()) {
