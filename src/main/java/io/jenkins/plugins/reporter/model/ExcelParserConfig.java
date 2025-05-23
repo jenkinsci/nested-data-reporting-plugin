@@ -17,4 +17,13 @@ public class ExcelParserConfig implements Serializable {
     }
 
     // Add getters and setters here if fields are added in the future.
+    private boolean skipNonNumericValues = false; // Default value
+
+    public boolean isSkipNonNumericValues() {
+        return skipNonNumericValues;
+    }
+
+    public void setSkipNonNumericValues(boolean skipNonNumericValues) {
+        this.skipNonNumericValues = skipNonNumericValues;
+    }
 }

@@ -1,5 +1,6 @@
 package io.jenkins.plugins.reporter.parser;
 
+import io.jenkins.plugins.reporter.model.ParserConfig;
 import io.jenkins.plugins.reporter.model.ExcelParserConfig;
 import io.jenkins.plugins.reporter.model.Item;
 import io.jenkins.plugins.reporter.model.ReportDto;
@@ -160,7 +161,7 @@ public class ExcelReportParser extends BaseExcelParser {
         if (colIdxValueStart == 0) { // Simplified condition for "no hierarchy columns"
             LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
             for (int j = 0; j < rowValues.size() && j < header.size(); j++) {
-                Optional<Integer> value = parseNumericValue(rowValues.get(j));
+                Optional<Integer> value = super.parseNumericValue(rowValues.get(j));
                 value.ifPresent(val -> result.put(header.get(j), val));
                 if (!value.isPresent() && !config.isSkipNonNumericValues()) {
                     // Handle non-numeric if needed, or log
@@ -171,7 +172,7 @@ public class ExcelReportParser extends BaseExcelParser {
                 int dataRowNumber = row.getRowNum() - headerRowIndex;
                 String itemName = String.format("Data Row %d (Sheet: %s)", dataRowNumber, sheet.getSheetName());
                 // Assuming CONFIG_ID_SEPARATOR is accessible. If not, use "::"
-                String itemId = parentId + config.CONFIG_ID_SEPARATOR + "datarow_" + dataRowNumber; 
+                String itemId = parentId + ParserConfig.CONFIG_ID_SEPARATOR + "datarow_" + dataRowNumber; 
                 
                 Item item = new Item();
                 item.setId(itemId);
@@ -241,7 +242,7 @@ public class ExcelReportParser extends BaseExcelParser {
             if (hierarchyValues.isEmpty()) {
                  LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
                  for (int j = colIdxValueStart; j < rowValues.size() && j < header.size(); j++) {
-                     Optional<Integer> value = parseNumericValue(rowValues.get(j));
+                     Optional<Integer> value = super.parseNumericValue(rowValues.get(j));
                      value.ifPresent(val -> result.put(header.get(j), val));
                  }
 
@@ -249,7 +250,7 @@ public class ExcelReportParser extends BaseExcelParser {
                      int dataRowNumber = row.getRowNum() - headerRowIndex;
                      String itemName = String.format("Data Row %d (Sheet: %s)", dataRowNumber, sheet.getSheetName());
                      // Using config.CONFIG_ID_SEPARATOR as requested
-                     String itemId = parentId + config.CONFIG_ID_SEPARATOR + "datarow_" + dataRowNumber;
+                     String itemId = parentId + ParserConfig.CONFIG_ID_SEPARATOR + "datarow_" + dataRowNumber;
 
                      Item item = new Item();
                      item.setId(itemId);
