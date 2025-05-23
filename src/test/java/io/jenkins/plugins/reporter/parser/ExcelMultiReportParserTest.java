@@ -230,7 +230,7 @@ class ExcelMultiReportParserTest {
         assertNotNull(result);
         assertTrue(result.getItems().isEmpty(), "Should have no items for an empty file/sheet.");
         // System.out.println("Messages (Empty File Multi): " + result.getParserLogMessages());
-        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.toLowerCase().contains("no header row found in sheet 'sheet1'")), "Should log no header for the empty sheet. Message was: " + result.getParserLogMessages());
+        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.toLowerCase().contains("no header row found in sheet 'sample_excel_empty_sheet.csv'")), "Should log no header for the sheet named after the source CSV. Message was: " + result.getParserLogMessages());
     }
     
     @Test

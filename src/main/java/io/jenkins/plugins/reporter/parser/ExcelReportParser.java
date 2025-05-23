@@ -94,8 +94,11 @@ public class ExcelReportParser extends BaseExcelParser {
         if (actualFirstDataRow != null && !isRowEmpty(actualFirstDataRow)) {
             firstDataRowValues = getRowValues(actualFirstDataRow);
         }
+        this.parserMessages.add(String.format("Debug [Excel]: Sheet: %s, Header: %s", sheetName, header.toString()));
+        this.parserMessages.add(String.format("Debug [Excel]: Sheet: %s, FirstDataRowValues for structure detection: %s", sheetName, (firstDataRowValues != null ? firstDataRowValues.toString() : "null")));
 
         int colIdxValueStart = detectColumnStructure(header, firstDataRowValues, this.parserMessages, "Excel");
+        this.parserMessages.add(String.format("Debug [Excel]: Sheet: %s, Detected colIdxValueStart: %d", sheetName, colIdxValueStart));
         if (colIdxValueStart == -1) {
             // Error already logged by detectColumnStructure
             return report; 
@@ -103,10 +106,13 @@ public class ExcelReportParser extends BaseExcelParser {
 
         for (int i = firstDataRowIndex; i <= sheet.getLastRowNum(); i++) {
             Row currentRow = sheet.getRow(i);
-            // No need to explicitly check isRowEmpty here, parseRowToItems will handle it.
-            // It will log if it skips an empty row.
+            if (isRowEmpty(currentRow)) { // isRowEmpty is a protected method in BaseExcelParser
+                 this.parserMessages.add(String.format("Info [Excel]: Skipped empty Excel row object at sheet row index %d.", i));
+                 continue;
+            }
             List<String> rowValues = getRowValues(currentRow); 
-            // The reportId is used as the baseItemIdPrefix for ExcelReportParser
+            // Add the existing diagnostic log from the previous step
+            this.parserMessages.add(String.format("Debug [Excel]: Sheet: %s, Row: %d, Processing rowValues: %s", sheetName, i, rowValues.toString()));
             parseRowToItems(report, rowValues, header, colIdxValueStart, reportId, this.parserMessages, "Excel", i);
         }
         return report;

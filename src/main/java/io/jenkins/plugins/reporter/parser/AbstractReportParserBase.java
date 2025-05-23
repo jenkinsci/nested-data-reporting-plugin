@@ -79,17 +79,6 @@ public abstract class AbstractReportParserBase extends ReportParser {
         return determinedColIdxValueStart;
     }
 
-    /**
-     * Parses a single row of data and converts it into hierarchical Item objects.
-     *
-     * @param reportDto             The ReportDto to which items will be added.
-     * @param rowValues             The list of string values for the current row.
-     * @param header                The list of header strings.
-     * @param colIdxValueStart      The starting column index for value data.
-     * @param baseItemIdPrefix      A prefix for generating item IDs (e.g., reportId or sheet-specific ID).
-     * @param messagesCollector     A list to collect informational/warning messages.
-     * @param parserName            A short name of the parser type (e.g., "CSV", "Excel") for message logging.
-     */
     protected void parseRowToItems(ReportDto reportDto, List<String> rowValues, List<String> header, 
                                  int colIdxValueStart, String baseItemIdPrefix, 
                                  List<String> messagesCollector, String parserName, int rowIndexForLog) {
@@ -99,14 +88,18 @@ public abstract class AbstractReportParserBase extends ReportParser {
             return;
         }
         
-        // If row is shorter than expected hierarchy columns, it might be problematic.
+        if (rowValues.stream().allMatch(StringUtils::isBlank)) { 
+            messagesCollector.add(String.format("Info [%s]: Skipped row with all blank cells at data index %d.", parserName, rowIndexForLog));
+            return;
+        }
+
         if (rowValues.size() < colIdxValueStart && colIdxValueStart > 0) {
             messagesCollector.add(String.format("Warning [%s]: Skipped data row at index %d: Row has %d cells, but hierarchy part expects at least %d.", 
                 parserName, rowIndexForLog, rowValues.size(), colIdxValueStart));
             return;
         }
 
-        String parentId = "report"; // Special root parent ID for top-level items
+        String parentId = "report"; 
         Item lastItem = null;
         boolean lastItemWasNewlyCreated = false;
         LinkedHashMap<String, Integer> resultValuesMap = new LinkedHashMap<>();
@@ -117,12 +110,12 @@ public abstract class AbstractReportParserBase extends ReportParser {
             String headerName = header.get(colIdx);
             String rawCellValue = (colIdx < rowValues.size() && rowValues.get(colIdx) != null) ? rowValues.get(colIdx).trim() : "";
 
-            if (colIdx < colIdxValueStart) { // This column is part of the hierarchy
+            if (colIdx < colIdxValueStart) { 
                 String hierarchyCellValue = rawCellValue;
                 String originalCellValueForName = rawCellValue;
 
                 if (StringUtils.isBlank(hierarchyCellValue)) {
-                    if (colIdx == 0) { // First hierarchy column cannot be blank
+                    if (colIdx == 0) { 
                         messagesCollector.add(String.format("Warning [%s]: Skipped data row at index %d: First hierarchy column ('%s') is empty.", 
                             parserName, rowIndexForLog, headerName));
                         issueInHierarchy = true;
@@ -130,24 +123,21 @@ public abstract class AbstractReportParserBase extends ReportParser {
                     }
                     messagesCollector.add(String.format("Info [%s]: Data row index %d, Col %d (Header '%s') is part of hierarchy and is blank. Using placeholder ID part.", 
                         parserName, rowIndexForLog, colIdx + 1, headerName));
-                    hierarchyCellValue = "blank_hier_" + colIdx; // Use placeholder for ID generation
+                    hierarchyCellValue = "blank_hier_" + colIdx; 
                 } else if (NumberUtils.isCreatable(hierarchyCellValue)) {
                     messagesCollector.add(String.format("Info [%s]: Data row index %d, Col %d (Header '%s') is part of hierarchy but is numeric-like ('%s'). Using as string for ID/Name.", 
                         parserName, rowIndexForLog, colIdx + 1, headerName, hierarchyCellValue));
                 }
-                // Check if a non-empty hierarchy cell appears after a blank one (if issueInHierarchy was set due to blank)
-                // This check is usually done by comparing originalCellValue with a flag set by previous blank cell.
-                // For simplicity here, we assume the `break` for colIdx == 0 handles the critical case.
-
+                
                 currentItemPathId += hierarchyCellValue.replaceAll("[^a-zA-Z0-9_-]", "_") + "_";
                 String itemId = StringUtils.removeEnd(currentItemPathId, "_");
-                if (StringUtils.isBlank(itemId)) { // Should not happen if baseItemIdPrefix is good and placeholders are used
+                if (StringUtils.isBlank(itemId)) { 
                     itemId = baseItemIdPrefix + "::unnamed_item_r" + rowIndexForLog + "_c" + colIdx;
                 }
                 
                 Optional<Item> parentOpt = reportDto.findItem(parentId, reportDto.getItems());
                 Item currentItem = new Item();
-                currentItem.setId(StringUtils.abbreviate(itemId, 250)); // Ensure ID is not excessively long
+                currentItem.setId(StringUtils.abbreviate(itemId, 250)); 
                 currentItem.setName(StringUtils.isBlank(originalCellValueForName) ? "(blank)" : originalCellValueForName);
                 lastItemWasNewlyCreated = false;
 
@@ -163,10 +153,10 @@ public abstract class AbstractReportParserBase extends ReportParser {
                     } else {
                         lastItem = existingItem.get();
                     }
-                } else { // No parent found, this is a top-level item in the current context (under "report")
+                } else { 
                     Optional<Item> existingRootItem = reportDto.getItems().stream().filter(it -> it.getId().equals(currentItem.getId())).findFirst();
                     if (!existingRootItem.isPresent()) {
-                        if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); // Defensive check
+                        if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); 
                         reportDto.getItems().add(currentItem);
                         lastItemWasNewlyCreated = true;
                         lastItem = currentItem;
@@ -174,9 +164,8 @@ public abstract class AbstractReportParserBase extends ReportParser {
                         lastItem = existingRootItem.get();
                     }
                 }
-                parentId = currentItem.getId(); // For the next level of hierarchy
-
-            } else { // This column is part of the values
+                parentId = currentItem.getId(); 
+            } else { 
                 Number numValue = 0;
                 if (NumberUtils.isCreatable(rawCellValue)) {
                     numValue = NumberUtils.createNumber(rawCellValue);
@@ -186,33 +175,34 @@ public abstract class AbstractReportParserBase extends ReportParser {
                 }
                 resultValuesMap.put(headerName, numValue.intValue());
             }
-        } // End column loop
+        } 
 
         if (issueInHierarchy) {
-            return; // Row processing was aborted
+            return; 
         }
 
-        if (lastItem != null) { // A hierarchy item was identified or created for this row
+        if (lastItem != null) { 
             if (lastItem.getResult() == null || lastItemWasNewlyCreated) {
                 lastItem.setResult(resultValuesMap);
             } else {
-                // Item existed and had results. Decide on merging or warning.
-                // For now, log and don't overwrite unless explicitly designed for merging.
                 messagesCollector.add(String.format("Info [%s]: Item '%s' (data row index %d) already had results. New values for this row were: %s. Not overwriting existing results.", 
                     parserName, lastItem.getId(), rowIndexForLog, resultValuesMap.toString()));
             }
-        } else if (!resultValuesMap.isEmpty()) { // No hierarchy columns (colIdxValueStart == 0), but values exist
+        } else if (!resultValuesMap.isEmpty()) { 
+            messagesCollector.add(String.format("Debug [%s]: In parseRowToItems - creating direct data item. Row: %d, BaseID: %s, ColIdxValueStart: %d, Results: %s", 
+                parserName, rowIndexForLog, baseItemIdPrefix, colIdxValueStart, resultValuesMap.toString()));
             Item valueItem = new Item();
             String generatedId = (StringUtils.isNotBlank(baseItemIdPrefix) ? baseItemIdPrefix + "::" : "") + "DataRow_" + rowIndexForLog;
             valueItem.setId(StringUtils.abbreviate(generatedId.replaceAll("[^a-zA-Z0-9_.-]", "_"), 100));
-            valueItem.setName("Data Row " + (rowIndexForLog + 1)); // User-friendly name
+            valueItem.setName("Data Row " + (rowIndexForLog + 1)); 
             valueItem.setResult(resultValuesMap);
-            if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); // Defensive check
+            if (reportDto.getItems() == null) reportDto.setItems(new ArrayList<>()); 
             reportDto.getItems().add(valueItem);
             messagesCollector.add(String.format("Info [%s]: Data row index %d created as a direct data item '%s' as no distinct hierarchy path was formed (or colIdxValueStart was 0).", 
                 parserName, rowIndexForLog, valueItem.getName()));
         } else if (lastItem == null && resultValuesMap.isEmpty() && header.size() > 0) {
-            // This means the row was processed, no hierarchy item was relevant (e.g. all blank hierarchy cells not at start), and no values.
+            messagesCollector.add(String.format("Debug [%s]: In parseRowToItems - row yielded no hierarchy item and no results. Row: %d, BaseID: %s, ColIdxValueStart: %d",
+                parserName, rowIndexForLog, baseItemIdPrefix, colIdxValueStart));
             messagesCollector.add(String.format("Warning [%s]: Data row index %d did not yield any identifiable hierarchy item or data values. It might be effectively empty or malformed relative to header.",
                 parserName, rowIndexForLog));
         }

@@ -119,8 +119,11 @@ public class ExcelMultiReportParser extends BaseExcelParser { // Changed
         if (actualFirstDataRow != null && !isRowEmpty(actualFirstDataRow)) {
             firstDataRowValues = getRowValues(actualFirstDataRow);
         }
+        this.parserMessages.add(String.format("Debug [ExcelMulti]: Sheet: %s, Header: %s", sheetName, currentSheetHeader.toString()));
+        this.parserMessages.add(String.format("Debug [ExcelMulti]: Sheet: %s, FirstDataRowValues for structure detection: %s", sheetName, (firstDataRowValues != null ? firstDataRowValues.toString() : "null")));
 
         int colIdxValueStart = detectColumnStructure(currentSheetHeader, firstDataRowValues, this.parserMessages, "ExcelMulti");
+        this.parserMessages.add(String.format("Debug [ExcelMulti]: Sheet: %s, Detected colIdxValueStart: %d", sheetName, colIdxValueStart));
         if (colIdxValueStart == -1) {
             // Error already logged by detectColumnStructure
             return report;
@@ -129,9 +132,13 @@ public class ExcelMultiReportParser extends BaseExcelParser { // Changed
         // Data Processing Loop
         for (int i = firstDataRowIndex; i <= sheet.getLastRowNum(); i++) {
             Row currentRow = sheet.getRow(i);
-            // parseRowToItems will handle empty rows and log them.
+            if (isRowEmpty(currentRow)) { // isRowEmpty is a protected method in BaseExcelParser
+                 this.parserMessages.add(String.format("Info [ExcelMulti]: Skipped empty Excel row object at sheet row index %d.", i));
+                 continue;
+            }
             List<String> rowValues = getRowValues(currentRow);
-            // reportId here is already sheet-specific (e.g., this.id + "::" + cleanSheetName)
+            // Add the existing diagnostic log from the previous step
+            this.parserMessages.add(String.format("Debug [ExcelMulti]: Sheet: %s, Row: %d, Processing rowValues: %s", sheetName, i, rowValues.toString()));
             parseRowToItems(report, rowValues, currentSheetHeader, colIdxValueStart, reportId, this.parserMessages, "ExcelMulti", i);
         }
         return report;

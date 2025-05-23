@@ -170,7 +170,7 @@ class CsvCustomParserTest {
         assertEquals(10, row1Item.getResult().get("Val1"));
         assertEquals(20, row1Item.getResult().get("Val2"));
         assertEquals(30, row1Item.getResult().get("Val3"));
-        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("First column ('Val1') in first data row (data index 0) is numeric.")), "Should log first col is numeric.");
+        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("Info [CSV]: First column ('Val1') is numeric. Treating it as the first value column.")), "Should log correct message for first column numeric. Messages: " + result.getParserLogMessages());
     }
     
     @Test
