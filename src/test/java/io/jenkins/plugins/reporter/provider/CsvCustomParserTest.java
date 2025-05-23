@@ -51,14 +51,14 @@ class CsvCustomParserTest {
         // System.out.println("Items (Standard CSV): " + result.getItems());
 
         assertEquals(2, result.getItems().size());
-        Item server1 = result.findItem("server1", result.getItems()).orElse(null); 
+        Item server1 = result.findItem("standard::server1", result.getItems()).orElse(null); 
         assertNotNull(server1, "Item 'server1' not found. Found: " + result.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
         assertEquals("server1", server1.getName());
         assertEquals(75, server1.getResult().get("CPU"));
         assertEquals(16, server1.getResult().get("RAM"));
         assertEquals(500, server1.getResult().get("Disk"));
         
-        Item server2 = result.findItem("server2", result.getItems()).orElse(null); 
+        Item server2 = result.findItem("standard::server2", result.getItems()).orElse(null); 
         assertNotNull(server2, "Item 'server2' not found.");
         assertEquals("server2", server2.getName());
         assertEquals(60, server2.getResult().get("CPU"));
@@ -78,9 +78,9 @@ class CsvCustomParserTest {
         assertEquals(2, result.getItems().size()); // AppA, AppB
         
         // Hierarchy: Product -> Version. Value: Count
-        Item appA = result.findItem("AppA", result.getItems()).orElse(null);
+        Item appA = result.findItem("semicolon::AppA", result.getItems()).orElse(null);
         assertNotNull(appA, "Item 'AppA' not found. Found: " + result.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
-        Item appAV1 = result.findItem("AppA1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
+        Item appAV1 = result.findItem("semicolon::AppA1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
         assertNotNull(appAV1, "Item 'AppA1.0' not found in AppA. Found: " + appA.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
         assertEquals("1.0", appAV1.getName());
         assertEquals(150, appAV1.getResult().get("Count"));
@@ -144,9 +144,9 @@ class CsvCustomParserTest {
         
         // Refactored: Assumes last column "ColC" for values. text3 -> 0
         assertEquals(2, result.getItems().size()); 
-        Item itemText1 = result.findItem("text1", result.getItems()).orElse(null);
+        Item itemText1 = result.findItem("noNumeric::text1", result.getItems()).orElse(null);
         assertNotNull(itemText1);
-        Item itemText1_text2 = result.findItem("text1text2", itemText1.getItems()).orElse(null);
+        Item itemText1_text2 = result.findItem("noNumeric::text1text2", itemText1.getItems()).orElse(null);
         assertNotNull(itemText1_text2);
         assertEquals("text2", itemText1_text2.getName());
         assertEquals(0, itemText1_text2.getResult().get("ColC"));
@@ -184,23 +184,23 @@ class CsvCustomParserTest {
 
         assertEquals(2, result.getItems().size(), "Expected Alpha and Beta as top-level items."); 
 
-        Item alpha = result.findItem("Alpha", result.getItems()).orElse(null);
+        Item alpha = result.findItem("mixed::Alpha", result.getItems()).orElse(null);
         assertNotNull(alpha, "Item 'Alpha' not found.");
         assertEquals(1, alpha.getItems().size(), "Alpha should have one sub-component: Auth");
-        Item auth = result.findItem("AlphaAuth", alpha.getItems()).orElse(null);
+        Item auth = result.findItem("mixed::AlphaAuth", alpha.getItems()).orElse(null);
         assertNotNull(auth, "Item 'AlphaAuth' not found.");
         assertEquals(2, auth.getItems().size(), "Auth should have two metrics: LoginTime, LogoutTime");
         
-        Item loginTime = result.findItem("AlphaAuthLoginTime", auth.getItems()).orElse(null);
+        Item loginTime = result.findItem("mixed::AlphaAuthLoginTime", auth.getItems()).orElse(null);
         assertNotNull(loginTime, "Item 'AlphaAuthLoginTime' not found.");
         assertEquals("LoginTime", loginTime.getName());
         assertEquals(120, loginTime.getResult().get("Value"));
         
-        Item beta = result.findItem("Beta", result.getItems()).orElse(null);
+        Item beta = result.findItem("mixed::Beta", result.getItems()).orElse(null);
         assertNotNull(beta, "Item 'Beta' not found.");
-        Item db = result.findItem("BetaDB", beta.getItems()).orElse(null);
+        Item db = result.findItem("mixed::BetaDB", beta.getItems()).orElse(null);
         assertNotNull(db, "Item 'BetaDB' not found.");
-        Item queryTime = result.findItem("BetaDBQueryTime", db.getItems()).orElse(null);
+        Item queryTime = result.findItem("mixed::BetaDBQueryTime", db.getItems()).orElse(null);
         assertNotNull(queryTime, "Item 'BetaDBQueryTime' not found.");
         assertEquals(80, queryTime.getResult().get("Value"));
     }

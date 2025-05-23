@@ -260,7 +260,7 @@ public class ExcelReportParser extends BaseExcelParser {
                      // Using the addLogMessage method structure from BaseExcelParser as a reference
                      // Assuming addLogMessage is a static helper or part of this class now.
                      // If not, will need to adjust. Given BaseExcelParser.addLogMessage,
- союз // this.parserMessages.add and LOGGER.info are more direct here.
+ // this.parserMessages.add and LOGGER.info are more direct here.
                      // The subtask asks for: addLogMessage(report, String.format(...), logger);
                      // Let's assume `logger` refers to the static `LOGGER` field.
                      // And `addLogMessage` needs to be implemented or this line adapted.
