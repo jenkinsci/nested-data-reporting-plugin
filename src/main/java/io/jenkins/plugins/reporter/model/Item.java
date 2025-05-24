@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class Item implements Serializable {
     @Nullable
     @JsonProperty(value = "items", required = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Item> items;
+    List<Item> items = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -72,9 +73,14 @@ public class Item implements Serializable {
             return result;
         }
 
-        return getItems()
+        // NPE fix: check if items list is null or empty before streaming
+        if (items == null || items.isEmpty()) { // items is the List<Item> field
+            return new LinkedHashMap<>(); // Return empty map if no sub-items to aggregate from
+        }
+
+        return items // Now items is guaranteed not to be null and not empty
                 .stream()
-                .map(Item::getResult)
+                .map(Item::getResult) // Recursive call
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
     }
@@ -114,6 +120,9 @@ public class Item implements Serializable {
     }
     
     public void addItem(Item item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
         this.items.add(item);
     }
 }
