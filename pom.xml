@@ -16,6 +16,7 @@
         <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
         <jackson-dataformat.version>2.18.3</jackson-dataformat.version>
+        <hpi-plugin.version>3.61</hpi-plugin.version>
     </properties>
     
     <groupId>io.jenkins.plugins</groupId>
