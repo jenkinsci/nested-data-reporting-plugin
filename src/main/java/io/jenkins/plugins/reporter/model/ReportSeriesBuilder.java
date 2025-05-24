@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 public class ReportSeriesBuilder extends SeriesBuilder<ReportResult> {
 
     @Override
-    protected Map<String, Integer> computeSeries(ReportResult reportResult) {
+    protected Map<String, Double> computeSeries(ReportResult reportResult) {
 
-        Map<String, Integer> result = reportResult.getReport().aggregate();
+        Map<String, Double> result = reportResult.getReport().aggregate();
 
         if (result.size() == 1) {
             return reportResult.getReport().getItems().stream()

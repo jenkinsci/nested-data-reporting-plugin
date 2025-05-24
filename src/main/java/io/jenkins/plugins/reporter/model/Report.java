@@ -160,12 +160,21 @@ public class Report extends ReportBase implements Serializable {
      *              the items to aggregate the childs for.
      * @return the aggregated result.
      */
-    public LinkedHashMap<String, Integer> aggregate(List<Item> items) {
+    public LinkedHashMap<String, Double> aggregate(List<Item> items) {
+        if (items == null) { // Defensive null check
+            return new LinkedHashMap<>();
+        }
         return items
                 .stream()
-                .map(Item::getResult)
+                .map(Item::getResult) // Item.getResult now returns Map<String, Object>
+                .filter(Objects::nonNull) // Avoid NPE if an item has a null result map
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
+                .filter(entry -> entry.getValue() instanceof Number) // Process only entries where value is a Number
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        LinkedHashMap::new,
+                        Collectors.summingDouble(entry -> ((Number) entry.getValue()).doubleValue()) // Sum double values
+                ));
     }
 
     public Optional<Item> findItem(String id) {
@@ -181,7 +190,7 @@ public class Report extends ReportBase implements Serializable {
         return new ArrayList<>(aggregate().keySet());
     }
  
-    public LinkedHashMap<String, Integer> aggregate() {
+    public LinkedHashMap<String, Double> aggregate() {
         return aggregate(getItems());
     }
     

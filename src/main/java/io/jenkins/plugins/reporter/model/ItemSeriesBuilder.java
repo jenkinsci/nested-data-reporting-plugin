@@ -30,7 +30,7 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportResult> {
     }
 
     @Override
-    protected Map<String, Integer> computeSeries(ReportResult reportResult) {
+    protected Map<String, Double> computeSeries(ReportResult reportResult) {
 
         if (item.getId().equals(ReportAction.REPORT_ID)) {
 
