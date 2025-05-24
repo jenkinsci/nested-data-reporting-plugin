@@ -72,8 +72,16 @@ public class ItemTableModel {
                 .build();
     }
 
-    public String label(Integer value) {
-        return item.getLabel(report, value, value / (double) item.getTotal() * 100);
+    public String label(Number value) { // Signature changed
+        if (value == null) { // Add null check for safety
+            return item.getLabel(report, 0, 0.0); // Or handle as appropriate
+        }
+        double itemTotal = item.getTotal(); // itemTotal is double
+        double percentage = 0.0;
+        if (itemTotal != 0.0) {
+            percentage = (value.doubleValue() / itemTotal) * 100.0;
+        }
+        return item.getLabel(report, value, percentage);
     }
 
     /**
@@ -115,25 +123,36 @@ public class ItemTableModel {
         }
 
         public double getPercentage(String id) {
-            int val = item.getResult().getOrDefault(id, -1);
+            // Inside getPercentage(String id)
+            Object specificValueRaw = item.getResult().get(id); // Is Object
+            double itemTotal = item.getTotal(); // Is double
+            double modelItemTotal = model.getItem().getTotal(); // Is double
 
-            if (val == -1) {
-                val = item.getTotal();
-
-                return val / (double) model.getItem().getTotal() * 100;
+            if (specificValueRaw instanceof Number) {
+                double specificValue = ((Number) specificValueRaw).doubleValue();
+                if (itemTotal == 0.0) { 
+                    return 0.0; 
+                }
+                return (specificValue / itemTotal) * 100.0;
+            } else {
+                // Key 'id' not found in item.getResult(), or its value is not a Number.
+                // Original logic: use item's total / model's item's total.
+                if (modelItemTotal == 0.0) { 
+                    return 0.0;
+                }
+                return (itemTotal / modelItemTotal) * 100.0;
             }
-
-            return val / (double) item.getTotal() * 100;
         }
 
         public boolean containsColorItem(String id) {
-            int val = item.getResult().getOrDefault(id, -1);
-
-            if (val == -1) {
-                return Objects.equals(item.getId(), id);
+            // Inside containsColorItem(String id)
+            Object rawVal = item.getResult().get(id);
+            if (rawVal instanceof Number) { // Check if key exists and its value is a Number
+                return true; 
+            } else {
+                // Key not found, or value was not a Number.
+                return Objects.equals(item.getId(), id); 
             }
-
-            return true;
         }
 
         public Map<String, String> getColors() {
@@ -144,12 +163,41 @@ public class ItemTableModel {
             return report.getColor(id);
         }
 
-        public String label(String id, Integer value) {
-            if (item.getResult().size() == 1) {
-                return item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
+        public String label(String id, Object valueAsObject) {
+            // Inside label(String id, Object valueAsObject)
+            if (!(valueAsObject instanceof Number)) {
+                return "N/A"; // Or some other indicator for non-numeric value
             }
+            Number valueNumber = (Number) valueAsObject;
+            
+            double numericValue = valueNumber.doubleValue();
+            double denominator;
 
-            return item.getLabel(report, value, value / (double) model.getItem().getResult().get(id) * 100);
+            // Check if the 'id' is the only key in the item's direct results.
+            boolean isSingleResultEntry = item.getResult() != null && item.getResult().containsKey(id) && item.getResult().size() == 1;
+
+            if (isSingleResultEntry) {
+                denominator = model.getItem().getTotal(); // This is double
+            } else {
+                // If multiple results, or 'id' is not the only one, use the item's own result for 'id' as denominator.
+                // This part of original logic: model.getItem().getResult().get(id) seems problematic.
+                // It should likely be item.getResult().get(id) if we're talking about item's self-percentage for a key.
+                // Given the original was model.getItem().getResult().get(id), let's stick to it for now, but ensure type safety.
+                Object specificDenominatorObj = item.getResult().get(id); // Using current item's result for the key 'id'
+                if (specificDenominatorObj instanceof Number) {
+                    denominator = ((Number) specificDenominatorObj).doubleValue();
+                } else {
+                    denominator = 0.0; // Fallback
+                }
+            }
+            
+            double percentage = 0.0;
+            if (denominator != 0.0) {
+                percentage = (numericValue / denominator) * 100.0;
+            }
+            
+            // This requires Item.getLabel to accept Number
+            return item.getLabel(report, valueNumber, percentage); 
         }
 
         public String tooltip(String id, double percentage) {

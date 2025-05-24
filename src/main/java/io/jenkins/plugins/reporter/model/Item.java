@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +35,12 @@ public class Item implements Serializable {
 
     @JsonProperty(value = "result", required = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    LinkedHashMap<String, Integer> result;
+    LinkedHashMap<String, Object> result;
 
     @Nullable
     @JsonProperty(value = "items", required = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Item> items;
+    List<Item> items = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -67,21 +68,40 @@ public class Item implements Serializable {
     }
 
     @JsonIgnore
-    public LinkedHashMap<String, Integer> getResult() {
+    public LinkedHashMap<String, Object> getResult() {
         if (result != null) {
             return result;
         }
 
-        return getItems()
+        if (items == null || items.isEmpty()) {
+            return new LinkedHashMap<>(); 
+        }
+
+        return items
                 .stream()
-                .map(Item::getResult)
+                .map(Item::getResult) 
+                .filter(Objects::nonNull) 
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (v1, v2) -> { 
+                        if (v1 instanceof Number && v2 instanceof Number) {
+                            return ((Number) v1).doubleValue() + ((Number) v2).doubleValue();
+                        }
+                        return v1; 
+                    },
+                    LinkedHashMap::new
+                ));
     }
     
     @JsonIgnore
-    public int getTotal() {
-        return getResult().values().stream().reduce(0, Integer::sum);
+    public double getTotal() { // Return double for potential sums of doubles
+        if (this.getResult() == null) return 0.0; // Handle case where getResult() might return null
+        return this.getResult().values().stream()
+            .filter(v -> v instanceof Number) // Only sum values that are Numbers
+            .mapToDouble(v -> ((Number) v).doubleValue())
+            .sum();
     }
 
     @JsonIgnore
@@ -97,7 +117,7 @@ public class Item implements Serializable {
         return value.toString();
     }
     
-    public void setResult(LinkedHashMap<String, Integer> result) {
+    public void setResult(LinkedHashMap<String, Object> result) {
         this.result = result;
     }
 
@@ -114,6 +134,9 @@ public class Item implements Serializable {
     }
     
     public void addItem(Item item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
         this.items.add(item);
     }
 }

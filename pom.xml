@@ -16,12 +16,11 @@
         <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
         <jackson-dataformat.version>2.18.3</jackson-dataformat.version>
-        <hpi-plugin.version>3.61</hpi-plugin.version>
     </properties>
     
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>nested-data-reporting</artifactId>
-    <version>${changelist}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Nested Data Reporting</name>
     <description>Jenkins plugin to report data from nested as pie-charts, trend-charts and data tables.</description>
@@ -118,6 +117,25 @@
             <artifactId>jackson2-api</artifactId>
         </dependency>
 
+        <!-- Apache POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
+        <!-- JSR 305 for annotations -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <!-- Workflow dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -164,7 +182,7 @@
             <plugin>
                 <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <version>${hpi-plugin.version}</version>
+                <version>3.65</version>
                 <extensions>true</extensions>
                 <configuration>
                     <compatibleSinceVersion>0.3</compatibleSinceVersion>

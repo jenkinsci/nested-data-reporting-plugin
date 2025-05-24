@@ -27,10 +27,19 @@ public class ItemPieChart {
         PieChartModel model = new PieChartModel(item.getId());
 
         if (item.getResult().size() == 1) {
-            item.getItems().forEach(i -> model.add(new PieData(i.getName(), i.getTotal()), report.getColor(i.getId())));
+            // item.getResult() has only one entry, typically when values are in sub-items.
+            // The original logic implies that if result.size() == 1, we should chart the totals of its children.
+            item.getItems().forEach(i -> model.add(new PieData(i.getName(), (int) i.getTotal()), report.getColor(i.getId())));
         } else {
-            item.getResult().forEach((key, value) -> model.add(new PieData(key, value),
-                    report.getColor(key)));
+            // item.getResult() has multiple entries, chart these directly.
+            item.getResult().forEach((key, value) -> {
+                if (value instanceof Number) {
+                    model.add(new PieData(key, ((Number) value).intValue()), report.getColor(key));
+                } else {
+                    // Optional: Log a warning if a non-numeric value is encountered for a chart key
+                    // System.err.println("Warning: Non-numeric value for key '" + key + "' in ItemPieChart, value: " + value);
+                }
+            });
         }
 
         return model;

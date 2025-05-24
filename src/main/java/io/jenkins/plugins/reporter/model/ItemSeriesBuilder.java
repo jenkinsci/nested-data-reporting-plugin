@@ -36,19 +36,23 @@ public class ItemSeriesBuilder extends SeriesBuilder<ReportResult> {
 
             if (item.getResult().size() == 1) {
                 return reportResult.getReport().getItems().stream()
-                        .collect(Collectors.toMap(Item::getId, Item::getTotal));
+                        .collect(Collectors.toMap(Item::getId, i -> (int) i.getTotal(), (v1, v2) -> v1, java.util.LinkedHashMap::new));
             }
 
-            return reportResult.getReport().aggregate();
+            Map<String, Double> doubleMap = reportResult.getReport().aggregate();
+            return doubleMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().intValue(), (v1, v2) -> v1, java.util.LinkedHashMap::new));
         }
         
         Item parent = reportResult.getReport().findItem(item.getId()).orElse(new Item());
         List<Item> items = parent.hasItems() ? parent.getItems() : Collections.singletonList(parent);
         
         if (item.getResult().size() == 1) {
-            return items.stream().collect(Collectors.toMap(Item::getId, Item::getTotal));
+            return items.stream().collect(Collectors.toMap(Item::getId, i -> (int) i.getTotal(), (v1, v2) -> v1, java.util.LinkedHashMap::new));
         }
 
-        return reportResult.getReport().aggregate(items);
+        Map<String, Double> doubleMap = reportResult.getReport().aggregate(items);
+        return doubleMap.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().intValue(), (v1, v2) -> v1, java.util.LinkedHashMap::new));
     }
 }
