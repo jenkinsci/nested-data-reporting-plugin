@@ -35,7 +35,7 @@ public class Item implements Serializable {
 
     @JsonProperty(value = "result", required = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    LinkedHashMap<String, Integer> result;
+    LinkedHashMap<String, Object> result;
 
     @Nullable
     @JsonProperty(value = "items", required = false)
@@ -68,26 +68,40 @@ public class Item implements Serializable {
     }
 
     @JsonIgnore
-    public LinkedHashMap<String, Integer> getResult() {
+    public LinkedHashMap<String, Object> getResult() {
         if (result != null) {
             return result;
         }
 
-        // NPE fix: check if items list is null or empty before streaming
-        if (items == null || items.isEmpty()) { // items is the List<Item> field
-            return new LinkedHashMap<>(); // Return empty map if no sub-items to aggregate from
+        if (items == null || items.isEmpty()) {
+            return new LinkedHashMap<>(); 
         }
 
-        return items // Now items is guaranteed not to be null and not empty
+        return items
                 .stream()
-                .map(Item::getResult) // Recursive call
+                .map(Item::getResult) 
+                .filter(Objects::nonNull) 
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (v1, v2) -> { 
+                        if (v1 instanceof Number && v2 instanceof Number) {
+                            return ((Number) v1).doubleValue() + ((Number) v2).doubleValue();
+                        }
+                        return v1; 
+                    },
+                    LinkedHashMap::new
+                ));
     }
     
     @JsonIgnore
-    public int getTotal() {
-        return getResult().values().stream().reduce(0, Integer::sum);
+    public double getTotal() { // Return double for potential sums of doubles
+        if (this.getResult() == null) return 0.0; // Handle case where getResult() might return null
+        return this.getResult().values().stream()
+            .filter(v -> v instanceof Number) // Only sum values that are Numbers
+            .mapToDouble(v -> ((Number) v).doubleValue())
+            .sum();
     }
 
     @JsonIgnore
@@ -103,7 +117,7 @@ public class Item implements Serializable {
         return value.toString();
     }
     
-    public void setResult(LinkedHashMap<String, Integer> result) {
+    public void setResult(LinkedHashMap<String, Object> result) {
         this.result = result;
     }
 
