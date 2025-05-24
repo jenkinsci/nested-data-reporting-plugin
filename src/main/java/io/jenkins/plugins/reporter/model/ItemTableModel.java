@@ -72,8 +72,16 @@ public class ItemTableModel {
                 .build();
     }
 
-    public String label(Integer value) {
-        return item.getLabel(report, value, value / (double) item.getTotal() * 100);
+    public String label(Number value) { // Signature changed
+        if (value == null) { // Add null check for safety
+            return item.getLabel(report, 0, 0.0); // Or handle as appropriate
+        }
+        double itemTotal = item.getTotal(); // itemTotal is double
+        double percentage = 0.0;
+        if (itemTotal != 0.0) {
+            percentage = (value.doubleValue() / itemTotal) * 100.0;
+        }
+        return item.getLabel(report, value, percentage);
     }
 
     /**
