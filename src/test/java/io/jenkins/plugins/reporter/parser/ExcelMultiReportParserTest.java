@@ -244,7 +244,7 @@ class ExcelMultiReportParserTest {
         assertEquals(10, itemAX.getResult().get("Value1"));
         assertEquals(20, itemAX.getResult().get("Value2"));
         
-        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.toLowerCase().contains("using header from sheet 'sheet1' as the reference")), "Should log reference header message for 'Sheet1'. Check sheet name in sample_excel_single_sheet.xlsx and actual log messages: " + result.getParserLogMessages().stream().collect(java.util.stream.Collectors.joining("\\n")));
+        assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("Using header from sheet 'sample_excel_single_sheet.csv' as the reference")), "Should log reference header message for 'sample_excel_single_sheet.csv'. Actual log messages: " + result.getParserLogMessages().stream().collect(java.util.stream.Collectors.joining("\\n")));
     }
 
     @Test

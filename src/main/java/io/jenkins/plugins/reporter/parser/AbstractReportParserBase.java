@@ -103,7 +103,7 @@ public abstract class AbstractReportParserBase extends ReportParser {
         String parentId = "report"; 
         Item lastItem = null;
         boolean lastItemWasNewlyCreated = false;
-        LinkedHashMap<String, Integer> resultValuesMap = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> resultValuesMap = new LinkedHashMap<>(); // Changed Integer to Object
         boolean issueInHierarchy = false;
         String currentItemPathId = StringUtils.isNotBlank(baseItemIdPrefix) ? baseItemIdPrefix + "::" : "";
 
@@ -148,7 +148,11 @@ public abstract class AbstractReportParserBase extends ReportParser {
                     
                     Optional<Item> existingItem = p.getItems().stream().filter(it -> it.getId().equals(currentItem.getId())).findFirst();
                     if (!existingItem.isPresent()) {
-                        p.addItem(currentItem);
+                        // Ensure getItems() is not null (already done, but good for safety)
+                        if (p.getItems() == null) {
+                            p.setItems(new ArrayList<>());
+                        }
+                        p.getItems().add(currentItem); // Explicitly add to the list
                         lastItemWasNewlyCreated = true;
                         lastItem = currentItem;
                     } else {
@@ -174,7 +178,20 @@ public abstract class AbstractReportParserBase extends ReportParser {
                     messagesCollector.add(String.format("Warning [%s]: Non-numeric value '%s' in data column '%s' at data row index %d, col %d. Using 0.", 
                         parserName, rawCellValue, headerName, rowIndexForLog, colIdx + 1));
                 }
-                resultValuesMap.put(headerName, numValue.intValue());
+                // resultValuesMap.put(headerName, numValue.intValue()); // Old line
+                Object valueToStore;
+                if (NumberUtils.isCreatable(rawCellValue)) {
+                    valueToStore = NumberUtils.createNumber(rawCellValue); // Store as Number (Integer, Double, etc.)
+                } else {
+                    // Store as String if not blank. If blank, store null or original blank string.
+                    // Test "assertEquals("Test", item1.getResult().get("Name"));" implies strings are desired.
+                    valueToStore = rawCellValue; // Keep original string, even if blank or just spaces (after trim)
+                    if (StringUtils.isNotBlank(rawCellValue)) { // Log only if it's a non-blank, non-numeric string
+                         messagesCollector.add(String.format("Info [%s]: Storing text value '%s' in data column '%s' at data row index %d, col %d.",
+                             parserName, rawCellValue, headerName, rowIndexForLog, colIdx + 1));
+                    }
+                }
+                resultValuesMap.put(headerName, valueToStore);
             }
         } 
 
