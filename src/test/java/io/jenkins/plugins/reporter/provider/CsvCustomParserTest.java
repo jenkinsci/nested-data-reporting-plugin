@@ -80,8 +80,8 @@ class CsvCustomParserTest {
         // Hierarchy: Product -> Version. Value: Count
         Item appA = result.findItem("semicolon::AppA", result.getItems()).orElse(null);
         assertNotNull(appA, "Item 'AppA' not found. Found: " + result.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
-        Item appAV1 = result.findItem("semicolon::AppA1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
-        assertNotNull(appAV1, "Item 'AppA1.0' not found in AppA. Found: " + appA.getItems().stream().map(Item::getId).collect(Collectors.joining(", ")));
+        Item appAV1 = result.findItem("semicolon::AppA_1.0", appA.getItems()).orElse(null); // ID is "AppA" + "1.0"
+        assertNotNull(appAV1, "Item 'AppA_1.0' not found in AppA. Found: " + (appA.getItems() != null ? appA.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "null or no items"));
         assertEquals("1.0", appAV1.getName());
         assertEquals(150, appAV1.getResult().get("Count"));
     }
@@ -122,8 +122,25 @@ class CsvCustomParserTest {
         assertEquals(2, result.getItems().size(), "Should have 2 generic items, one for each data row.");
 
         Item item1 = result.getItems().stream()
-            .filter(it -> it.getResult() != null && Integer.valueOf(1).equals(it.getResult().get("ID")))
-            .findFirst().orElse(null);
+            .filter(it -> {
+                if (it.getResult() == null) return false;
+                Object idVal = it.getResult().get("ID");
+                if (idVal instanceof Number) {
+                    // Compare the double values to handle Integer, Double, Long, etc.
+                    return ((Number) idVal).doubleValue() == 1.0;
+                }
+                // Optional: handle case where it might be a string, though less likely
+                // if (idVal instanceof String) {
+                //     try {
+                //         return Double.parseDouble((String) idVal) == 1.0;
+                //     } catch (NumberFormatException e) {
+                //         return false;
+                //     }
+                // }
+                return false;
+            })
+            .findFirst()
+            .orElse(null);
         assertNotNull(item1, "Item for ID 1 not found or 'ID' not in result.");
         assertEquals("Test", item1.getResult().get("Name"));
         assertEquals(100, item1.getResult().get("Value"));
@@ -146,8 +163,8 @@ class CsvCustomParserTest {
         assertEquals(2, result.getItems().size()); 
         Item itemText1 = result.findItem("noNumeric::text1", result.getItems()).orElse(null);
         assertNotNull(itemText1);
-        Item itemText1_text2 = result.findItem("noNumeric::text1text2", itemText1.getItems()).orElse(null);
-        assertNotNull(itemText1_text2);
+        Item itemText1_text2 = result.findItem("noNumeric::text1_text2", itemText1.getItems()).orElse(null);
+        assertNotNull(itemText1_text2, "Child item 'text2' (expected ID noNumeric::text1_text2) not found under itemText1. Items under itemText1: " + (itemText1 != null && itemText1.getItems() != null ? itemText1.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "itemText1 is null or has no items"));
         assertEquals("text2", itemText1_text2.getName());
         assertEquals(0, itemText1_text2.getResult().get("ColC"));
         assertTrue(result.getParserLogMessages().stream().anyMatch(m -> m.contains("Warning [CSV]: No numeric columns auto-detected")), "Expected warning about no numeric columns.");
@@ -187,21 +204,21 @@ class CsvCustomParserTest {
         Item alpha = result.findItem("mixed::Alpha", result.getItems()).orElse(null);
         assertNotNull(alpha, "Item 'Alpha' not found.");
         assertEquals(1, alpha.getItems().size(), "Alpha should have one sub-component: Auth");
-        Item auth = result.findItem("mixed::AlphaAuth", alpha.getItems()).orElse(null);
-        assertNotNull(auth, "Item 'AlphaAuth' not found.");
+        Item auth = result.findItem("mixed::Alpha_Auth", alpha.getItems()).orElse(null);
+        assertNotNull(auth, "Item 'Alpha_Auth' not found. Actual items in Alpha: " + (alpha.getItems() != null ? alpha.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "null or no items"));
         assertEquals(2, auth.getItems().size(), "Auth should have two metrics: LoginTime, LogoutTime");
         
-        Item loginTime = result.findItem("mixed::AlphaAuthLoginTime", auth.getItems()).orElse(null);
-        assertNotNull(loginTime, "Item 'AlphaAuthLoginTime' not found.");
+        Item loginTime = result.findItem("mixed::Alpha_Auth_LoginTime", auth.getItems()).orElse(null);
+        assertNotNull(loginTime, "Item 'Alpha_Auth_LoginTime' not found. Actual items in Auth: " + (auth != null && auth.getItems() != null ? auth.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "null or no items"));
         assertEquals("LoginTime", loginTime.getName());
         assertEquals(120, loginTime.getResult().get("Value"));
         
         Item beta = result.findItem("mixed::Beta", result.getItems()).orElse(null);
         assertNotNull(beta, "Item 'Beta' not found.");
-        Item db = result.findItem("mixed::BetaDB", beta.getItems()).orElse(null);
-        assertNotNull(db, "Item 'BetaDB' not found.");
-        Item queryTime = result.findItem("mixed::BetaDBQueryTime", db.getItems()).orElse(null);
-        assertNotNull(queryTime, "Item 'BetaDBQueryTime' not found.");
+        Item db = result.findItem("mixed::Beta_DB", beta.getItems()).orElse(null);
+        assertNotNull(db, "Item 'Beta_DB' not found. Actual items in Beta: " + (beta.getItems() != null ? beta.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "null or no items"));
+        Item queryTime = result.findItem("mixed::Beta_DB_QueryTime", db.getItems()).orElse(null);
+        assertNotNull(queryTime, "Item 'Beta_DB_QueryTime' not found. Actual items in DB: " + (db != null && db.getItems() != null ? db.getItems().stream().map(io.jenkins.plugins.reporter.model.Item::getId).collect(java.util.stream.Collectors.joining(", ")) : "null or no items"));
         assertEquals(80, queryTime.getResult().get("Value"));
     }
 

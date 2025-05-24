@@ -233,7 +233,7 @@ public class Csv extends Provider {
             
             if (firstActualDataRow == null) { // All data rows are empty or no data rows at all
                  if (rows.isEmpty()) {
-                    this.parserMessages.add("Info [CSV]: No data rows found after header.");
+                    this.parserMessages.add("Error [CSV]: No data rows found after header. Parsing effectively failed as no data could be processed.");
                  } else {
                     this.parserMessages.add("Info [CSV]: All data rows after header are empty or contain only blank fields. No structure to detect or items to parse.");
                  }
