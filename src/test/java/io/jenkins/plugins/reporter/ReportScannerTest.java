@@ -141,6 +141,8 @@ class ReportScannerTest {
 
         // Assertions for Nested Item 2.1
         assertThat(processedItem2.getItems()).hasSize(1);
+        // CodeQL might warn about potential IndexOutOfBounds here,
+        // but the preceding assertion ensures getItems() has one element.
         Item processedNestedItem21 = processedItem2.getItems().get(0);
         assertThat(processedNestedItem21.getId()).isEqualTo("id2.1");
         assertThat(processedNestedItem21.getResult())
