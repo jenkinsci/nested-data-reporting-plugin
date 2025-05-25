@@ -40,11 +40,12 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getData()).hasSize(1);
-        PieData pieData = model.getData().get(0);
+        assertThat(model.getSeries()).hasSize(1); // PieChartModel.add adds to series
+        PieData pieData = model.getSeries().get(0);
         assertThat(pieData.getName()).isEqualTo("Diff display not applicable for pie chart");
         assertThat(pieData.getValue()).isEqualTo(1);
-        assertThat(pieData.getColor()).isEqualTo("grey");
+        assertThat(model.getColors()).hasSize(1);
+        assertThat(model.getColors().get(0)).isEqualTo("grey");
     }
 
     @Test
@@ -62,17 +63,29 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getData()).hasSize(2);
+        assertThat(model.getSeries()).hasSize(2);
+        assertThat(model.getColors()).hasSize(2);
 
-        PieData passedData = model.getData().stream().filter(d -> d.getName().equals("Passed")).findFirst().orElse(null);
-        assertThat(passedData).isNotNull();
-        assertThat(passedData.getValue()).isEqualTo(50);
-        assertThat(passedData.getColor()).isEqualTo("green");
+        List<PieData> seriesData = model.getSeries();
+        List<String> colorList = model.getColors();
 
-        PieData failedData = model.getData().stream().filter(d -> d.getName().equals("Failed")).findFirst().orElse(null);
-        assertThat(failedData).isNotNull();
-        assertThat(failedData.getValue()).isEqualTo(10);
-        assertThat(failedData.getColor()).isEqualTo("red");
+        Optional<PieData> passedDataOptional = seriesData.stream().filter(pd -> "Passed".equals(pd.getName())).findFirst();
+        assertThat(passedDataOptional).isPresent();
+        if (passedDataOptional.isPresent()) {
+            PieData passedData = passedDataOptional.get();
+            assertThat(passedData.getValue()).isEqualTo(50);
+            int passedDataIndex = seriesData.indexOf(passedData);
+            assertThat(colorList.get(passedDataIndex)).isEqualTo("green");
+        }
+
+        Optional<PieData> failedDataOptional = seriesData.stream().filter(pd -> "Failed".equals(pd.getName())).findFirst();
+        assertThat(failedDataOptional).isPresent();
+        if (failedDataOptional.isPresent()) {
+            PieData failedData = failedDataOptional.get();
+            assertThat(failedData.getValue()).isEqualTo(10);
+            int failedDataIndex = seriesData.indexOf(failedData);
+            assertThat(colorList.get(failedDataIndex)).isEqualTo("red");
+        }
     }
     
     @Test
@@ -91,16 +104,31 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getData()).hasSize(2);
+        assertThat(model.getSeries()).hasSize(2);
+        assertThat(model.getColors()).hasSize(2);
         
-        PieData successData = model.getData().stream().filter(d -> d.getName().equals("Success")).findFirst().orElse(null);
-        assertThat(successData).isNotNull();
-        assertThat(successData.getValue()).isEqualTo(75); // Values are absolute in PieChart, labels show percentage if DUAL/RELATIVE
-        assertThat(successData.getColor()).isEqualTo("blue");
+        List<PieData> seriesDataRelative = model.getSeries();
+        List<String> colorListRelative = model.getColors();
 
-        PieData errorData = model.getData().stream().filter(d -> d.getName().equals("Error")).findFirst().orElse(null);
-        assertThat(errorData).isNotNull();
-        assertThat(errorData.getValue()).isEqualTo(25);
-        assertThat(errorData.getColor()).isEqualTo("orange");
+        Optional<PieData> successDataOptional = seriesDataRelative.stream().filter(pd -> "Success".equals(pd.getName())).findFirst();
+        assertThat(successDataOptional).isPresent();
+        if (successDataOptional.isPresent()) {
+            PieData successData = successDataOptional.get();
+            assertThat(successData.getValue()).isEqualTo(75); // Values are absolute in PieChart
+            int successDataIndex = seriesDataRelative.indexOf(successData);
+            assertThat(colorListRelative.get(successDataIndex)).isEqualTo("blue");
+        }
+
+        Optional<PieData> errorDataOptional = seriesDataRelative.stream().filter(pd -> "Error".equals(pd.getName())).findFirst();
+        assertThat(errorDataOptional).isPresent();
+        if (errorDataOptional.isPresent()) {
+            PieData errorData = errorDataOptional.get();
+            assertThat(errorData.getValue()).isEqualTo(25);
+            int errorDataIndex = seriesDataRelative.indexOf(errorData);
+            assertThat(colorListRelative.get(errorDataIndex)).isEqualTo("orange");
+        }
+import java.util.List;
+import java.util.Optional;
+
     }
 }

@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import io.jenkins.plugins.reporter.ReportAction; // Added import
 
 class ReportScannerTest {
 
@@ -66,6 +67,9 @@ class ReportScannerTest {
         previousReport.setId("test-report");
         previousReport.setDisplayType(DisplayType.ABSOLUTE); // Previous report could be absolute
 
+        // Use a spy for the currentRun to allow mocking of its final methods like getPreviousSuccessfulBuild()
+        // currentRun = spy(Run.class) ; // This would require a concrete class or more complex setup.
+                                     // Sticking to doReturn for now as it's simpler with existing @Mock.
         reportScanner = new ReportScanner(currentRun, provider, workspace, taskListener);
         
         baos = new ByteArrayOutputStream();
@@ -106,14 +110,19 @@ class ReportScannerTest {
         Item prevItem2 = createItem("id2", "Item 2", results("skipped", 3), Collections.singletonList(prevItem2NestedChild));
         previousReport.setItems(Arrays.asList(prevItem1, prevItem2));
 
-        ReportAction reportAction = mock(ReportAction.class);
-        ResultAction resultAction = mock(ResultAction.class);
-        when(resultAction.getReport()).thenReturn(previousReport);
-        when(reportAction.getResult()).thenReturn(resultAction);
+        ReportAction mockReportAction = mock(ReportAction.class); // Changed variable name
+        ReportAction mockResultAction = mock(ReportAction.class); // Changed type and variable name
+        when(mockResultAction.getReport()).thenReturn(previousReport);
+        // when(mockReportAction.getResult()).thenReturn(mockResultAction); // This line is problematic, ReportAction doesn't have getResult() returning another ReportAction.
+                                                                        // It should return the Report directly or via a Result object if that's the actual structure.
+                                                                        // Based on ReportScanner, it's ReportAction -> getResult() -> getReport().
+                                                                        // However, ReportAction itself *is* the action holding the report.
+                                                                        // Let's assume getReport() is directly on the action object found.
+        when(mockReportAction.getReport()).thenReturn(previousReport); // Corrected assumption
         
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(previousSuccessfulRun);
+        doReturn(previousSuccessfulRun).when(currentRun).getPreviousSuccessfulBuild();
         when(previousSuccessfulRun.getResult()).thenReturn(Result.SUCCESS);
-        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(reportAction));
+        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(mockReportAction)); // Use mockReportAction
 
         Report processedReport = reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
@@ -150,7 +159,7 @@ class ReportScannerTest {
         Item currentItem1 = createItem("id1", "Item 1", results("passed", 10), null);
         currentReport.setItems(Collections.singletonList(currentItem1));
 
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(null);
+        doReturn(null).when(currentRun).getPreviousSuccessfulBuild();
 
         Report processedReport = reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
@@ -163,7 +172,7 @@ class ReportScannerTest {
         Item currentItem1 = createItem("id1", "Item 1", results("passed", 10), null);
         currentReport.setItems(Collections.singletonList(currentItem1));
 
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(previousSuccessfulRun);
+        doReturn(previousSuccessfulRun).when(currentRun).getPreviousSuccessfulBuild();
         when(previousSuccessfulRun.getResult()).thenReturn(Result.SUCCESS);
         when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.emptyList()); // No matching action
 
@@ -187,14 +196,14 @@ class ReportScannerTest {
         Item prevParent = createItem("p1", "Parent", results(), Collections.singletonList(prevChild));
         previousReport.setItems(Collections.singletonList(prevParent));
         
-        ReportAction reportAction = mock(ReportAction.class);
-        ResultAction resultAction = mock(ResultAction.class);
-        when(resultAction.getReport()).thenReturn(previousReport);
-        when(reportAction.getResult()).thenReturn(resultAction);
+        ReportAction mockReportAction = mock(ReportAction.class); // Changed variable name
+        // ResultAction resultAction = mock(ResultAction.class); // Not needed
+        // when(resultAction.getReport()).thenReturn(previousReport); // Not needed
+        when(mockReportAction.getReport()).thenReturn(previousReport); // ReportAction directly has getReport()
 
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(previousSuccessfulRun);
+        doReturn(previousSuccessfulRun).when(currentRun).getPreviousSuccessfulBuild();
         when(previousSuccessfulRun.getResult()).thenReturn(Result.SUCCESS);
-        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(reportAction));
+        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(mockReportAction));
 
         reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
@@ -209,14 +218,14 @@ class ReportScannerTest {
         // Previous report is empty or does not contain 'unique_id'
         previousReport.setItems(Collections.emptyList()); 
         
-        ReportAction reportAction = mock(ReportAction.class);
-        ResultAction resultAction = mock(ResultAction.class);
-        when(resultAction.getReport()).thenReturn(previousReport);
-        when(reportAction.getResult()).thenReturn(resultAction);
+        ReportAction mockReportAction = mock(ReportAction.class); // Changed variable name
+        // ResultAction resultAction = mock(ResultAction.class); // Not needed
+        // when(resultAction.getReport()).thenReturn(previousReport); // Not needed
+        when(mockReportAction.getReport()).thenReturn(previousReport); // ReportAction directly has getReport()
 
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(previousSuccessfulRun);
+        doReturn(previousSuccessfulRun).when(currentRun).getPreviousSuccessfulBuild();
         when(previousSuccessfulRun.getResult()).thenReturn(Result.SUCCESS);
-        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(reportAction));
+        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(mockReportAction));
 
         reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
@@ -238,14 +247,14 @@ class ReportScannerTest {
         Item prevItemOnly = createItem("old_id", "Old Item", results("old_data", 50), null);
         previousReport.setItems(Collections.singletonList(prevItemOnly));
 
-        ReportAction reportAction = mock(ReportAction.class);
-        ResultAction resultAction = mock(ResultAction.class);
-        when(resultAction.getReport()).thenReturn(previousReport);
-        when(reportAction.getResult()).thenReturn(resultAction);
+        ReportAction mockReportAction = mock(ReportAction.class); // Changed variable name
+        // ResultAction resultAction = mock(ResultAction.class); // Not needed
+        // when(resultAction.getReport()).thenReturn(previousReport); // Not needed
+        when(mockReportAction.getReport()).thenReturn(previousReport); // ReportAction directly has getReport()
 
-        when(currentRun.getPreviousSuccessfulBuild()).thenReturn(previousSuccessfulRun);
+        doReturn(previousSuccessfulRun).when(currentRun).getPreviousSuccessfulBuild();
         when(previousSuccessfulRun.getResult()).thenReturn(Result.SUCCESS);
-        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(reportAction));
+        when(previousSuccessfulRun.getActions(ReportAction.class)).thenReturn(Collections.singletonList(mockReportAction));
 
         Report processedReport = reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
