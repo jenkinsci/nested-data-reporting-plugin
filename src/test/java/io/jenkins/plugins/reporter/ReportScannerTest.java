@@ -90,8 +90,15 @@ class ReportScannerTest {
     }
     
     private LinkedHashMap<String, Integer> results(Object... kv) {
+        if (kv.length % 2 != 0) {
+            throw new IllegalArgumentException("results method expects an even number of arguments (key-value pairs).");
+        }
         LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
         for (int i = 0; i < kv.length; i += 2) {
+            // No need to check i + 1 < kv.length here because the initial check ensures kv.length is even.
+            // If kv.length is 0, loop doesn't run.
+            // If kv.length is 2, i=0, accesses kv[0], kv[1]. Loop ends.
+            // If kv.length is 4, i=0 (accesses 0,1), i=2 (accesses 2,3). Loop ends.
             map.put((String) kv[i], (Integer) kv[i + 1]);
         }
         return map;
