@@ -7,11 +7,12 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.reporter.model.ColorPalette;
 import io.jenkins.plugins.reporter.model.Provider;
 import io.jenkins.plugins.reporter.model.Report;
+import io.jenkins.plugins.reporter.model.Item; // Added import
 import io.jenkins.plugins.reporter.util.LogHandler;
+import edu.umd.cs.findbugs.annotations.Nullable; // Changed import
 
 import java.io.IOException;
 import java.util.List;
-import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
