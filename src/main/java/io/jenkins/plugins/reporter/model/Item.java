@@ -86,6 +86,9 @@ public class Item implements Serializable {
 
     @JsonIgnore
     public String getLabel(Report report, Integer value, double percentage) {
+        if (report.getDisplayType().equals(DisplayType.DIFF)) {
+            return String.format("%+d", value); // Shows +value, -value, or +0
+        }
         if (report.getDisplayType().equals(DisplayType.DUAL)) {
             return String.format("%s (%.2f%%)", value.toString(), percentage);
         }

@@ -133,6 +133,12 @@ public class ReportRecorder extends Recorder {
                 .findFirst().orElse(DisplayType.ABSOLUTE);
         
         report.setDisplayType(dt);
+
+        if (dt == DisplayType.DIFF) {
+            // LogHandler logger = new LogHandler(listener, provider.getSymbolName()); // Not strictly needed as processDiffReport uses listener directly
+            ReportScanner scanner = new ReportScanner(run, this.provider, workspace, listener);
+            report = scanner.processDiffReport(report, run, listener);
+        }
         
     return publishReport(run, listener, provider.getSymbolName(), report);
     }
