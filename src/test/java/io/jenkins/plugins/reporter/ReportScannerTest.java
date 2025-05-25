@@ -147,7 +147,9 @@ class ReportScannerTest {
                 .containsEntry("passed", 2)    // 7 - 5
                 .containsEntry("flaky", -1);   // 0 - 1
         
-        verify(taskListener.getLogger()).println(contains("Previous successful report found: test-report. Calculating diff."));
+        printStream.flush(); // Ensure all output is written
+        String logOutput = baos.toString();
+        assertThat(logOutput).contains("Previous successful report found: test-report. Calculating diff.");
     }
 
     @Test
@@ -160,7 +162,9 @@ class ReportScannerTest {
         Report processedReport = reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
         assertThat(processedReport.getItems().get(0).getResult()).containsEntry("passed", 10);
-        verify(taskListener.getLogger()).println("No previous successful report found. Current values will be displayed as is.");
+        printStream.flush();
+        String logOutput_noPrevBuild = baos.toString(); // Renamed to avoid conflict
+        assertThat(logOutput_noPrevBuild).contains("No previous successful report found. Current values will be displayed as is.");
     }
     
     @Test
@@ -175,7 +179,9 @@ class ReportScannerTest {
         Report processedReport = reportScanner.processDiffReport(currentReport, currentRun, taskListener);
 
         assertThat(processedReport.getItems().get(0).getResult()).containsEntry("passed", 10);
-        verify(taskListener.getLogger()).println("No previous successful report found. Current values will be displayed as is.");
+        printStream.flush();
+        String logOutput_noReportAction = baos.toString(); // Renamed to avoid conflict
+        assertThat(logOutput_noReportAction).contains("No previous successful report found. Current values will be displayed as is.");
     }
 
     @Test
@@ -256,7 +262,9 @@ class ReportScannerTest {
 
         // Assert that the processed report is still empty, as the diff only processes current items
         assertThat(processedReport.getItems()).isEmpty();
-        verify(taskListener.getLogger()).println(contains("Previous successful report found: test-report. Calculating diff."));
+        printStream.flush();
+        String logOutput_itemInPrevOnly = baos.toString(); // Renamed to avoid conflict
+        assertThat(logOutput_itemInPrevOnly).contains("Previous successful report found: test-report. Calculating diff.");
         // No errors should occur, and no "Item with ID 'old_id' not found" message for items *only* in previous.
     }
 }
