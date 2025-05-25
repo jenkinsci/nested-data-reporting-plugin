@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.LinkedHashMap;
+import java.util.List; // Moved import
+import java.util.Optional; // Moved import
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -127,8 +129,5 @@ class ItemPieChartTest {
             int errorDataIndex = seriesDataRelative.indexOf(errorData);
             assertThat(colorListRelative.get(errorDataIndex)).isEqualTo("orange");
         }
-import java.util.List;
-import java.util.Optional;
-
     }
-}
+// Removed extra closing brace and misplaced imports from here
