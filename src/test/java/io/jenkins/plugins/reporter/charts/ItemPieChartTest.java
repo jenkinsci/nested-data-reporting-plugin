@@ -42,8 +42,8 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getSeries()).hasSize(1); // PieChartModel.add adds to series
-        PieData pieData = model.getSeries().get(0);
+        assertThat(model.getData()).hasSize(1); // Reverted to getData()
+        PieData pieData = model.getData().get(0); // Reverted to getData()
         assertThat(pieData.getName()).isEqualTo("Diff display not applicable for pie chart");
         assertThat(pieData.getValue()).isEqualTo(1);
         assertThat(model.getColors()).hasSize(1);
@@ -65,10 +65,10 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getSeries()).hasSize(2);
+        assertThat(model.getData()).hasSize(2); // Reverted to getData()
         assertThat(model.getColors()).hasSize(2);
 
-        List<PieData> seriesData = model.getSeries();
+        List<PieData> seriesData = model.getData(); // Reverted to getData()
         List<String> colorList = model.getColors();
 
         Optional<PieData> passedDataOptional = seriesData.stream().filter(pd -> "Passed".equals(pd.getName())).findFirst();
@@ -106,10 +106,10 @@ class ItemPieChartTest {
         PieChartModel model = itemPieChart.create(report, item);
 
         assertThat(model.getName()).isEqualTo("test-item");
-        assertThat(model.getSeries()).hasSize(2);
+        assertThat(model.getData()).hasSize(2); // Reverted to getData()
         assertThat(model.getColors()).hasSize(2);
         
-        List<PieData> seriesDataRelative = model.getSeries();
+        List<PieData> seriesDataRelative = model.getData(); // Reverted to getData()
         List<String> colorListRelative = model.getColors();
 
         Optional<PieData> successDataOptional = seriesDataRelative.stream().filter(pd -> "Success".equals(pd.getName())).findFirst();
