@@ -79,7 +79,7 @@ public class ReportScanner {
                     .collect(Collectors.toMap(Item::getId, Function.identity()));
 
             for (Item currentItem : currentReport.getItems()) {
-                processItemDiff(currentItem, previousItemsMap.get(currentItem.getId()), listener, previousItemsMap);
+                processItemDiff(currentItem, previousItemsMap.get(currentItem.getId()), listener);
             }
         } else {
             listener.getLogger().println("No previous successful report found. Current values will be displayed as is.");
@@ -87,7 +87,7 @@ public class ReportScanner {
         return currentReport;
     }
 
-    private void processItemDiff(Item currentItem, @Nullable Item previousItem, TaskListener listener, Map<String, Item> previousItemsMap) {
+    private void processItemDiff(Item currentItem, @Nullable Item previousItem, TaskListener listener) {
         if (previousItem == null) {
             listener.getLogger().println(String.format("Item with ID '%s' (name: '%s') not found in previous successful report. Current values will be used as diff.", currentItem.getId(), currentItem.getName()));
             // If previousItem is null, all current values are considered "new".
@@ -124,7 +124,7 @@ public class ReportScanner {
             }
             
             for (Item childCurrentItem : currentItem.getItems()) {
-                processItemDiff(childCurrentItem, childPreviousItemsMap.get(childCurrentItem.getId()), listener, childPreviousItemsMap);
+                processItemDiff(childCurrentItem, childPreviousItemsMap.get(childCurrentItem.getId()), listener);
             }
         }
     }
