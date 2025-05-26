@@ -7,6 +7,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for tabular data processing
@@ -54,125 +55,138 @@ public class TabularData implements Serializable {
 
         int rowCount = 0;
         final int headerColumnCount = header.size();
-        int colIdxValueStart = 0;
+        
+        // First two columns are always category columns, rest are value columns
+        final int categoryColumns = 2;
+        final int valueColumns = headerColumnCount - categoryColumns;
 
         if (headerColumnCount >= 2) {
             rowCount = rows.size();
+            parserMessages.add(String.format("Processing data with %d rows, %d category columns, %d value columns", 
+                rowCount, categoryColumns, valueColumns));
+            parserMessages.add(String.format("Headers: %s", String.join(", ", header)));
         } else {
-            parserMessages.add(String.format("skipped file - First line has %d elements", headerColumnCount + 1));
+            parserMessages.add(String.format("skipped file - First line has %d elements", headerColumnCount));
+            return report;
         }
 
         /** Parse all data rows */
         for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
-            String parentId = "report";
             List<String> row = rows.get(rowIdx);
-            Item last = null;
-            boolean lastItemAdded = false;
-            LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
-            boolean emptyFieldFound = false;
-            int rowSize = row.size();
-
-            /** Parse until first data line is found to get data and value field */
-            if (colIdxValueStart == 0) {
-                /** Col 0 is assumed to be string */
-                for (int colIdx = rowSize - 1; colIdx > 1; colIdx--) {
-                    String value = row.get(colIdx);
-
-                    if (NumberUtils.isCreatable(value)) {
-                        colIdxValueStart = colIdx;
-                    } else {
-                        if (colIdxValueStart > 0) {
-                            parserMessages
-                                    .add(String.format("Found data - fields number = %d  - numeric fields = %d",
-                                            colIdxValueStart, rowSize - colIdxValueStart));
-                        }
-                        break;
-                    }
-                }
+            
+            // Add debug info for first and last row
+            if (rowIdx == 0 || rowIdx == rows.size() - 1) {  // Only log first and last row for brevity
+                parserMessages.add(String.format("Processing row %d: %s", 
+                    rowIdx + 1, 
+                    String.join(", ", row.subList(0, Math.min(row.size(), 5))) + 
+                    (row.size() > 5 ? "..." : "")));
+            }
+            
+            if (row.size() < headerColumnCount) {
+                parserMessages.add(String.format("skipped line %d - line has fewer elements than header", rowIdx + 2));
+                continue;
             }
 
-            String valueId = "";
-            /** Parse line if first data line is OK and line has more element than header */
-            if ((colIdxValueStart > 0) && (rowSize >= headerColumnCount)) {
-                /** Check line and header size matching */
-                for (int colIdx = 0; colIdx < headerColumnCount; colIdx++) {
-                    String colId = header.get(colIdx);
-                    String value = row.get(colIdx);
-
-                    /** Check value fields */
-                    if ((colIdx < colIdxValueStart)) {
-                        /** Test if text item is a value or empty */
-                        if ((NumberUtils.isCreatable(value)) || (StringUtils.isBlank(value))) {
-                            /** Empty field found - message */
-                            if (colIdx == 0) {
-                                parserMessages
-                                        .add(String.format("skipped line %d - First column item empty - col = %d ",
-                                                rowIdx + 2, colIdx + 1));
-                                break;
-                            } else {
-                                emptyFieldFound = true;
-                                /** Continue next column parsing */
-                                continue;
-                            }
-                        } else {
-                            /** Check if field values are present after empty cells */
-                            if (emptyFieldFound) {
-                                parserMessages.add(String.format("skipped line %d Empty field in col = %d ",
-                                        rowIdx + 2, colIdx + 1));
-                                break;
-                            }
-                        }
-                        valueId += value;
-                        Optional<Item> parent = report.findItem(parentId, report.getItems());
-                        Item item = new Item();
-                        lastItemAdded = false;
-                        item.setId(valueId);
-                        item.setName(value);
-                        String finalValueId = valueId;
-                        if (parent.isPresent()) {
-                            Item p = parent.get();
-                            if (!p.hasItems()) {
-                                p.setItems(new ArrayList<>());
-                            }
-                            if (p.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
-                                p.addItem(item);
-                                lastItemAdded = true;
-                            }
-                        } else {
-                            if (report.getItems().stream().noneMatch(i -> i.getId().equals(finalValueId))) {
-                                report.getItems().add(item);
-                                lastItemAdded = true;
-                            }
-                        }
-                        parentId = valueId;
-                        last = item;
-                    } else {
-                        Number val = 0;
-                        if (NumberUtils.isCreatable(value)) {
-                            val = NumberUtils.createNumber(value);
-                        }
-                        result.put(colId, val.intValue());
-                    }
+            // Process category columns
+            String[] categories = new String[categoryColumns];
+            boolean validRow = true;
+            for (int i = 0; i < categoryColumns; i++) {
+                categories[i] = row.get(i).trim();
+                if (categories[i].isEmpty()) {
+                    validRow = false;
+                    break;
                 }
-            } else {
-                /** Skip file if first data line has no value field */
-                if (colIdxValueStart == 0) {
-                    parserMessages.add(String.format("skipped line %d - First data row not found", rowIdx + 2));
-                    continue;
+            }
+            
+            if (!validRow) {
+                parserMessages.add(String.format("skipped line %d - empty category", rowIdx + 2));
+                continue;
+            }
+
+            // Process each category level
+            Item currentItem = null;
+            String parentId = "report";
+            
+            for (int level = 0; level < categories.length; level++) {
+                String categoryName = categories[level];
+                String categoryId = level == 0 ? categoryName : parentId + categoryName;
+                
+                if (level == 0) {
+                    // Find or create root level item
+                    Optional<Item> existing = report.getItems().stream()
+                        .filter(i -> i.getName().equals(categoryName))
+                        .findFirst();
+                    
+                    if (existing.isPresent()) {
+                        currentItem = existing.get();
+                    } else {
+                        currentItem = new Item();
+                        currentItem.setId(categoryId);
+                        currentItem.setName(categoryName);
+                        report.getItems().add(currentItem);
+                        parserMessages.add(String.format("Created new root item: %s", categoryName));
+                    }
                 } else {
-                    parserMessages
-                            .add(String.format("skipped line %d - line has fewer element than title", rowIdx + 2));
-                    continue;
+                    // Find or create sub-item
+                    if (!currentItem.hasItems()) {
+                        currentItem.setItems(new ArrayList<>());
+                    }
+                    
+                    Optional<Item> existing = currentItem.getItems().stream()
+                        .filter(i -> i.getName().equals(categoryName))
+                        .findFirst();
+                    
+                    if (existing.isPresent()) {
+                        currentItem = existing.get();
+                    } else {
+                        Item newItem = new Item();
+                        newItem.setId(categoryId);
+                        newItem.setName(categoryName);
+                        currentItem.getItems().add(newItem);
+                        currentItem = newItem;
+                        parserMessages.add(String.format("Created new sub-item: %s under %s", 
+                            categoryName, categories[level-1]));
+                    }
                 }
+                parentId = categoryId;
             }
-            /** If last item was created, it will be added to report */
-            if (lastItemAdded) {
-                last.setResult(result);
-            } else {
-                parserMessages.add(String.format("ignored line %d - Same fields already exists", rowIdx + 2));
+
+            // Process value columns
+            if (currentItem != null) {
+                LinkedHashMap<String, Integer> values = new LinkedHashMap<>();
+                for (int i = categoryColumns; i < headerColumnCount && i < row.size(); i++) {
+                    String headerName = header.get(i);
+                    String value = row.get(i);
+                    int numericValue = NumberUtils.isCreatable(value) ? 
+                        NumberUtils.createNumber(value).intValue() : 0;
+                    values.put(headerName, numericValue);
+                }
+
+                if (currentItem.getResult() == null) {
+                    currentItem.setResult(values);
+                } else {
+                    // Merge values with existing results
+                    LinkedHashMap<String, Integer> existing = currentItem.getResult();
+                    for (Map.Entry<String, Integer> entry : values.entrySet()) {
+                        existing.merge(entry.getKey(), entry.getValue(), Integer::sum);
+                    }
+                }
+                
+                parserMessages.add(String.format("Processed %s: %s", currentItem.getName(), 
+                    values.entrySet().stream()
+                        .map(e -> e.getKey() + "=" + e.getValue())
+                        .collect(Collectors.joining(", "))));
             }
         }
-        // report.setParserLog(parserMessages);
+        
+        // Add debug info about final report structure
+        parserMessages.add(String.format("Final report contains %d root items", report.getItems().size()));
+        for (Item item : report.getItems()) {
+            parserMessages.add(String.format("Root item: %s with %d subitems", 
+                item.getName(),
+                item.hasItems() ? item.getItems().size() : 0));
+        }
+        
         return report;
     }
 }
