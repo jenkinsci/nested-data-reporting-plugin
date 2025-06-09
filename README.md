@@ -27,7 +27,7 @@ Whether you're tracking metrics, analyzing trends, or monitoring performance, th
 ## Key Features
 
 - **Visualize Nested Data**: Display hierarchical data structures in pie charts, trend charts, and tables.
-- **Multiple File Formats**: Supports JSON, YAML, XML, and CSV files.
+- **Multiple File Formats**: Supports JSON, YAML, XML, CSV, and Excel (.xls, .xlsx) files.
 - **Dynamic UI**: Interactive charts and tables that update based on your data.
 - **Customizable Colors**: Define custom colors for your data points or use predefined color schemes.
 - **Trend Analysis**: Track data trends over multiple builds with history charts.
@@ -85,6 +85,34 @@ The plugin supports the following file formats for data input:
 #### YAML and XML
 - Similar hierarchical structures as JSON are supported.
 
+#### Excel (`excel` provider)
+- This provider parses a single Excel sheet from an `.xls` or `.xlsx` file. By default, it processes the **first sheet** in the workbook.
+- **Structure Expectation:**
+  - The parser automatically detects the header row (the first non-empty row).
+  - Columns *before* the first column containing predominantly numeric data are treated as hierarchy levels.
+  - Columns *from* the first numeric-looking column onwards are treated as data values, with their respective header names as keys for the results.
+- **Example Data (conceptual view of a sheet):**
+  ```
+  (Sheet1 in an .xlsx or .xls file)
+  Category, SubCategory, Metric1, Value2
+  Alpha, X, 10, 100
+  Alpha, Y, 15, 150
+  Beta, Z, 20, 200
+  ```
+  In this example:
+    - "Category" and "SubCategory" would form the hierarchy (e.g., Alpha -> X).
+    - "Metric1" and "Value2" would be the data keys with their corresponding numeric values.
+- Empty rows before the header or between data rows are typically ignored.
+
+#### Multi-Sheet Excel (`excelmulti` provider)
+- This provider parses **all sheets** in an Excel workbook (.xls or .xlsx).
+- **Header Consistency Requirement:**
+  - The header from the *first successfully parsed sheet* (first non-empty sheet with a valid header) is used as a reference.
+  - Subsequent sheets **must have an identical header** (same column names in the same order) to be included in the report.
+  - Sheets with headers that do not match the reference header will be skipped, and a warning will be logged.
+- **Data Structure per Sheet:** Within each sheet, the data structure expectation is the same as for the `excel` provider (auto-detected header, hierarchy based on pre-numeric columns, values from numeric columns onwards).
+- Item IDs are generated to be unique across sheets, typically by internally prefixing them with sheet-specific information.
+
 ---
 
 ## Color Management
@@ -95,7 +123,7 @@ The plugin allows you to customize the colors used in the visualizations. You ca
 
 To customize colors, add a `colors` object to your JSON, YAML, or XML file. The `colors` object should map metric keys or category names to specific colors. Colors can be defined using **HEX values** or **predefined color names**.
 
-> **Note**: Color customization is **not supported for CSV files** due to the format does not allow color attribute definition. For now, colors are attributed aleatory.
+> **Note**: Color customization is **not supported for CSV or Excel files** as these formats do not have a standard way to define color attributes within the data file itself for this plugin's use. For CSV and Excel, colors are attributed automatically by the charting libraries.
 
 #### Example in JSON:
 ```json
@@ -146,8 +174,16 @@ You can interact with the charts and tables to drill down into specific data poi
   - `relative`: Show percentage values.
   - `dual`: Show both absolute and relative values.
 - **`provider`**: Specify the file format and pattern for the data files.
-  - **`id`**: (Required for CSV) A unique identifier for the report.
+  - **`id`**: (Optional, but recommended for CSV, Excel, and ExcelMulti if multiple reports of the same type are used) A unique identifier for the report instance. This helps in creating distinct report URLs and managing history, especially if you have multiple CSV or Excel reports in the same job.
   - **`pattern`**: An Ant-style pattern to locate the data files.
+
+  **Examples for `provider`:**
+  - JSON: `provider: json(pattern: 'reports/**/*.json')`
+  - CSV: `provider: csv(id: 'my-csv-report', pattern: 'reports/data.csv')`
+  - Excel (single sheet): `provider: excel(pattern: 'reports/data.xlsx')`
+  - Excel (multi-sheet): `provider: excelmulti(pattern: 'reports/multi_sheet_data.xlsx')`
+  - You can also add an `id` to `excel` and `excelmulti` if needed:
+    `provider: excel(id: 'my-excel-report', pattern: 'reports/data.xlsx')`
 
 
 ## Examples
