@@ -84,7 +84,7 @@ public class ReportRecorderTest {
 
         // Create ReportConfig instances (cannot mock ReportConfig directly if it's an inner class and new-ed up)
         ReportRecorder.ReportConfig config1 = new ReportRecorder.ReportConfig("Report1", mockProvider1, "absolute");
-        ReportRecorder.ReportConfig config2 = new ReportRecorder.ReportConfig("Report2", mockProvider2, "pie");
+        ReportRecorder.ReportConfig config2 = new ReportRecorder.ReportConfig("Report2", mockProvider2, "relative"); // Changed "pie" to "relative"
 
         spyRecorder.setReportConfigs(List.of(config1, config2));
 
@@ -123,7 +123,7 @@ public class ReportRecorderTest {
         verify(mockReport1, times(1)).setName("Report1");
         verify(mockReport1, times(1)).setDisplayType(io.jenkins.plugins.reporter.model.DisplayType.ABSOLUTE);
         verify(mockReport2, times(1)).setName("Report2");
-        verify(mockReport2, times(1)).setDisplayType(io.jenkins.plugins.reporter.model.DisplayType.PIE);
+        verify(mockReport2, times(1)).setDisplayType(io.jenkins.plugins.reporter.model.DisplayType.RELATIVE); // Changed DisplayType.PIE to DisplayType.RELATIVE
 
         // Verify 'publishReport' was called for each report object
         verify(spyRecorder, times(1)).publishReport(eq(mockRun), eq(mockListener), eq("provider1"), eq(mockReport1));

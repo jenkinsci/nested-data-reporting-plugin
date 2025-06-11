@@ -241,7 +241,7 @@ public class ReportRecorder extends Recorder {
         return action.getResult();
     }
 
-    private Report scan(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    Report scan(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
                               final Provider provider) throws IOException, InterruptedException {
 
         ReportScanner reportScanner = new ReportScanner(run, provider, workspace, listener);
