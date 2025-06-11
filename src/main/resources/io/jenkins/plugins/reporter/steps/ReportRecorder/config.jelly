@@ -1,6 +1,27 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:report="/report">
- 
-        <report:step/>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="Report Configurations">
+        <f:repeatableProperty field="reportConfigs" add="Add Report Configuration" header="Report Configuration">
             
+            <f:entry title="Name" field="name">
+                <f:textbox />
+            </f:entry>
+
+            <f:entry title="Display Type" field="displayType">
+                <f:select />
+            </f:entry>
+
+            <f:entry title="Provider">
+                <f:dropdownDescriptorSelector field="provider"/>
+            </f:entry>
+
+            <f:entry title="">
+                <div align="right">
+                    <f:repeatableDeleteButton value="Delete Report Configuration"/>
+                </div>
+            </f:entry>
+        </f:repeatableProperty>
+    </f:section>
+
 </j:jelly>
