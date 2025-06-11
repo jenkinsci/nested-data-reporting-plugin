@@ -124,6 +124,38 @@ public class ReportRecorder extends Recorder {
         this.reportConfigs = reportConfigs;
     }
 
+    @DataBoundSetter
+    @Deprecated
+    public void setName(String name) {
+        ensureFirstConfigExists();
+        this.reportConfigs.get(0).setName(name);
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    public void setProvider(Provider provider) {
+        ensureFirstConfigExists();
+        this.reportConfigs.get(0).setProvider(provider);
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    public void setDisplayType(String displayType) {
+        ensureFirstConfigExists();
+        this.reportConfigs.get(0).setDisplayType(displayType);
+    }
+
+    private void ensureFirstConfigExists() {
+        if (this.reportConfigs == null) { // Defensive, should already be initialized
+            this.reportConfigs = new ArrayList<>();
+        }
+        if (this.reportConfigs.isEmpty()) {
+            // Parameters for ReportConfig constructor can be null or default if not immediately available.
+            // The actual values will be set by the specific setters (setName, setProvider, setDisplayType).
+            this.reportConfigs.add(new ReportConfig(null, null, null));
+        }
+    }
+
     // Old setters and getters are removed as fields are now transient
     // and new interactions go through reportConfigs list.
 
@@ -162,10 +194,10 @@ public class ReportRecorder extends Recorder {
         // For now, we'll return the result of the last processed report,
         // or a new ReportResult if the list is empty.
         // Consider a more sophisticated way to aggregate results or handle errors.
-        ReportResult finalResult = new ReportResult();
+        ReportResult finalResult = new ReportResult(run, new Report()); // Initialize with an empty report context
         if (reportConfigs == null || reportConfigs.isEmpty()) {
             listener.getLogger().println("[Reporter] No report configurations provided.");
-            return finalResult; // Return an empty result or handle as an error
+            return finalResult; // Return the empty result
         }
 
         for (ReportConfig config : reportConfigs) {
