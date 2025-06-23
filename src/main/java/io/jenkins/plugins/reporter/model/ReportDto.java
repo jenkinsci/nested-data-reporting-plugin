@@ -19,6 +19,10 @@ public class ReportDto extends ReportBase {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> colors;
 
+    @JsonProperty(value = "parserLogMessages")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY) // Only include in JSON if not empty
+    private List<String> parserLogMessages;
+
     public String getId() {
         return id;
     }
@@ -41,6 +45,14 @@ public class ReportDto extends ReportBase {
 
     public void setColors(Map<String, String> colors) {
         this.colors = colors;
+    }
+
+    public List<String> getParserLogMessages() {
+        return parserLogMessages;
+    }
+
+    public void setParserLogMessages(List<String> parserLogMessages) {
+        this.parserLogMessages = parserLogMessages;
     }
     
     @JsonIgnore
