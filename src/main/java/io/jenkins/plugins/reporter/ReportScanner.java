@@ -22,40 +22,41 @@ public class ReportScanner {
     private final Provider provider;
 
     private final TaskListener listener;
+    
+    private final String colorPaletteTheme;
 
-    public ReportScanner(final Run<?, ?> run, final Provider provider, final FilePath workspace, final TaskListener listener) {
+    public ReportScanner(final Run<?, ?> run, final Provider provider, final FilePath workspace, final TaskListener listener, final String colorPaletteTheme) {
         this.run = run;
         this.provider = provider;
         this.workspace = workspace;
         this.listener = listener;
+        this.colorPaletteTheme = colorPaletteTheme;
     }
     
     public Report scan() throws IOException, InterruptedException {
         LogHandler logger = new LogHandler(listener, provider.getSymbolName());
         Report report = provider.scan(run, workspace, logger);
 
-        if (!report.hasColors()) {
-            report.logInfo("Report has no colors! Try to find the colors of the previous report.");
-            
-            Optional<Report> prevReport = findPreviousReport(run, report.getId());
-
-            if (prevReport.isPresent()) {
-                Report previous = prevReport.get();
-
-                if (previous.hasColors()) {
-                    report.logInfo("Previous report has colors. Add it to this report.");
-                    report.setColors(previous.getColors());
-                } else {
-                    report.logInfo("Previous report has no colors. Will generate color palette.");
-                    report.setColors(new ColorPalette(report.getColorIds()).generatePalette());
-                }
-
-            } else {
-                report.logInfo("No previous report found. Will generate color palette.");
-                report.setColors(new ColorPalette(report.getColorIds()).generatePalette());
-            }
-        }
+        // Previous logic for colors removed as per new requirement to always use palette or fallback within ColorPalette itself.
+        // The ColorPalette class will handle the fallback to RANDOM if themeName is null, empty, or invalid.
         
+        if (report != null && report.hasItems()) {
+            List<String> colorIds = report.getColorIds();
+            if (colorIds != null && !colorIds.isEmpty()) {
+                io.jenkins.plugins.reporter.model.ColorPalette paletteGenerator = new io.jenkins.plugins.reporter.model.ColorPalette(colorIds, this.colorPaletteTheme);
+                report.setColors(paletteGenerator.generatePalette());
+                report.logInfo("Applied color palette: " + (this.colorPaletteTheme != null ? this.colorPaletteTheme : "RANDOM"));
+            } else {
+                report.logInfo("Report has no items with IDs to assign colors or colorIds list is empty.");
+            }
+        } else if (report != null) {
+            report.logInfo("Report is null or has no items, skipping color generation.");
+        }
+        // The old logic for finding previous report colors is removed.
+        // The new ColorPalette will always be used.
+        // If specific handling for "no colors" vs "previous colors" is still needed, it has to be re-evaluated.
+        // For now, assuming new palette generation is the primary goal.
+
         logger.log(report);
         
         return report;
