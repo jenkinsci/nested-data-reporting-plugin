@@ -1,0 +1,5 @@
+System,Component,Metric,Value
+Alpha,Auth,LoginTime,120
+Alpha,Auth,LogoutTime,30
+Beta,DB,QueryTime,80
+Beta,DB,Connections,15
