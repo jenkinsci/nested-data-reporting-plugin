@@ -40,6 +40,8 @@ public class ReportRecorder extends Recorder {
     
     private String displayType;
 
+    private String colorPalette;
+
     /**
      * Creates a new instance of {@link ReportRecorder}.
      */
@@ -87,6 +89,15 @@ public class ReportRecorder extends Recorder {
         this.displayType = displayType;
     }
 
+    public String getColorPalette() {
+        return colorPalette;
+    }
+
+    @DataBoundSetter
+    public void setColorPalette(String colorPalette) {
+        this.colorPalette = colorPalette;
+    }
+    
     @Override
     public Descriptor getDescriptor() {
         return (Descriptor) super.getDescriptor();
@@ -125,7 +136,7 @@ public class ReportRecorder extends Recorder {
     private ReportResult record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) 
             throws IOException, InterruptedException {
     
-        Report report = scan(run, workspace, listener, provider);
+        Report report = scan(run, workspace, listener, provider, getColorPalette());
         report.setName(getName());
 
         DisplayType dt = Arrays.stream(DisplayType.values())
@@ -149,9 +160,9 @@ public class ReportRecorder extends Recorder {
     }
 
     private Report scan(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-                              final Provider provider) throws IOException, InterruptedException {
+                              final Provider provider, final String colorPalette) throws IOException, InterruptedException {
         
-        ReportScanner reportScanner = new ReportScanner(run, provider, workspace, listener);
+        ReportScanner reportScanner = new ReportScanner(run, provider, workspace, listener, colorPalette);
         
         return reportScanner.scan();
     }
