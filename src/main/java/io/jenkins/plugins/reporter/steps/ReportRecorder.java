@@ -32,7 +32,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class ReportRecorder extends Recorder {
+import hudson.tasks.BuildStepMonitor;
+
+public class ReportRecorder extends Publisher {
     
     private String name;
     
@@ -85,6 +87,11 @@ public class ReportRecorder extends Recorder {
     @DataBoundSetter
     public void setDisplayType(String displayType) {
         this.displayType = displayType;
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
     @Override
