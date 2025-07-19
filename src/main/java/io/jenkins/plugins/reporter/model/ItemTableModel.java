@@ -67,7 +67,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
                 .stream()
-                .map(item -> new ItemRow(report, item, this, owner))
+                .map(item -> new ItemRow(report, item, this))
                 .collect(Collectors.toList());
     }
 
@@ -90,7 +90,6 @@ public class ItemTableModel {
 
         private final Report report;
         private final Item item;
-        private final Run<?, ?> owner;
 
         private final ItemTableModel model;
 
@@ -104,11 +103,10 @@ public class ItemTableModel {
          * @param item
          *          the item to render.
          */
-        ItemRow(Report report, Item item, ItemTableModel model, Run<?, ?> owner) {
+        ItemRow(Report report, Item item, ItemTableModel model) {
             this.report = report;
             this.item = item;
             this.model = model;
-            this.owner = owner;
         }
 
         public String getId() {
@@ -157,7 +155,9 @@ public class ItemTableModel {
             String label = "";
             if (report.getDisplayType() == DisplayType.DELTA) {
                 String delta = getDelta(id);
-                if (StringUtils.isNotEmpty(delta)) {
+                if (StringUtils.equals(delta, "=")) {
+                    label = String.valueOf(value);
+                } else if (StringUtils.isNotEmpty(delta)) {
                     label = String.format("%d (%s)", value, delta);
                 } else {
                     label = String.valueOf(value);
@@ -189,6 +189,8 @@ public class ItemTableModel {
 
                     if (delta > 0) {
                         return String.format("+%d", delta);
+                    } else if (delta == 0) {
+                        return "=";
                     }
 
                     return String.valueOf(delta);
@@ -199,7 +201,11 @@ public class ItemTableModel {
         }
 
         private Optional<Report> getReferenceReport() {
-            Run<?, ?> lastSuccessfulBuild = owner.getParent().getLastSuccessfulBuild();
+            if (model.owner == null) {
+                return Optional.empty();
+            }
+
+            Run<?, ?> lastSuccessfulBuild = model.owner.getParent().getLastSuccessfulBuild();
             if (lastSuccessfulBuild != null) {
                 ReportAction action = lastSuccessfulBuild.getAction(ReportAction.class);
                 if (action != null) {
