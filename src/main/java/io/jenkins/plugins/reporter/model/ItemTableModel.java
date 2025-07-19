@@ -1,6 +1,9 @@
 package io.jenkins.plugins.reporter.model;
 
+import hudson.model.Run;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.reporter.ReportAction;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +27,8 @@ public class ItemTableModel {
 
     private final Item item;
 
+    private final Run<?, ?> owner;
+
     /**
      * Creates a new instance of {@link ItemTableModel}.
      *
@@ -32,11 +38,12 @@ public class ItemTableModel {
      * @param item
      *         the item to render
      */
-    public ItemTableModel(final Report report, final Item item) {
+    public ItemTableModel(final Report report, final Item item, final Run<?,?> owner) {
         super();
 
         this.report = report;
         this.item = item;
+        this.owner = owner;
     }
 
     public String getId() {
@@ -60,7 +67,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
                 .stream()
-                .map(item -> new ItemRow(report, item, this))
+                .map(item -> new ItemRow(report, item, this, owner))
                 .collect(Collectors.toList());
     }
 
@@ -83,6 +90,7 @@ public class ItemTableModel {
 
         private final Report report;
         private final Item item;
+        private final Run<?, ?> owner;
 
         private final ItemTableModel model;
 
@@ -96,10 +104,11 @@ public class ItemTableModel {
          * @param item
          *          the item to render.
          */
-        ItemRow(Report report, Item item, ItemTableModel model) {
+        ItemRow(Report report, Item item, ItemTableModel model, Run<?, ?> owner) {
             this.report = report;
             this.item = item;
             this.model = model;
+            this.owner = owner;
         }
 
         public String getId() {
@@ -145,15 +154,60 @@ public class ItemTableModel {
         }
 
         public String label(String id, Integer value) {
-            if (item.getResult().size() == 1) {
-                return item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
+            String label = "";
+            if (report.getDisplayType() == DisplayType.ABSOLUTE_AND_DELTA) {
+                String delta = getDelta(id);
+                if (StringUtils.isNotEmpty(delta)) {
+                    label = String.format("%d (%s)", value, delta);
+                } else {
+                    label = String.valueOf(value);
+                }
+            } else {
+                 if (item.getResult().size() == 1) {
+                    label = item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
+                } else {
+                    label = item.getLabel(report, value, value / (double) model.getItem().getResult().get(id) * 100);
+                }
             }
 
-            return item.getLabel(report, value, value / (double) model.getItem().getResult().get(id) * 100);
+            return label;
         }
 
         public String tooltip(String id, double percentage) {
             return String.format("%s: %.2f%%", id, percentage);
+        }
+
+        public String getDelta(String property) {
+            Optional<Report> referenceReport = getReferenceReport();
+            if (referenceReport.isPresent()) {
+                Optional<Item> referenceItem = referenceReport.get().findItem(item.getId());
+                if (referenceItem.isPresent()) {
+
+                    int current = item.getResult().get(property);
+                    int old = referenceItem.get().getResult().get(property);
+                    int delta = current - old;
+
+                    if (delta > 0) {
+                        return String.format("+%d", delta);
+                    }
+
+                    return String.valueOf(delta);
+                }
+            }
+
+            return "";
+        }
+
+        private Optional<Report> getReferenceReport() {
+            Run<?, ?> lastSuccessfulBuild = owner.getParent().getLastSuccessfulBuild();
+            if (lastSuccessfulBuild != null) {
+                ReportAction action = lastSuccessfulBuild.getAction(ReportAction.class);
+                if (action != null) {
+                    return Optional.of(action.getReport());
+                }
+            }
+
+            return Optional.empty();
         }
     }
 }
