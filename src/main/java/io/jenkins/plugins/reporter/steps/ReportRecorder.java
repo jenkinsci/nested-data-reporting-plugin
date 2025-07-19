@@ -29,16 +29,14 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class ReportRecorder extends Recorder {
     
-    private String name;
-    
-    private Provider provider;
-    
-    private String displayType;
+    private List<ReportConfiguration> reports = new ArrayList<>();
 
     /**
      * Creates a new instance of {@link ReportRecorder}.
@@ -49,6 +47,15 @@ public class ReportRecorder extends Recorder {
 
         // empty constructor required for Stapler
     }
+    
+    @DataBoundSetter
+    public void setReports(List<ReportConfiguration> reports) {
+        this.reports = reports;
+    }
+    
+    public List<ReportConfiguration> getReports() {
+        return reports;
+    }
 
     /**
      * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
@@ -57,9 +64,25 @@ public class ReportRecorder extends Recorder {
      * @return this
      */
     protected Object readResolve() {
+        // Backward compatibility: if old single report fields are set, convert to list
+        if (reports == null) {
+            reports = new ArrayList<>();
+        }
+        if (name != null && provider != null && reports.isEmpty()) {
+            ReportConfiguration config = new ReportConfiguration();
+            config.setName(name);
+            config.setProvider(provider);
+            config.setDisplayType(displayType != null ? displayType : "dual");
+            reports.add(config);
+        }
         return this;
     }
 
+    // Keep these for backward compatibility
+    private String name;
+    private Provider provider;
+    private String displayType;
+    
     @DataBoundSetter
     public void setName(String name) {
         this.name = name;
@@ -124,17 +147,31 @@ public class ReportRecorder extends Recorder {
 
     private ReportResult record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) 
             throws IOException, InterruptedException {
-    
-        Report report = scan(run, workspace, listener, provider);
-        report.setName(getName());
+        
+        // Ensure backward compatibility is handled
+        readResolve();
+        
+        ReportResult lastResult = null;
+        
+        // Process all configured reports
+        for (ReportConfiguration config : reports) {
+            if (config.getProvider() == null) {
+                continue;
+            }
+            
+            Report report = scan(run, workspace, listener, config.getProvider());
+            report.setName(config.getName());
 
-        DisplayType dt = Arrays.stream(DisplayType.values())
-                .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(getDisplayType()))
-                .findFirst().orElse(DisplayType.ABSOLUTE);
+            DisplayType dt = Arrays.stream(DisplayType.values())
+                    .filter(e -> e.name().toLowerCase(Locale.ROOT).equals(config.getDisplayType()))
+                    .findFirst().orElse(DisplayType.ABSOLUTE);
+            
+            report.setDisplayType(dt);
+            
+            lastResult = publishReport(run, listener, config.getProvider().getSymbolName(), report);
+        }
         
-        report.setDisplayType(dt);
-        
-    return publishReport(run, listener, provider.getSymbolName(), report);
+        return lastResult;
     }
 
     ReportResult publishReport(final Run<?, ?> run, final TaskListener listener,
