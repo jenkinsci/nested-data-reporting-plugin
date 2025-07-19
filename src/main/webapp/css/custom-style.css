@@ -68,7 +68,7 @@
 }
 
 .distribution {
-    display: block;
+    display: inline-block;
     color: transparent;
 }
 

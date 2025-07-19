@@ -59,16 +59,16 @@
                                     </j:forEach>
                                                                             
                                     <td>
-                                        <div>
+                                        <div class="d-flex">
                                              <j:forEach var="color" items="${row.colors}">
                                                 <j:set var="id" value="${color.key}"/>
                                                 <j:set var="hex" value="${row.getColor(id)}"/>
                                                 <j:set var="percentage" value="${row.getPercentage(id)}"/>
                                                 
                                                 <j:if test="${row.containsColorItem(id)}">
-                                                    <span id="tooltip-${row.id}-${id}" class="distribution" style="width: ${percentage}%; background-color: ${hex}"
+                                                    <span id="tooltip-${row.id}-${id}" style="width: ${percentage}%; background-color: ${hex}"
                                                           data-bs-toggle="tooltip" data-bs-placement="left" 
-                                                          title="${row.tooltip(id, percentage)}">.</span>
+                                                          title="${row.tooltip(id, percentage)}"></span>
                                                 </j:if>
                                                                                 
                                             </j:forEach>
