@@ -155,7 +155,7 @@ public class ItemTableModel {
 
         public String label(String id, Integer value) {
             String label = "";
-            if (report.getDisplayType() == DisplayType.ABSOLUTE_AND_DELTA) {
+            if (report.getDisplayType() == DisplayType.DELTA) {
                 String delta = getDelta(id);
                 if (StringUtils.isNotEmpty(delta)) {
                     label = String.format("%d (%s)", value, delta);
