@@ -67,7 +67,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
                 .stream()
-                .map(item -> new ItemRow(report, item, this))
+                .map(item -> new ItemRow(report, item, this, owner))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +80,8 @@ public class ItemTableModel {
     }
 
     public String label(Integer value) {
-        return item.getLabel(report, value, value / (double) item.getTotal() * 100);
+        // This method is now only used for the total row, which doesn't show delta
+        return String.valueOf(value);
     }
 
     /**
@@ -90,6 +91,7 @@ public class ItemTableModel {
 
         private final Report report;
         private final Item item;
+        private final Run<?, ?> owner;
 
         private final ItemTableModel model;
 
@@ -103,10 +105,11 @@ public class ItemTableModel {
          * @param item
          *          the item to render.
          */
-        ItemRow(Report report, Item item, ItemTableModel model) {
+        ItemRow(Report report, Item item, ItemTableModel model, Run<?, ?> owner) {
             this.report = report;
             this.item = item;
             this.model = model;
+            this.owner = owner;
         }
 
         public String getId() {
@@ -152,52 +155,43 @@ public class ItemTableModel {
         }
 
         public String label(String id, Integer value) {
-            String label = "";
-            if (report.getDisplayType() == DisplayType.DELTA) {
-                String delta = getDelta(id);
-                if (StringUtils.equals(delta, "=")) {
-                    label = String.valueOf(value);
-                } else if (StringUtils.isNotEmpty(delta)) {
-                    label = String.format("%d (%s)", value, delta);
-                } else {
-                    label = String.valueOf(value);
-                }
-            } else {
-                 if (item.getResult().size() == 1) {
-                    label = item.getLabel(report, value, value / (double) model.getItem().getTotal() * 100);
-                } else {
-                    label = item.getLabel(report, value, value / (double) model.getItem().getResult().get(id) * 100);
-                }
+            switch (report.getDisplayType()) {
+                case DELTA:
+                    int delta = value - getLastSuccessBuildValue(id);
+                    if (delta == 0) {
+                        return String.valueOf(value);
+                    } else {
+                        return String.format("%d (%s%d)", value, delta > 0 ? "+" : "", delta);
+                    }
+                case RELATIVE:
+                     if (item.getResult().size() == 1) {
+                        return String.format("%.2f%%", value / (double) model.getItem().getTotal() * 100);
+                    }
+                    return String.format("%.2f%%", value / (double) item.getTotal() * 100);
+                case DUAL:
+                     if (item.getResult().size() == 1) {
+                        return String.format("%d (%.2f%%)", value, value / (double) model.getItem().getTotal() * 100);
+                    }
+                    return String.format("%d (%.2f%%)", value, value / (double) item.getTotal() * 100);
+                case ABSOLUTE:
+                default:
+                    return String.valueOf(value);
             }
-
-            return label;
         }
 
         public String tooltip(String id, double percentage) {
             return String.format("%s: %.2f%%", id, percentage);
         }
 
-        public String getDelta(String property) {
+        public int getLastSuccessBuildValue(String property) {
             Optional<Report> referenceReport = getReferenceReport();
             if (referenceReport.isPresent()) {
                 Optional<Item> referenceItem = referenceReport.get().findItem(item.getId());
                 if (referenceItem.isPresent()) {
-
-                    int current = item.getResult().get(property);
-                    int old = referenceItem.get().getResult().get(property);
-                    int delta = current - old;
-
-                    if (delta > 0) {
-                        return String.format("+%d", delta);
-                    } else if (delta == 0) {
-                        return "=";
-                    }
-
-                    return String.valueOf(delta);
+                    return referenceItem.get().getResult().get(property);
                 }
             }
-
-            return "";
+            return 0;
         }
 
         private Optional<Report> getReferenceReport() {
