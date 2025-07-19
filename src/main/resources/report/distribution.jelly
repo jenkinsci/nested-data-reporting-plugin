@@ -20,15 +20,6 @@
                 
                 <div class="table-responsive">
                     <table class="table table-hover table-striped display item-table" id="${t.id}" isLoaded="true">
-                        <colgroup>
-                            <col class="col-width-5"/>
-                                
-                            <j:forEach var="column" items="${columns}">
-                                <col class="col-width-1 text-end" />
-                            </j:forEach>
-                            
-                            <col class="col-width-5"/>
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th>${%Name}</th>
