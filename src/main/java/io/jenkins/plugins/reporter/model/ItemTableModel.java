@@ -29,6 +29,8 @@ public class ItemTableModel {
 
     private final Run<?, ?> owner;
 
+    private final Optional<Report> referenceReport;
+
     /**
      * Creates a new instance of {@link ItemTableModel}.
      *
@@ -44,6 +46,7 @@ public class ItemTableModel {
         this.report = report;
         this.item = item;
         this.owner = owner;
+        this.referenceReport = getReferenceReport();
     }
 
     public String getId() {
@@ -67,7 +70,7 @@ public class ItemTableModel {
     public List<ItemRow> getRows() {
         return item.getItems()
                 .stream()
-                .map(item -> new ItemRow(report, item, this, owner))
+                .map(item -> new ItemRow(report, item, this, referenceReport))
                 .collect(Collectors.toList());
     }
 
@@ -91,7 +94,7 @@ public class ItemTableModel {
 
         private final Report report;
         private final Item item;
-        private final Run<?, ?> owner;
+        private final Optional<Report> referenceReport;
 
         private final ItemTableModel model;
 
@@ -105,11 +108,11 @@ public class ItemTableModel {
          * @param item
          *          the item to render.
          */
-        ItemRow(Report report, Item item, ItemTableModel model, Run<?, ?> owner) {
+        ItemRow(Report report, Item item, ItemTableModel model, Optional<Report> referenceReport) {
             this.report = report;
             this.item = item;
             this.model = model;
-            this.owner = owner;
+            this.referenceReport = referenceReport;
         }
 
         public String getId() {
@@ -157,12 +160,8 @@ public class ItemTableModel {
         public String label(String id, Integer value) {
             switch (report.getDisplayType()) {
                 case DELTA:
-                    int delta = value - getLastSuccessBuildValue(id);
-                    if (delta == 0) {
-                        return String.valueOf(value);
-                    } else {
-                        return String.format("%d (%s%d)", value, delta > 0 ? "+" : "", delta);
-                    }
+                    Integer previousValue = getLastSuccessBuildValue(id);
+                    return formatDeltaLabel(value, previousValue);
                 case RELATIVE:
                      if (item.getResult().size() == 1) {
                         return String.format("%.2f%%", value / (double) model.getItem().getTotal() * 100);
@@ -183,31 +182,44 @@ public class ItemTableModel {
             return String.format("%s: %.2f%%", id, percentage);
         }
 
-        public int getLastSuccessBuildValue(String property) {
-            Optional<Report> referenceReport = getReferenceReport();
+        public Integer getLastSuccessBuildValue(String property) {
             if (referenceReport.isPresent()) {
                 Optional<Item> referenceItem = referenceReport.get().findItem(item.getId());
                 if (referenceItem.isPresent()) {
                     return referenceItem.get().getResult().get(property);
                 }
             }
-            return 0;
+            return null;
         }
 
-        private Optional<Report> getReferenceReport() {
-            if (model.owner == null) {
-                return Optional.empty();
+        private String formatDeltaLabel(Integer currentValue, Integer previousValue) {
+            if (previousValue == null) {
+                return String.format("%d (+%d)", currentValue, currentValue);
             }
 
-            Run<?, ?> lastSuccessfulBuild = model.owner.getParent().getLastSuccessfulBuild();
-            if (lastSuccessfulBuild != null) {
-                ReportAction action = lastSuccessfulBuild.getAction(ReportAction.class);
-                if (action != null) {
-                    return Optional.of(action.getReport());
-                }
-            }
+            int delta = currentValue - previousValue;
 
+            if (delta == 0) {
+                return currentValue.toString();
+            } else {
+                return String.format("%d (%s%d)", currentValue, delta > 0 ? "+" : "", delta);
+            }
+        }
+    }
+
+    private Optional<Report> getReferenceReport() {
+        if (owner == null) {
             return Optional.empty();
         }
+
+        Run<?, ?> lastSuccessfulBuild = owner.getParent().getLastSuccessfulBuild();
+        if (lastSuccessfulBuild != null) {
+            ReportAction action = lastSuccessfulBuild.getAction(ReportAction.class);
+            if (action != null) {
+                return Optional.of(action.getReport());
+            }
+        }
+
+        return Optional.empty();
     }
 }
