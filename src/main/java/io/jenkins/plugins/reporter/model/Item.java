@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,11 @@ public class Item implements Serializable {
             return result;
         }
 
-        return getItems()
-                .stream()
+        if (items == null || items.isEmpty()) {
+            return new LinkedHashMap<>();
+        }
+
+        return items.stream()
                 .map(Item::getResult)
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingInt(Map.Entry::getValue)));
@@ -102,11 +106,14 @@ public class Item implements Serializable {
     }
 
     public List<Item> getItems() {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
         return items;
     }
 
     public boolean hasItems() {
-        return !Objects.isNull(items) && !items.isEmpty();
+        return items != null && !items.isEmpty();
     }
 
     public void setItems(List<Item> items) {
@@ -114,6 +121,9 @@ public class Item implements Serializable {
     }
     
     public void addItem(Item item) {
-        this.items.add(item);
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        items.add(item);
     }
 }
