@@ -46,7 +46,7 @@
                                     </td>
                                     
                                     <j:forEach var="i" items="${row.item.result}">
-                                        <td class="text-end">${row.label(i.key, i.value)}</td>
+                                        <td class="text-end" data-order="${i.value}" >${row.label(i.key, i.value)}</td>
                                     </j:forEach>
                                                                             
                                     <td>
