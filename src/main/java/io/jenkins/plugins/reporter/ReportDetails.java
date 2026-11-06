@@ -146,7 +146,7 @@ public class ReportDetails implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public ItemTableModel getTableModel() {
-        return new ItemTableModel(result.getReport(), getItem());
+        return new ItemTableModel(result.getReport(), getItem(), owner);
     }
 
     /**

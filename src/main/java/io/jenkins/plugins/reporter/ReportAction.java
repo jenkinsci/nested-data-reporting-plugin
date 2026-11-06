@@ -109,6 +109,11 @@ public class ReportAction implements LastBuildAction, RunAction2, StaplerProxy, 
     public ReportResult getResult() {
         return result;
     }
+
+    @Whitelisted
+    public io.jenkins.plugins.reporter.model.Report getReport() {
+        return result.getReport();
+    }
     
     /**
      * Returns the name of the report.
